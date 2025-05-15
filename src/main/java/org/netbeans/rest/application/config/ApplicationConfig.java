@@ -28,6 +28,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(usac.eps.controladores.Autenticacion.class);
         resources.add(usac.eps.controladores.DepartamentoController.class);
         resources.add(usac.eps.controladores.PresentacionProductoController.class);
         resources.add(usac.eps.controladores.ProductoController.class);

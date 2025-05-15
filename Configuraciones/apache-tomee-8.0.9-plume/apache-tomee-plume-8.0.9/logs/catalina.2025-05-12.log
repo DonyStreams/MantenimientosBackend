@@ -1,0 +1,942 @@
+12-May-2025 14:54:12.818 INFO [main] org.apache.openejb.persistence.PersistenceBootstrap.getDefaultProvider Default JPA Provider changed to org.eclipse.persistence.jpa.PersistenceProvider specified by jar:file:/D:/Proyectos/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/lib/openejb-core-eclipselink-8.0.9.jar!/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke Nombre de la versión del servidor: Apache Tomcat/9.0.56
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke Server built:                      Dec 2 2021 14:30:07 UTC
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke Número de versión de servidor:     9.0.56.0
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke OS Name:                           Windows 11
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke Versión de Systema Operativo:      10.0
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke Arquitectura:                      amd64
+12-May-2025 14:54:13.130 INFO [main] java.lang.reflect.Method.invoke Java Home:                         C:\Program Files\Java\jdk-19.0.2
+12-May-2025 14:54:13.131 INFO [main] java.lang.reflect.Method.invoke JVM Version:                       19.0.2+7-44
+12-May-2025 14:54:13.131 INFO [main] java.lang.reflect.Method.invoke Vededor JVM:                       Oracle Corporation
+12-May-2025 14:54:13.131 INFO [main] java.lang.reflect.Method.invoke CATALINA_BASE:                     D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 14:54:13.131 INFO [main] java.lang.reflect.Method.invoke CATALINA_HOME:                     D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 14:54:13.132 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.lang=ALL-UNNAMED
+12-May-2025 14:54:13.132 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.io=ALL-UNNAMED
+12-May-2025 14:54:13.132 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.util=ALL-UNNAMED
+12-May-2025 14:54:13.132 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+12-May-2025 14:54:13.132 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+12-May-2025 14:54:13.133 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.util.logging.config.file=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\logging.properties
+12-May-2025 14:54:13.133 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+12-May-2025 14:54:13.133 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -javaagent:D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\lib\openejb-javaagent.jar
+12-May-2025 14:54:13.133 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djdk.tls.ephemeralDHKeySize=2048
+12-May-2025 14:54:13.133 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+12-May-2025 14:54:13.134 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Dignore.endorsed.dirs=
+12-May-2025 14:54:13.134 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Dcatalina.base=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 14:54:13.134 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Dcatalina.home=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 14:54:13.134 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.io.tmpdir=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\temp
+12-May-2025 14:54:13.145 INFO [main] java.lang.reflect.Method.invoke La biblioteca nativa de Apache Tomcat basada en ARP que permite un rendimiento óptimo en entornos de desarrollo no ha sido hallada en java.library.path: [C:\Program Files\Java\jdk-19.0.2\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Lumia Stream\commands;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\nodejs\;C:\Program Files\Docker\Docker\resources\bin;C:\php;C:\Program Files\PuTTY\;C:\Users\USER\AppData\Local\Programs\Python\Python314\Scripts\;C:\Users\USER\AppData\Local\Programs\Python\Python314\;C:\Users\USER\AppData\Local\Programs\Python\Launcher\;C:\Users\USER\AppData\Local\Microsoft\WindowsApps;C:\Users\USER\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\USER\AppData\Local\GitHubDesktop\bin;C:\Program Files\Azure Data Studio\bin;C:\Program Files\Java\jdk-19.0.2\bin;C:\Users\USER\.dotnet\tools;C:\Users\USER\AppData\Roaming\npm;;.]
+12-May-2025 14:54:13.577 INFO [main] java.lang.reflect.Method.invoke Inicializando el manejador de protocolo ["http-nio-8080"]
+
+12-May-2025 14:54:13.880 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+12-May-2025 14:54:14.000 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+12-May-2025 14:54:14.000 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+12-May-2025 14:54:14.000 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Mon May 12 14:54:13 CST 2025
+12-May-2025 14:54:14.000 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2021 (C) Apache TomEE Project, All Rights Reserved.
+12-May-2025 14:54:14.001 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.9
+12-May-2025 14:54:14.001 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20211223
+12-May-2025 14:54:14.001 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 12:34
+12-May-2025 14:54:14.001 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+12-May-2025 14:54:14.001 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 14:54:14.001 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 14:54:14.003 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@76012793
+12-May-2025 14:54:14.006 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+12-May-2025 14:54:14.046 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is 'D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\tomee.xml'
+12-May-2025 14:54:14.090 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+12-May-2025 14:54:14.093 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+12-May-2025 14:54:14.095 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.deployments.classpath=false'
+12-May-2025 14:54:14.104 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+12-May-2025 14:54:14.200 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+12-May-2025 14:54:14.283 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf)
+12-May-2025 14:54:14.514 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+12-May-2025 14:54:14.543 INFO [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+12-May-2025 14:54:14.544 INFO [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT  
+12-May-2025 14:54:14.544 INFO [main] org.apache.openejb.server.SimpleServiceManager.start -------
+12-May-2025 14:54:14.544 INFO [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+12-May-2025 14:54:14.544 INFO [main] java.lang.reflect.Method.invoke Server initialization in [1679] milliseconds
+12-May-2025 14:54:14.586 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+12-May-2025 14:54:14.586 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+12-May-2025 14:54:14.603 INFO [main] java.lang.reflect.Method.invoke Arrancando servicio [Catalina]
+12-May-2025 14:54:14.603 INFO [main] java.lang.reflect.Method.invoke Starting Servlet engine: [Apache Tomcat/9.0.56]
+12-May-2025 14:54:14.617 INFO [main] java.lang.reflect.Method.invoke Desplieque del descriptor de configuración [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml]
+12-May-2025 14:54:14.622 WARNING [main] java.lang.reflect.Method.invoke The path attribute with value [/ControlSuministros] in deployment descriptor [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml] has been ignored
+12-May-2025 14:54:14.631 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /ControlSuministros
+12-May-2025 14:54:16.087 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 14:54:16.478 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=ControlSuministros/inacifDataSource, type=Resource, provider-id=Default JDBC Database)
+12-May-2025 14:54:16.480 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 14:54:17.117 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+12-May-2025 14:54:17.117 INFO [main] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean ControlSuministros.Comp215694469: Container(type=MANAGED, id=Default Managed Container)
+12-May-2025 14:54:17.118 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+12-May-2025 14:54:17.127 INFO [main] org.apache.openejb.core.managed.SimplePassivater.init Using directory D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\temp for stateful session passivation
+12-May-2025 14:54:17.139 INFO [main] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'openejb/Resource/ControlSuministros/inacifDataSource' in bean ControlSuministros.Comp215694469 to Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 14:54:17.139 INFO [main] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'openejb/Resource/inacifDataSource' in bean ControlSuministros.Comp215694469 to Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 14:54:17.140 INFO [main] org.apache.openejb.config.AutoConfig.deploy Configuring PersistenceUnit(name=usac.eps_ControlSuministros, provider=org.eclipse.persistence.jpa.PersistenceProvider)
+12-May-2025 14:54:17.140 INFO [main] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'ControlSuministros/inacifDataSourceNonJta' of type 'DataSource for 'usac.eps_ControlSuministros'.
+12-May-2025 14:54:17.140 INFO [main] org.apache.openejb.config.AutoConfig.deploy Configuring Service(id=ControlSuministros/inacifDataSourceNonJta, type=Resource, provider-id=ControlSuministros/inacifDataSource)
+12-May-2025 14:54:17.140 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=ControlSuministros/inacifDataSourceNonJta)
+12-May-2025 14:54:17.302 INFO [main] org.apache.openejb.config.AutoConfig.setJtaDataSource Adjusting PersistenceUnit usac.eps_ControlSuministros <jta-data-source> to Resource ID 'ControlSuministros/inacifDataSource' from 'inacifDataSource'
+12-May-2025 14:54:17.303 INFO [main] org.apache.openejb.config.AutoConfig.setNonJtaDataSource Adjusting PersistenceUnit usac.eps_ControlSuministros <non-jta-data-source> to Resource ID 'ControlSuministros/inacifDataSourceNonJta' from 'null'
+12-May-2025 14:54:17.339 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\ControlSuministros\target\ControlSuministros" loaded.
+12-May-2025 14:54:17.344 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 14:54:18.172 INFO [main] org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory.createDelegate PersistenceUnit(name=usac.eps_ControlSuministros, provider=org.eclipse.persistence.jpa.PersistenceProvider) - provider time 803ms
+12-May-2025 14:54:18.229 INFO [main] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@76012793
+12-May-2025 14:54:18.299 INFO [main] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+12-May-2025 14:54:18.304 INFO [main] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+12-May-2025 14:54:19.283 INFO [main] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/cdi-api-2.0.jar looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+12-May-2025 14:54:19.284 INFO [main] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/deltaspike-data-module-api-1.9.4.jar looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+12-May-2025 14:54:19.317 INFO [main] org.apache.deltaspike.core.impl.config.EnvironmentPropertyConfigSourceProvider.<init> Custom config found by DeltaSpike. Name: 'META-INF/apache-deltaspike.properties', URL: 'jar:file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/deltaspike-jpa-module-impl-1.9.4.jar!/META-INF/apache-deltaspike.properties'
+12-May-2025 14:54:19.325 INFO [main] org.apache.deltaspike.core.util.ProjectStageProducer.initProjectStage Computed the following DeltaSpike ProjectStage: Production
+12-May-2025 14:54:20.774 INFO [main] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+12-May-2025 14:54:20.810 INFO [main] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 2511 ms.
+12-May-2025 14:54:20.852 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\ControlSuministros\target\ControlSuministros\META-INF\context.xml
+12-May-2025 14:54:20.855 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\ControlSuministros\target\ControlSuministros)
+12-May-2025 14:54:21.383 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using readers:
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@fa3db48
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@31c9bb2f
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@71e839ee
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@36a65069
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@2762e9a7
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@5b8e2ea7
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@19158d56
+12-May-2025 14:54:21.764 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@6b994b71
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@3f02dc34
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@7f49fa1d
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@6e211727
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@2762e9a7
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@19158d56
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@5b6b5888
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@72a1ccad
+12-May-2025 14:54:21.765 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@3f02dc34
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@fa3db48
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@31c9bb2f
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@71e839ee
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@5b8e2ea7
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@36a65069
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@6b994b71
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@7f49fa1d
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@6e211727
+12-May-2025 14:54:21.766 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using exception mappers:
+12-May-2025 14:54:21.767 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@38300447
+12-May-2025 14:54:21.767 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@18f6ccf4
+12-May-2025 14:54:21.767 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@14484887
+12-May-2025 14:54:21.769 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/ControlSuministros/                                                    -> org.netbeans.rest.application.config.ApplicationConfig@3a69c81e
+12-May-2025 14:54:21.772 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Departamento                                        -> Pojo usac.eps.controladores.DepartamentoController        
+12-May-2025 14:54:21.772 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 14:54:21.772 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Departamento                                        ->      List<DepartamentoModel> getAll()       
+12-May-2025 14:54:21.772 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 14:54:21.773 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Departamento                                        ->      Response create(DepartamentoModel)     
+12-May-2025 14:54:21.773 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response update(int, DepartamentoModel)
+12-May-2025 14:54:21.773 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/PresentacionProducto                                -> Pojo usac.eps.controladores.PresentacionProductoController
+12-May-2025 14:54:21.773 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response deleteById(int)                       
+12-May-2025 14:54:21.773 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/PresentacionProducto                                ->      List<PresentacionProductoModel> getAll()       
+12-May-2025 14:54:21.774 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response findById(int)                         
+12-May-2025 14:54:21.774 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/PresentacionProducto                                ->      Response create(PresentacionProductoModel)     
+12-May-2025 14:54:21.774 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response update(int, PresentacionProductoModel)
+12-May-2025 14:54:21.774 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Producto                                            -> Pojo usac.eps.controladores.ProductoController            
+12-May-2025 14:54:21.774 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response deleteById(int)           
+12-May-2025 14:54:21.774 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto                                            ->      List<ProductoModel> getAll()       
+12-May-2025 14:54:21.775 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorPresentacion/{id:[0-9][0-9]*}           ->      Response findByPresentacion(int)   
+12-May-2025 14:54:21.775 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorTipo/{id:[0-9][0-9]*}                   ->      Response findByTipoProducto(int)   
+12-May-2025 14:54:21.775 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorUnidadMedida/{id:[0-9][0-9]*}           ->      Response findByUnidadMedida(int)   
+12-May-2025 14:54:21.775 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response findById(int)             
+12-May-2025 14:54:21.775 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Producto                                            ->      Response create(ProductoModel)     
+12-May-2025 14:54:21.775 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response update(int, ProductoModel)
+12-May-2025 14:54:21.776 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Requisicion                                         -> Pojo usac.eps.controladores.RequisicionController         
+12-May-2025 14:54:21.776 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response deleteById(long)              
+12-May-2025 14:54:21.776 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion                                         ->      List<RequisicionModel> getAll()        
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorTipo/{id:[0-9][0-9]*}                ->      Response findByTipoRequisicion(int)    
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorUnidad/{id:[0-9][0-9]*}              ->      Response findByUnidad(int)             
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorUsuario/{id:[0-9][0-9]*}             ->      Response findByUsuario(Long)           
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response findById(long)                
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Requisicion                                         ->      Response create(RequisicionModel)      
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response update(long, RequisicionModel)
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/RequisicionBitacora                                 -> Pojo usac.eps.controladores.RequisicionBitacoraController 
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response delete(Long)                          
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora                                 ->      List<RequisicionBitacoraModel> getAll()        
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/PorRequisicion/{id:[0-9][0-9]*} ->      Response findByTipoRequisicion(Long)           
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/PorUsuario/{id:[0-9][0-9]*}     ->      Response findByUsuario(Long)                   
+12-May-2025 14:54:21.777 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response findById(Long)                        
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/RequisicionBitacora                                 ->      Response create(RequisicionBitacoraModel)      
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response update(Long, RequisicionBitacoraModel)
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/RequisicionDetalle                                  -> Pojo usac.eps.controladores.RequisicionDetalleController  
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response deleteById(Long)                     
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle                                  ->      List<RequisicionDetalleModel> getAll()        
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/PorProducto/{id:[0-9][0-9]*}     ->      Response findByProducto(int)                  
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/PorRequisicion/{id:[0-9][0-9]*}  ->      Response findByRequisicion(Long)              
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response getById(Long)                        
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/RequisicionDetalle                                  ->      Response create(RequisicionDetalleModel)      
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response update(Long, RequisicionDetalleModel)
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Rol                                                 -> Pojo usac.eps.controladores.RolController                 
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response deleteById(int)      
+12-May-2025 14:54:21.779 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Rol                                                 ->      List<RolModel> getAll()       
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response findById(int)        
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Rol                                                 ->      Response create(RolModel)     
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response update(int, RolModel)
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Sede                                                -> Pojo usac.eps.controladores.SedeController                
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response deleteById(int)        
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede                                                ->      List<SedeModel> getAll()        
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede/PorDepartamento/{id:[0-9][0-9]*}               ->      Response findByDepartamento(int)
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response findById(int)          
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Sede                                                ->      Response create(SedeModel)      
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response update(int, SedeModel) 
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Stock                                               -> Pojo usac.eps.controladores.StockController               
+12-May-2025 14:54:21.780 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response deleteById(long)        
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock                                               ->      List<StockModel> getAll()        
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/PorProducto/{id:[0-9][0-9]*}                  ->      Response findByProducto(int)     
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/PorSede/{id:[0-9][0-9]*}                      ->      Response findBySede(int)         
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response findById(long)          
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Stock                                               ->      Response create(StockModel)      
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response update(long, StockModel)
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/StockBitacora                                       -> Pojo usac.eps.controladores.StockBitacoraController       
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response deleteById(long)                
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora                                       ->      List<StockBitacoraModel> getAll()        
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/PorStock/{id:[0-9][0-9]*}             ->      Response findByStock(long)               
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/PorUsuario/{id:[0-9][0-9]*}           ->      Response findByUsuario(Long)             
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response findById(long)                  
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/StockBitacora                                       ->      Response create(StockBitacoraModel)      
+12-May-2025 14:54:21.781 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response update(long, StockBitacoraModel)
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/TipoProducto                                        -> Pojo usac.eps.controladores.TipoProductoController        
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoProducto                                        ->      List<TipoProductoModel> getAll()       
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/TipoProducto                                        ->      Response create(TipoProductoModel)     
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response update(int, TipoProductoModel)
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/TipoRequisicion                                     -> Pojo usac.eps.controladores.TipoRequisicionController     
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response deleteById(int)                  
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoRequisicion                                     ->      List<TipoRequisicionModel> getAll()       
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response findById(int)                    
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/TipoRequisicion                                     ->      Response create(TipoRequisicionModel)     
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response update(int, TipoRequisicionModel)
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Unidad                                              -> Pojo usac.eps.controladores.UnidadController              
+12-May-2025 14:54:21.782 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response deleteById(int)         
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Unidad                                              ->      List<UnidadModel> getAll()       
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response findById(int)           
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Unidad                                              ->      Response create(UnidadModel)     
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response update(int, UnidadModel)
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/UnidadMedida                                        -> Pojo usac.eps.controladores.UnidadMedidaController        
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/UnidadMedida                                        ->      List<UnidadMedidaModel> getAll()       
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/UnidadMedida                                        ->      Response create(UnidadMedidaModel)     
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response update(int, UnidadMedidaModel)
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Usuario                                             -> Pojo usac.eps.controladores.UsuarioController             
+12-May-2025 14:54:21.783 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response deleteById(Long)          
+12-May-2025 14:54:21.784 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario                                             ->      List<UsuarioModel> getAll()        
+12-May-2025 14:54:21.784 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/PorRol/{id:[0-9][0-9]*}                     ->      Response findByRol(int)            
+12-May-2025 14:54:21.784 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/PorSede/{id:[0-9][0-9]*}                    ->      Response findBySede(int)           
+12-May-2025 14:54:21.784 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response findById(Long)            
+12-May-2025 14:54:21.784 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Usuario                                             ->      Response create(UsuarioModel)      
+12-May-2025 14:54:21.784 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response update(Long, UsuarioModel)
+12-May-2025 14:54:21.805 INFO [main] java.lang.reflect.Method.invoke Deployment of deployment descriptor [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml] has finished in [7.188] ms
+12-May-2025 14:54:21.806 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs] de la aplicación web
+12-May-2025 14:54:21.806 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /docs
+12-May-2025 14:54:21.872 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs
+12-May-2025 14:54:21.878 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs" loaded.
+12-May-2025 14:54:21.879 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs
+12-May-2025 14:54:21.893 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs)
+12-May-2025 14:54:21.989 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 14:54:22.008 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs] has finished in [202] ms
+12-May-2025 14:54:22.009 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager] de la aplicación web
+12-May-2025 14:54:22.011 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /host-manager
+12-May-2025 14:54:22.068 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager
+12-May-2025 14:54:22.075 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager" loaded.
+12-May-2025 14:54:22.077 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager
+12-May-2025 14:54:22.090 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager\META-INF\context.xml
+12-May-2025 14:54:22.090 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager)
+12-May-2025 14:54:22.199 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 14:54:22.224 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager] has finished in [214] ms
+12-May-2025 14:54:22.224 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager] de la aplicación web
+12-May-2025 14:54:22.226 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /manager
+12-May-2025 14:54:22.267 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager
+12-May-2025 14:54:22.278 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager" loaded.
+12-May-2025 14:54:22.278 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager
+12-May-2025 14:54:22.289 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager\META-INF\context.xml
+12-May-2025 14:54:22.290 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager)
+12-May-2025 14:54:22.392 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 14:54:22.408 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager] has finished in [184] ms
+12-May-2025 14:54:22.409 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT] de la aplicación web
+12-May-2025 14:54:22.409 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /
+12-May-2025 14:54:22.439 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT
+12-May-2025 14:54:22.443 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT" loaded.
+12-May-2025 14:54:22.445 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT
+12-May-2025 14:54:22.456 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT)
+12-May-2025 14:54:22.533 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 14:54:22.548 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT] has finished in [140] ms
+12-May-2025 14:54:22.551 INFO [main] java.lang.reflect.Method.invoke Starting ProtocolHandler ["http-nio-8080"]
+12-May-2025 14:54:22.566 INFO [main] java.lang.reflect.Method.invoke Server startup in [8023] milliseconds
+12-May-2025 23:16:41.168 INFO [main] org.apache.openejb.persistence.PersistenceBootstrap.getDefaultProvider Default JPA Provider changed to org.eclipse.persistence.jpa.PersistenceProvider specified by jar:file:/D:/Proyectos/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/lib/openejb-core-eclipselink-8.0.9.jar!/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider
+12-May-2025 23:16:41.358 INFO [main] java.lang.reflect.Method.invoke Se ha recibido un comando de apagado a través del puerto de apagado. Parando la instancia del Servidor.
+12-May-2025 23:16:41.360 INFO [main] java.lang.reflect.Method.invoke Pausing ProtocolHandler ["http-nio-8080"]
+12-May-2025 23:16:41.380 INFO [main] java.lang.reflect.Method.invoke Parando servicio [Catalina]
+12-May-2025 23:16:41.418 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 23:16:41.439 INFO [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Closing DataSource: ControlSuministros/inacifDataSource
+12-May-2025 23:16:41.524 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc La aplicación web [ControlSuministros] registró el conductor JDBC [com.microsoft.sqlserver.jdbc.SQLServerDriver] pero falló al anular el registro mientras la aplicación web estaba parada. Para prevenir un fallo de memoria, se ha anulado el registro del conductor JDBC por la fuerza.
+12-May-2025 23:16:41.526 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches Failed to clear soft references from ObjectStreamClass$Caches for web application [ControlSuministros]
+	java.lang.ClassCastException: class java.io.ObjectStreamClass$Caches$1 cannot be cast to class java.util.Map (java.io.ObjectStreamClass$Caches$1 and java.util.Map are in module java.base of loader 'bootstrap')
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearCache(WebappClassLoaderBase.java:2325)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches(WebappClassLoaderBase.java:2300)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferences(WebappClassLoaderBase.java:1669)
+		at org.apache.catalina.loader.WebappClassLoaderBase.stop(WebappClassLoaderBase.java:1597)
+		at org.apache.tomee.catalina.TomEEWebappClassLoader.internalStop(TomEEWebappClassLoader.java:306)
+		at org.apache.tomee.catalina.TomcatWebAppBuilder.afterStop(TomcatWebAppBuilder.java:2149)
+		at org.apache.tomee.catalina.GlobalListenerSupport.lifecycleEvent(GlobalListenerSupport.java:127)
+		at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:123)
+		at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:423)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:265)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardService.stopInternal(StandardService.java:497)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardServer.stopInternal(StandardServer.java:979)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.startup.Catalina.stop(Catalina.java:849)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:811)
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+12-May-2025 23:16:41.535 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs
+12-May-2025 23:16:41.594 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches Failed to clear soft references from ObjectStreamClass$Caches for web application [docs]
+	java.lang.ClassCastException: class java.io.ObjectStreamClass$Caches$1 cannot be cast to class java.util.Map (java.io.ObjectStreamClass$Caches$1 and java.util.Map are in module java.base of loader 'bootstrap')
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearCache(WebappClassLoaderBase.java:2325)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches(WebappClassLoaderBase.java:2300)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferences(WebappClassLoaderBase.java:1669)
+		at org.apache.catalina.loader.WebappClassLoaderBase.stop(WebappClassLoaderBase.java:1597)
+		at org.apache.tomee.catalina.TomEEWebappClassLoader.internalStop(TomEEWebappClassLoader.java:306)
+		at org.apache.tomee.catalina.TomcatWebAppBuilder.afterStop(TomcatWebAppBuilder.java:2149)
+		at org.apache.tomee.catalina.GlobalListenerSupport.lifecycleEvent(GlobalListenerSupport.java:127)
+		at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:123)
+		at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:423)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:265)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardService.stopInternal(StandardService.java:497)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardServer.stopInternal(StandardServer.java:979)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.startup.Catalina.stop(Catalina.java:849)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:811)
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+12-May-2025 23:16:41.599 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager
+12-May-2025 23:16:41.643 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches Failed to clear soft references from ObjectStreamClass$Caches for web application [host-manager]
+	java.lang.ClassCastException: class java.io.ObjectStreamClass$Caches$1 cannot be cast to class java.util.Map (java.io.ObjectStreamClass$Caches$1 and java.util.Map are in module java.base of loader 'bootstrap')
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearCache(WebappClassLoaderBase.java:2325)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches(WebappClassLoaderBase.java:2300)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferences(WebappClassLoaderBase.java:1669)
+		at org.apache.catalina.loader.WebappClassLoaderBase.stop(WebappClassLoaderBase.java:1597)
+		at org.apache.tomee.catalina.TomEEWebappClassLoader.internalStop(TomEEWebappClassLoader.java:306)
+		at org.apache.tomee.catalina.TomcatWebAppBuilder.afterStop(TomcatWebAppBuilder.java:2149)
+		at org.apache.tomee.catalina.GlobalListenerSupport.lifecycleEvent(GlobalListenerSupport.java:127)
+		at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:123)
+		at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:423)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:265)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardService.stopInternal(StandardService.java:497)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardServer.stopInternal(StandardServer.java:979)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.startup.Catalina.stop(Catalina.java:849)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:811)
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+12-May-2025 23:16:41.649 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager
+12-May-2025 23:16:41.689 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches Failed to clear soft references from ObjectStreamClass$Caches for web application [manager]
+	java.lang.ClassCastException: class java.io.ObjectStreamClass$Caches$1 cannot be cast to class java.util.Map (java.io.ObjectStreamClass$Caches$1 and java.util.Map are in module java.base of loader 'bootstrap')
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearCache(WebappClassLoaderBase.java:2325)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches(WebappClassLoaderBase.java:2300)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferences(WebappClassLoaderBase.java:1669)
+		at org.apache.catalina.loader.WebappClassLoaderBase.stop(WebappClassLoaderBase.java:1597)
+		at org.apache.tomee.catalina.TomEEWebappClassLoader.internalStop(TomEEWebappClassLoader.java:306)
+		at org.apache.tomee.catalina.TomcatWebAppBuilder.afterStop(TomcatWebAppBuilder.java:2149)
+		at org.apache.tomee.catalina.GlobalListenerSupport.lifecycleEvent(GlobalListenerSupport.java:127)
+		at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:123)
+		at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:423)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:265)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardService.stopInternal(StandardService.java:497)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardServer.stopInternal(StandardServer.java:979)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.startup.Catalina.stop(Catalina.java:849)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:811)
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+12-May-2025 23:16:41.692 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT
+12-May-2025 23:16:41.750 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches Failed to clear soft references from ObjectStreamClass$Caches for web application [ROOT]
+	java.lang.ClassCastException: class java.io.ObjectStreamClass$Caches$1 cannot be cast to class java.util.Map (java.io.ObjectStreamClass$Caches$1 and java.util.Map are in module java.base of loader 'bootstrap')
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearCache(WebappClassLoaderBase.java:2325)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches(WebappClassLoaderBase.java:2300)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferences(WebappClassLoaderBase.java:1669)
+		at org.apache.catalina.loader.WebappClassLoaderBase.stop(WebappClassLoaderBase.java:1597)
+		at org.apache.tomee.catalina.TomEEWebappClassLoader.internalStop(TomEEWebappClassLoader.java:306)
+		at org.apache.tomee.catalina.TomcatWebAppBuilder.afterStop(TomcatWebAppBuilder.java:2149)
+		at org.apache.tomee.catalina.GlobalListenerSupport.lifecycleEvent(GlobalListenerSupport.java:127)
+		at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:123)
+		at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:423)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:265)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1412)
+		at org.apache.catalina.core.ContainerBase$StopChild.call(ContainerBase.java:1401)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+		at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+		at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+		at org.apache.catalina.core.ContainerBase.stopInternal(ContainerBase.java:986)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardService.stopInternal(StandardService.java:497)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.core.StandardServer.stopInternal(StandardServer.java:979)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:257)
+		at org.apache.catalina.startup.Catalina.stop(Catalina.java:849)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:811)
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+12-May-2025 23:16:41.751 INFO [main] java.lang.reflect.Method.invoke Stopping ProtocolHandler ["http-nio-8080"]
+12-May-2025 23:16:41.756 INFO [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+12-May-2025 23:16:41.766 INFO [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Closing DataSource: ControlSuministros/inacifDataSourceNonJta
+12-May-2025 23:16:41.776 INFO [main] java.lang.reflect.Method.invoke Destroying ProtocolHandler ["http-nio-8080"]
+12-May-2025 23:16:45.629 INFO [main] org.apache.openejb.persistence.PersistenceBootstrap.getDefaultProvider Default JPA Provider changed to org.eclipse.persistence.jpa.PersistenceProvider specified by jar:file:/D:/Proyectos/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/lib/openejb-core-eclipselink-8.0.9.jar!/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Nombre de la versión del servidor: Apache Tomcat/9.0.56
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Server built:                      Dec 2 2021 14:30:07 UTC
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Número de versión de servidor:     9.0.56.0
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke OS Name:                           Windows 11
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Versión de Systema Operativo:      10.0
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Arquitectura:                      amd64
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Java Home:                         C:\Program Files\Java\jdk-19.0.2
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke JVM Version:                       19.0.2+7-44
+12-May-2025 23:16:45.923 INFO [main] java.lang.reflect.Method.invoke Vededor JVM:                       Oracle Corporation
+12-May-2025 23:16:45.924 INFO [main] java.lang.reflect.Method.invoke CATALINA_BASE:                     D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 23:16:45.924 INFO [main] java.lang.reflect.Method.invoke CATALINA_HOME:                     D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 23:16:45.925 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.lang=ALL-UNNAMED
+12-May-2025 23:16:45.925 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.io=ALL-UNNAMED
+12-May-2025 23:16:45.925 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.util=ALL-UNNAMED
+12-May-2025 23:16:45.925 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+12-May-2025 23:16:45.925 INFO [main] java.lang.reflect.Method.invoke Command line argument:             --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+12-May-2025 23:16:45.925 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.util.logging.config.file=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\logging.properties
+12-May-2025 23:16:45.926 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+12-May-2025 23:16:45.926 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -javaagent:D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\lib\openejb-javaagent.jar
+12-May-2025 23:16:45.926 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djdk.tls.ephemeralDHKeySize=2048
+12-May-2025 23:16:45.926 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+12-May-2025 23:16:45.926 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Dignore.endorsed.dirs=
+12-May-2025 23:16:45.927 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Dcatalina.base=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 23:16:45.927 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Dcatalina.home=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 23:16:45.927 INFO [main] java.lang.reflect.Method.invoke Command line argument:             -Djava.io.tmpdir=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\temp
+12-May-2025 23:16:45.936 INFO [main] java.lang.reflect.Method.invoke La biblioteca nativa de Apache Tomcat basada en ARP que permite un rendimiento óptimo en entornos de desarrollo no ha sido hallada en java.library.path: [C:\Program Files\Java\jdk-19.0.2\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Lumia Stream\commands;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\nodejs\;C:\Program Files\Docker\Docker\resources\bin;C:\php;C:\Program Files\PuTTY\;C:\Users\USER\AppData\Local\Programs\Python\Python314\Scripts\;C:\Users\USER\AppData\Local\Programs\Python\Python314\;C:\Users\USER\AppData\Local\Programs\Python\Launcher\;C:\Users\USER\AppData\Local\Microsoft\WindowsApps;C:\Users\USER\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\USER\AppData\Local\GitHubDesktop\bin;C:\Program Files\Azure Data Studio\bin;C:\Program Files\Java\jdk-19.0.2\bin;C:\Users\USER\.dotnet\tools;C:\Users\USER\AppData\Roaming\npm;;.]
+12-May-2025 23:16:46.333 INFO [main] java.lang.reflect.Method.invoke Inicializando el manejador de protocolo ["http-nio-8080"]
+
+12-May-2025 23:16:46.595 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+12-May-2025 23:16:46.684 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+12-May-2025 23:16:46.684 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+12-May-2025 23:16:46.684 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Mon May 12 23:16:46 CST 2025
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2021 (C) Apache TomEE Project, All Rights Reserved.
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.9
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20211223
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 12:34
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 23:16:46.685 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9
+12-May-2025 23:16:46.686 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@497486b3
+12-May-2025 23:16:46.688 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+12-May-2025 23:16:46.720 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is 'D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\tomee.xml'
+12-May-2025 23:16:46.756 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+12-May-2025 23:16:46.758 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+12-May-2025 23:16:46.761 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.deployments.classpath=false'
+12-May-2025 23:16:46.763 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+12-May-2025 23:16:46.817 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+12-May-2025 23:16:46.892 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf)
+12-May-2025 23:16:47.133 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+12-May-2025 23:16:47.169 INFO [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+12-May-2025 23:16:47.169 INFO [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT  
+12-May-2025 23:16:47.169 INFO [main] org.apache.openejb.server.SimpleServiceManager.start -------
+12-May-2025 23:16:47.169 INFO [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+12-May-2025 23:16:47.170 INFO [main] java.lang.reflect.Method.invoke Server initialization in [1497] milliseconds
+12-May-2025 23:16:47.213 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+12-May-2025 23:16:47.213 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+12-May-2025 23:16:47.231 INFO [main] java.lang.reflect.Method.invoke Arrancando servicio [Catalina]
+12-May-2025 23:16:47.231 INFO [main] java.lang.reflect.Method.invoke Starting Servlet engine: [Apache Tomcat/9.0.56]
+12-May-2025 23:16:47.242 INFO [main] java.lang.reflect.Method.invoke Desplieque del descriptor de configuración [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml]
+12-May-2025 23:16:47.248 WARNING [main] java.lang.reflect.Method.invoke The path attribute with value [/ControlSuministros] in deployment descriptor [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml] has been ignored
+12-May-2025 23:16:47.256 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /ControlSuministros
+12-May-2025 23:16:48.059 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 23:16:48.461 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=ControlSuministros/inacifDataSource, type=Resource, provider-id=Default JDBC Database)
+12-May-2025 23:16:48.463 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 23:16:49.163 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+12-May-2025 23:16:49.163 INFO [main] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean ControlSuministros.Comp588503940: Container(type=MANAGED, id=Default Managed Container)
+12-May-2025 23:16:49.163 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+12-May-2025 23:16:49.173 INFO [main] org.apache.openejb.core.managed.SimplePassivater.init Using directory D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\temp for stateful session passivation
+12-May-2025 23:16:49.184 INFO [main] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'openejb/Resource/ControlSuministros/inacifDataSource' in bean ControlSuministros.Comp588503940 to Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 23:16:49.185 INFO [main] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'openejb/Resource/inacifDataSource' in bean ControlSuministros.Comp588503940 to Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 23:16:49.185 INFO [main] org.apache.openejb.config.AutoConfig.deploy Configuring PersistenceUnit(name=usac.eps_ControlSuministros, provider=org.eclipse.persistence.jpa.PersistenceProvider)
+12-May-2025 23:16:49.186 INFO [main] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'ControlSuministros/inacifDataSourceNonJta' of type 'DataSource for 'usac.eps_ControlSuministros'.
+12-May-2025 23:16:49.186 INFO [main] org.apache.openejb.config.AutoConfig.deploy Configuring Service(id=ControlSuministros/inacifDataSourceNonJta, type=Resource, provider-id=ControlSuministros/inacifDataSource)
+12-May-2025 23:16:49.186 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=ControlSuministros/inacifDataSourceNonJta)
+12-May-2025 23:16:49.325 INFO [main] org.apache.openejb.config.AutoConfig.setJtaDataSource Adjusting PersistenceUnit usac.eps_ControlSuministros <jta-data-source> to Resource ID 'ControlSuministros/inacifDataSource' from 'inacifDataSource'
+12-May-2025 23:16:49.325 INFO [main] org.apache.openejb.config.AutoConfig.setNonJtaDataSource Adjusting PersistenceUnit usac.eps_ControlSuministros <non-jta-data-source> to Resource ID 'ControlSuministros/inacifDataSourceNonJta' from 'null'
+12-May-2025 23:16:49.357 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\ControlSuministros\target\ControlSuministros" loaded.
+12-May-2025 23:16:49.361 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 23:16:50.058 INFO [main] org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory.createDelegate PersistenceUnit(name=usac.eps_ControlSuministros, provider=org.eclipse.persistence.jpa.PersistenceProvider) - provider time 679ms
+12-May-2025 23:16:50.109 INFO [main] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@497486b3
+12-May-2025 23:16:50.175 INFO [main] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+12-May-2025 23:16:50.180 INFO [main] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+12-May-2025 23:16:51.177 INFO [main] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/cdi-api-2.0.jar looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+12-May-2025 23:16:51.179 INFO [main] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/deltaspike-data-module-api-1.9.4.jar looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+12-May-2025 23:16:51.223 INFO [main] org.apache.deltaspike.core.impl.config.EnvironmentPropertyConfigSourceProvider.<init> Custom config found by DeltaSpike. Name: 'META-INF/apache-deltaspike.properties', URL: 'jar:file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/deltaspike-jpa-module-impl-1.9.4.jar!/META-INF/apache-deltaspike.properties'
+12-May-2025 23:16:51.231 INFO [main] org.apache.deltaspike.core.util.ProjectStageProducer.initProjectStage Computed the following DeltaSpike ProjectStage: Production
+12-May-2025 23:16:52.551 INFO [main] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+12-May-2025 23:16:52.589 INFO [main] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 2414 ms.
+12-May-2025 23:16:52.653 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\ControlSuministros\target\ControlSuministros\META-INF\context.xml
+12-May-2025 23:16:52.657 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\ControlSuministros\target\ControlSuministros)
+12-May-2025 23:16:53.203 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using readers:
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@72dc9f9d
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@280d1d8d
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@397fced4
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@2026af0
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@31c9bb2f
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@71e839ee
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@45ec6bb3
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@36a65069
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@219c32e3
+12-May-2025 23:16:53.579 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@fa3db48
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@19158d56
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@31c9bb2f
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@45ec6bb3
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@3f02dc34
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@7f49fa1d
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@219c32e3
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@72dc9f9d
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@280d1d8d
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@397fced4
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@71e839ee
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@2026af0
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@36a65069
+12-May-2025 23:16:53.580 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@fa3db48
+12-May-2025 23:16:53.581 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@19158d56
+12-May-2025 23:16:53.581 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using exception mappers:
+12-May-2025 23:16:53.581 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@7aead7d9
+12-May-2025 23:16:53.581 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@73032867
+12-May-2025 23:16:53.581 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@605790e5
+12-May-2025 23:16:53.583 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/ControlSuministros/                                                    -> org.netbeans.rest.application.config.ApplicationConfig@6c927487
+12-May-2025 23:16:53.587 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Departamento                                        -> Pojo usac.eps.controladores.DepartamentoController        
+12-May-2025 23:16:53.587 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 23:16:53.587 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Departamento                                        ->      List<DepartamentoModel> getAll()       
+12-May-2025 23:16:53.588 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Departamento/a/{id:[0-9][0-9]*}                     ->      Response findById(int)                 
+12-May-2025 23:16:53.588 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Departamento                                        ->      Response create(DepartamentoModel)     
+12-May-2025 23:16:53.588 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response update(int, DepartamentoModel)
+12-May-2025 23:16:53.588 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/PresentacionProducto                                -> Pojo usac.eps.controladores.PresentacionProductoController
+12-May-2025 23:16:53.588 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response deleteById(int)                       
+12-May-2025 23:16:53.588 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/PresentacionProducto                                ->      List<PresentacionProductoModel> getAll()       
+12-May-2025 23:16:53.589 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response findById(int)                         
+12-May-2025 23:16:53.589 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/PresentacionProducto                                ->      Response create(PresentacionProductoModel)     
+12-May-2025 23:16:53.589 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response update(int, PresentacionProductoModel)
+12-May-2025 23:16:53.589 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Producto                                            -> Pojo usac.eps.controladores.ProductoController            
+12-May-2025 23:16:53.589 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response deleteById(int)           
+12-May-2025 23:16:53.589 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto                                            ->      List<ProductoModel> getAll()       
+12-May-2025 23:16:53.590 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorPresentacion/{id:[0-9][0-9]*}           ->      Response findByPresentacion(int)   
+12-May-2025 23:16:53.590 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorTipo/{id:[0-9][0-9]*}                   ->      Response findByTipoProducto(int)   
+12-May-2025 23:16:53.590 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorUnidadMedida/{id:[0-9][0-9]*}           ->      Response findByUnidadMedida(int)   
+12-May-2025 23:16:53.590 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response findById(int)             
+12-May-2025 23:16:53.590 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Producto                                            ->      Response create(ProductoModel)     
+12-May-2025 23:16:53.590 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response update(int, ProductoModel)
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Requisicion                                         -> Pojo usac.eps.controladores.RequisicionController         
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response deleteById(long)              
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion                                         ->      List<RequisicionModel> getAll()        
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorTipo/{id:[0-9][0-9]*}                ->      Response findByTipoRequisicion(int)    
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorUnidad/{id:[0-9][0-9]*}              ->      Response findByUnidad(int)             
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorUsuario/{id:[0-9][0-9]*}             ->      Response findByUsuario(Long)           
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response findById(long)                
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Requisicion                                         ->      Response create(RequisicionModel)      
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response update(long, RequisicionModel)
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/RequisicionBitacora                                 -> Pojo usac.eps.controladores.RequisicionBitacoraController 
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response delete(Long)                          
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora                                 ->      List<RequisicionBitacoraModel> getAll()        
+12-May-2025 23:16:53.591 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/PorRequisicion/{id:[0-9][0-9]*} ->      Response findByTipoRequisicion(Long)           
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/PorUsuario/{id:[0-9][0-9]*}     ->      Response findByUsuario(Long)                   
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response findById(Long)                        
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/RequisicionBitacora                                 ->      Response create(RequisicionBitacoraModel)      
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response update(Long, RequisicionBitacoraModel)
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/RequisicionDetalle                                  -> Pojo usac.eps.controladores.RequisicionDetalleController  
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response deleteById(Long)                     
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle                                  ->      List<RequisicionDetalleModel> getAll()        
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/PorProducto/{id:[0-9][0-9]*}     ->      Response findByProducto(int)                  
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/PorRequisicion/{id:[0-9][0-9]*}  ->      Response findByRequisicion(Long)              
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response getById(Long)                        
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/RequisicionDetalle                                  ->      Response create(RequisicionDetalleModel)      
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response update(Long, RequisicionDetalleModel)
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Rol                                                 -> Pojo usac.eps.controladores.RolController                 
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response deleteById(int)      
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Rol                                                 ->      List<RolModel> getAll()       
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response findById(int)        
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Rol                                                 ->      Response create(RolModel)     
+12-May-2025 23:16:53.593 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response update(int, RolModel)
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Sede                                                -> Pojo usac.eps.controladores.SedeController                
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response deleteById(int)        
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede                                                ->      List<SedeModel> getAll()        
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede/PorDepartamento/{id:[0-9][0-9]*}               ->      Response findByDepartamento(int)
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response findById(int)          
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Sede                                                ->      Response create(SedeModel)      
+12-May-2025 23:16:53.594 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response update(int, SedeModel) 
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Stock                                               -> Pojo usac.eps.controladores.StockController               
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response deleteById(long)        
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock                                               ->      List<StockModel> getAll()        
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/PorProducto/{id:[0-9][0-9]*}                  ->      Response findByProducto(int)     
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/PorSede/{id:[0-9][0-9]*}                      ->      Response findBySede(int)         
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response findById(long)          
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Stock                                               ->      Response create(StockModel)      
+12-May-2025 23:16:53.595 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response update(long, StockModel)
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/StockBitacora                                       -> Pojo usac.eps.controladores.StockBitacoraController       
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response deleteById(long)                
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora                                       ->      List<StockBitacoraModel> getAll()        
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/PorStock/{id:[0-9][0-9]*}             ->      Response findByStock(long)               
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/PorUsuario/{id:[0-9][0-9]*}           ->      Response findByUsuario(Long)             
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response findById(long)                  
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/StockBitacora                                       ->      Response create(StockBitacoraModel)      
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response update(long, StockBitacoraModel)
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/TipoProducto                                        -> Pojo usac.eps.controladores.TipoProductoController        
+12-May-2025 23:16:53.596 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoProducto                                        ->      List<TipoProductoModel> getAll()       
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/TipoProducto                                        ->      Response create(TipoProductoModel)     
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response update(int, TipoProductoModel)
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/TipoRequisicion                                     -> Pojo usac.eps.controladores.TipoRequisicionController     
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response deleteById(int)                  
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoRequisicion                                     ->      List<TipoRequisicionModel> getAll()       
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response findById(int)                    
+12-May-2025 23:16:53.604 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/TipoRequisicion                                     ->      Response create(TipoRequisicionModel)     
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response update(int, TipoRequisicionModel)
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Unidad                                              -> Pojo usac.eps.controladores.UnidadController              
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response deleteById(int)         
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Unidad                                              ->      List<UnidadModel> getAll()       
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response findById(int)           
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Unidad                                              ->      Response create(UnidadModel)     
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response update(int, UnidadModel)
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/UnidadMedida                                        -> Pojo usac.eps.controladores.UnidadMedidaController        
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/UnidadMedida                                        ->      List<UnidadMedidaModel> getAll()       
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/UnidadMedida                                        ->      Response create(UnidadMedidaModel)     
+12-May-2025 23:16:53.605 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response update(int, UnidadMedidaModel)
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Usuario                                             -> Pojo usac.eps.controladores.UsuarioController             
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response deleteById(Long)          
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario                                             ->      List<UsuarioModel> getAll()        
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/PorRol/{id:[0-9][0-9]*}                     ->      Response findByRol(int)            
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/PorSede/{id:[0-9][0-9]*}                    ->      Response findBySede(int)           
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response findById(Long)            
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Usuario                                             ->      Response create(UsuarioModel)      
+12-May-2025 23:16:53.606 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response update(Long, UsuarioModel)
+12-May-2025 23:16:53.633 INFO [main] java.lang.reflect.Method.invoke Deployment of deployment descriptor [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml] has finished in [6.391] ms
+12-May-2025 23:16:53.634 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs] de la aplicación web
+12-May-2025 23:16:53.634 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /docs
+12-May-2025 23:16:53.715 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs
+12-May-2025 23:16:53.724 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs" loaded.
+12-May-2025 23:16:53.725 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs
+12-May-2025 23:16:53.739 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs)
+12-May-2025 23:16:53.850 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 23:16:53.870 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\docs] has finished in [237] ms
+12-May-2025 23:16:53.870 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager] de la aplicación web
+12-May-2025 23:16:53.873 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /host-manager
+12-May-2025 23:16:53.931 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager
+12-May-2025 23:16:53.942 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager" loaded.
+12-May-2025 23:16:53.943 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager
+12-May-2025 23:16:53.955 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager\META-INF\context.xml
+12-May-2025 23:16:53.955 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager)
+12-May-2025 23:16:54.070 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 23:16:54.093 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\host-manager] has finished in [223] ms
+12-May-2025 23:16:54.093 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager] de la aplicación web
+12-May-2025 23:16:54.094 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /manager
+12-May-2025 23:16:54.134 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager
+12-May-2025 23:16:54.143 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager" loaded.
+12-May-2025 23:16:54.144 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager
+12-May-2025 23:16:54.157 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager\META-INF\context.xml
+12-May-2025 23:16:54.157 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager)
+12-May-2025 23:16:54.255 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 23:16:54.273 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\manager] has finished in [180] ms
+12-May-2025 23:16:54.273 INFO [main] java.lang.reflect.Method.invoke Desplegando el directorio [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT] de la aplicación web
+12-May-2025 23:16:54.273 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /
+12-May-2025 23:16:54.305 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT
+12-May-2025 23:16:54.309 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT" loaded.
+12-May-2025 23:16:54.311 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT
+12-May-2025 23:16:54.321 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT)
+12-May-2025 23:16:54.381 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 23:16:54.396 INFO [main] java.lang.reflect.Method.invoke Deployment of web application directory [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\ROOT] has finished in [123] ms
+12-May-2025 23:16:54.402 INFO [main] java.lang.reflect.Method.invoke Starting ProtocolHandler ["http-nio-8080"]
+12-May-2025 23:16:54.416 INFO [main] java.lang.reflect.Method.invoke Server startup in [7246] milliseconds
+12-May-2025 23:50:48.937 INFO [http-nio-8080-exec-6] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 23:50:48.948 INFO [http-nio-8080-exec-6] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Closing DataSource: ControlSuministros/inacifDataSource
+12-May-2025 23:50:49.020 WARNING [http-nio-8080-exec-6] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc La aplicación web [ControlSuministros] registró el conductor JDBC [com.microsoft.sqlserver.jdbc.SQLServerDriver] pero falló al anular el registro mientras la aplicación web estaba parada. Para prevenir un fallo de memoria, se ha anulado el registro del conductor JDBC por la fuerza.
+12-May-2025 23:50:49.022 WARNING [http-nio-8080-exec-6] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches Failed to clear soft references from ObjectStreamClass$Caches for web application [ControlSuministros]
+	java.lang.ClassCastException: class java.io.ObjectStreamClass$Caches$1 cannot be cast to class java.util.Map (java.io.ObjectStreamClass$Caches$1 and java.util.Map are in module java.base of loader 'bootstrap')
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearCache(WebappClassLoaderBase.java:2325)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesObjectStreamClassCaches(WebappClassLoaderBase.java:2300)
+		at org.apache.catalina.loader.WebappClassLoaderBase.clearReferences(WebappClassLoaderBase.java:1669)
+		at org.apache.catalina.loader.WebappClassLoaderBase.stop(WebappClassLoaderBase.java:1597)
+		at org.apache.tomee.catalina.TomEEWebappClassLoader.internalStop(TomEEWebappClassLoader.java:306)
+		at org.apache.tomee.catalina.TomcatWebAppBuilder.afterStop(TomcatWebAppBuilder.java:2149)
+		at org.apache.tomee.catalina.GlobalListenerSupport.lifecycleEvent(GlobalListenerSupport.java:127)
+		at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:123)
+		at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:423)
+		at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:265)
+		at org.apache.catalina.manager.ManagerServlet.undeploy(ManagerServlet.java:1543)
+		at org.apache.catalina.manager.ManagerServlet.doGet(ManagerServlet.java:383)
+		at javax.servlet.http.HttpServlet.service(HttpServlet.java:655)
+		at javax.servlet.http.HttpServlet.service(HttpServlet.java:764)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+		at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+		at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:126)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+		at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197)
+		at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+		at org.apache.tomee.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
+		at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:659)
+		at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:378)
+		at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:56)
+		at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135)
+		at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+		at org.apache.tomee.catalina.OpenEJBSecurityListener$RequestCapturer.invoke(OpenEJBSecurityListener.java:97)
+		at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:687)
+		at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+		at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357)
+		at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382)
+		at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+		at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:895)
+		at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1732)
+		at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+		at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+		at java.base/java.lang.Thread.run(Thread.java:1589)
+12-May-2025 23:50:49.529 INFO [http-nio-8080-exec-6] java.lang.reflect.Method.invoke Repliegue (undeploy) de la aplicación web que tiene como trayectoria de contexto [/ControlSuministros]
+12-May-2025 23:50:49.551 INFO [http-nio-8080-exec-3] java.lang.reflect.Method.invoke Desplieque del descriptor de configuración [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml]
+12-May-2025 23:50:49.552 WARNING [http-nio-8080-exec-3] java.lang.reflect.Method.invoke The path attribute with value [/ControlSuministros] in deployment descriptor [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml] has been ignored
+12-May-2025 23:50:49.552 INFO [http-nio-8080-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /ControlSuministros
+12-May-2025 23:50:49.751 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 23:50:49.906 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=ControlSuministros/inacifDataSource, type=Resource, provider-id=Default JDBC Database)
+12-May-2025 23:50:49.907 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 23:50:50.142 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'openejb/Resource/ControlSuministros/inacifDataSource' in bean ControlSuministros.Comp1636401592 to Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 23:50:50.142 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'openejb/Resource/inacifDataSource' in bean ControlSuministros.Comp1636401592 to Resource(id=ControlSuministros/inacifDataSource)
+12-May-2025 23:50:50.142 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.deploy Configuring PersistenceUnit(name=usac.eps_ControlSuministros, provider=org.eclipse.persistence.jpa.PersistenceProvider)
+12-May-2025 23:50:50.143 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.setJtaDataSource Adjusting PersistenceUnit usac.eps_ControlSuministros <jta-data-source> to Resource ID 'ControlSuministros/inacifDataSource' from 'inacifDataSource'
+12-May-2025 23:50:50.143 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.setNonJtaDataSource Adjusting PersistenceUnit usac.eps_ControlSuministros <non-jta-data-source> to Resource ID 'ControlSuministros/inacifDataSourceNonJta' from 'null'
+12-May-2025 23:50:50.154 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "D:\Proyectos\ControlSuministros\target\ControlSuministros" loaded.
+12-May-2025 23:50:50.155 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: D:\Proyectos\ControlSuministros\target\ControlSuministros
+12-May-2025 23:50:50.462 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory.createDelegate PersistenceUnit(name=usac.eps_ControlSuministros, provider=org.eclipse.persistence.jpa.PersistenceProvider) - provider time 304ms
+12-May-2025 23:50:50.471 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@497486b3
+12-May-2025 23:50:50.475 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+12-May-2025 23:50:51.164 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/cdi-api-2.0.jar looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+12-May-2025 23:50:51.164 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/deltaspike-data-module-api-1.9.4.jar looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+12-May-2025 23:50:51.184 INFO [http-nio-8080-exec-3] org.apache.deltaspike.core.impl.config.EnvironmentPropertyConfigSourceProvider.<init> Custom config found by DeltaSpike. Name: 'META-INF/apache-deltaspike.properties', URL: 'jar:file:/D:/Proyectos/ControlSuministros/target/ControlSuministros/WEB-INF/lib/deltaspike-jpa-module-impl-1.9.4.jar!/META-INF/apache-deltaspike.properties'
+12-May-2025 23:50:51.189 INFO [http-nio-8080-exec-3] org.apache.deltaspike.core.util.ProjectStageProducer.initProjectStage Computed the following DeltaSpike ProjectStage: Production
+12-May-2025 23:50:51.801 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 1325 ms.
+12-May-2025 23:50:51.809 INFO [http-nio-8080-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using context file D:\Proyectos\ControlSuministros\target\ControlSuministros\META-INF\context.xml
+12-May-2025 23:50:51.810 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=D:\Proyectos\ControlSuministros\target\ControlSuministros)
+12-May-2025 23:50:52.132 INFO [http-nio-8080-exec-3] org.apache.jasper.servlet.TldScanner.scanJars Al menos un JAR, que se ha explorado buscando TLDs, aún no contenía TLDs. Activar historial de depuración para este historiador para una completa lista de los JARs que fueron explorados y de los que nos se halló TLDs. Saltarse JARs no necesarios durante la exploración puede dar lugar a una mejora de tiempo significativa en el arranque y compilación de JSP .
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using readers:
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@2230a45c
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@74578d7b
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@5a35c68d
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@7e1f1073
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@f33078e
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@47c77f46
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@5e71d213
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@3332d89d
+12-May-2025 23:50:52.198 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@7ba21f70
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@82932de
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@2f9c65c3
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@f33078e
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@5e71d213
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@7faddb69
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@149f1273
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@7ba21f70
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@2230a45c
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@74578d7b
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@5a35c68d
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@47c77f46
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@7e1f1073
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@3332d89d
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@82932de
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@2f9c65c3
+12-May-2025 23:50:52.199 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using exception mappers:
+12-May-2025 23:50:52.200 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@55616dfc
+12-May-2025 23:50:52.200 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@3528da00
+12-May-2025 23:50:52.200 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@199fa8ee
+12-May-2025 23:50:52.200 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/ControlSuministros/                                                    -> org.netbeans.rest.application.config.ApplicationConfig@1d14a7d7
+12-May-2025 23:50:52.201 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Departamento                                        -> Pojo usac.eps.controladores.DepartamentoController        
+12-May-2025 23:50:52.201 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 23:50:52.201 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Departamento                                        ->      List<DepartamentoModel> getAll()       
+12-May-2025 23:50:52.201 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 23:50:52.201 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Departamento                                        ->      Response create(DepartamentoModel)     
+12-May-2025 23:50:52.201 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Departamento/{id:[0-9][0-9]*}                       ->      Response update(int, DepartamentoModel)
+12-May-2025 23:50:52.202 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/PresentacionProducto                                -> Pojo usac.eps.controladores.PresentacionProductoController
+12-May-2025 23:50:52.202 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response deleteById(int)                       
+12-May-2025 23:50:52.202 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/PresentacionProducto                                ->      List<PresentacionProductoModel> getAll()       
+12-May-2025 23:50:52.202 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response findById(int)                         
+12-May-2025 23:50:52.202 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/PresentacionProducto                                ->      Response create(PresentacionProductoModel)     
+12-May-2025 23:50:52.202 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/PresentacionProducto/{id:[0-9][0-9]*}               ->      Response update(int, PresentacionProductoModel)
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Producto                                            -> Pojo usac.eps.controladores.ProductoController            
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response deleteById(int)           
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto                                            ->      List<ProductoModel> getAll()       
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorPresentacion/{id:[0-9][0-9]*}           ->      Response findByPresentacion(int)   
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorTipo/{id:[0-9][0-9]*}                   ->      Response findByTipoProducto(int)   
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/PorUnidadMedida/{id:[0-9][0-9]*}           ->      Response findByUnidadMedida(int)   
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response findById(int)             
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Producto                                            ->      Response create(ProductoModel)     
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Producto/{id:[0-9][0-9]*}                           ->      Response update(int, ProductoModel)
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Requisicion                                         -> Pojo usac.eps.controladores.RequisicionController         
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response deleteById(long)              
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion                                         ->      List<RequisicionModel> getAll()        
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorTipo/{id:[0-9][0-9]*}                ->      Response findByTipoRequisicion(int)    
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorUnidad/{id:[0-9][0-9]*}              ->      Response findByUnidad(int)             
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/PorUsuario/{id:[0-9][0-9]*}             ->      Response findByUsuario(Long)           
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response findById(long)                
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Requisicion                                         ->      Response create(RequisicionModel)      
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Requisicion/{id:[0-9][0-9]*}                        ->      Response update(long, RequisicionModel)
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/RequisicionBitacora                                 -> Pojo usac.eps.controladores.RequisicionBitacoraController 
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response delete(Long)                          
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora                                 ->      List<RequisicionBitacoraModel> getAll()        
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/PorRequisicion/{id:[0-9][0-9]*} ->      Response findByTipoRequisicion(Long)           
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/PorUsuario/{id:[0-9][0-9]*}     ->      Response findByUsuario(Long)                   
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response findById(Long)                        
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/RequisicionBitacora                                 ->      Response create(RequisicionBitacoraModel)      
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/RequisicionBitacora/{id:[0-9][0-9]*}                ->      Response update(Long, RequisicionBitacoraModel)
+12-May-2025 23:50:52.203 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/RequisicionDetalle                                  -> Pojo usac.eps.controladores.RequisicionDetalleController  
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response deleteById(Long)                     
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle                                  ->      List<RequisicionDetalleModel> getAll()        
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/PorProducto/{id:[0-9][0-9]*}     ->      Response findByProducto(int)                  
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/PorRequisicion/{id:[0-9][0-9]*}  ->      Response findByRequisicion(Long)              
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response getById(Long)                        
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/RequisicionDetalle                                  ->      Response create(RequisicionDetalleModel)      
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/RequisicionDetalle/{id:[0-9][0-9]*}                 ->      Response update(Long, RequisicionDetalleModel)
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Rol                                                 -> Pojo usac.eps.controladores.RolController                 
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response deleteById(int)      
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Rol                                                 ->      List<RolModel> getAll()       
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response findById(int)        
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Rol                                                 ->      Response create(RolModel)     
+12-May-2025 23:50:52.204 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Rol/{id:[0-9][0-9]*}                                ->      Response update(int, RolModel)
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Sede                                                -> Pojo usac.eps.controladores.SedeController                
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response deleteById(int)        
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede                                                ->      List<SedeModel> getAll()        
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede/PorDepartamento/{id:[0-9][0-9]*}               ->      Response findByDepartamento(int)
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response findById(int)          
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Sede                                                ->      Response create(SedeModel)      
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Sede/{id:[0-9][0-9]*}                               ->      Response update(int, SedeModel) 
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Stock                                               -> Pojo usac.eps.controladores.StockController               
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response deleteById(long)        
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock                                               ->      List<StockModel> getAll()        
+12-May-2025 23:50:52.205 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/PorProducto/{id:[0-9][0-9]*}                  ->      Response findByProducto(int)     
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/PorSede/{id:[0-9][0-9]*}                      ->      Response findBySede(int)         
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response findById(long)          
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Stock                                               ->      Response create(StockModel)      
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Stock/{id:[0-9][0-9]*}                              ->      Response update(long, StockModel)
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/StockBitacora                                       -> Pojo usac.eps.controladores.StockBitacoraController       
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response deleteById(long)                
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora                                       ->      List<StockBitacoraModel> getAll()        
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/PorStock/{id:[0-9][0-9]*}             ->      Response findByStock(long)               
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/PorUsuario/{id:[0-9][0-9]*}           ->      Response findByUsuario(Long)             
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response findById(long)                  
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/StockBitacora                                       ->      Response create(StockBitacoraModel)      
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/StockBitacora/{id:[0-9][0-9]*}                      ->      Response update(long, StockBitacoraModel)
+12-May-2025 23:50:52.206 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/TipoProducto                                        -> Pojo usac.eps.controladores.TipoProductoController        
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoProducto                                        ->      List<TipoProductoModel> getAll()       
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/TipoProducto                                        ->      Response create(TipoProductoModel)     
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/TipoProducto/{id:[0-9][0-9]*}                       ->      Response update(int, TipoProductoModel)
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/TipoRequisicion                                     -> Pojo usac.eps.controladores.TipoRequisicionController     
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response deleteById(int)                  
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoRequisicion                                     ->      List<TipoRequisicionModel> getAll()       
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response findById(int)                    
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/TipoRequisicion                                     ->      Response create(TipoRequisicionModel)     
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/TipoRequisicion/{id:[0-9][0-9]*}                    ->      Response update(int, TipoRequisicionModel)
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Unidad                                              -> Pojo usac.eps.controladores.UnidadController              
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response deleteById(int)         
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Unidad                                              ->      List<UnidadModel> getAll()       
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response findById(int)           
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Unidad                                              ->      Response create(UnidadModel)     
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Unidad/{id:[0-9][0-9]*}                             ->      Response update(int, UnidadModel)
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/UnidadMedida                                        -> Pojo usac.eps.controladores.UnidadMedidaController        
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response deleteById(int)               
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/UnidadMedida                                        ->      List<UnidadMedidaModel> getAll()       
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response findById(int)                 
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/UnidadMedida                                        ->      Response create(UnidadMedidaModel)     
+12-May-2025 23:50:52.207 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/UnidadMedida/{id:[0-9][0-9]*}                       ->      Response update(int, UnidadMedidaModel)
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/ControlSuministros/Usuario                                             -> Pojo usac.eps.controladores.UsuarioController             
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints            DELETE http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response deleteById(Long)          
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario                                             ->      List<UsuarioModel> getAll()        
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/PorRol/{id:[0-9][0-9]*}                     ->      Response findByRol(int)            
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/PorSede/{id:[0-9][0-9]*}                    ->      Response findBySede(int)           
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response findById(Long)            
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/ControlSuministros/Usuario                                             ->      Response create(UsuarioModel)      
+12-May-2025 23:50:52.209 INFO [http-nio-8080-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               PUT http://localhost:8080/ControlSuministros/Usuario/{id:[0-9][0-9]*}                            ->      Response update(Long, UsuarioModel)
+12-May-2025 23:50:52.215 INFO [http-nio-8080-exec-3] java.lang.reflect.Method.invoke Deployment of deployment descriptor [D:\Proyectos\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\conf\Catalina\localhost\ControlSuministros.xml] has finished in [2.664] ms
+12-May-2025 23:50:52.219 INFO [http-nio-8080-exec-9] java.lang.reflect.Method.invoke The start() method was called on component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/ControlSuministros]] after start() had already been called. The second call will be ignored.
