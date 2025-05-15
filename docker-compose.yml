@@ -1,0 +1,9 @@
+version: '3'
+services:
+  tomee:
+    build:
+      context: .  # Utiliza un punto para indicar el directorio actual
+      dockerfile: DockerFile  # Asegúrate de que el nombre coincida con tu archivo Dockerfile
+    ports:
+      - "8080:8080" # Mapeo del puerto del contenedor (8080) al puerto del host (8080)
+    container_name: tomee-server

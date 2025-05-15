@@ -1,0 +1,9 @@
+/target/
+.idea
+.distribution
+/bin/
+.classpath
+.settings
+nbactions.xml
+nb-configuration.xml
+.idea

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <Resource id="inacifDataSource" type="javax.sql.DataSource">
+        jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
+        jdbcUrl = jdbc:sqlserver://localhost:1433;instanceName=SQLEXPRESS;databaseName=INACIF;encrypt=true;trustServerCertificate=true;
+        jtaManaged = true
+        password = 1234
+        userName = bsoto
+    </Resource>    
+</resources>
+
