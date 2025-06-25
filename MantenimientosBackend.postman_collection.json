@@ -1,0 +1,438 @@
+{
+  "info": {
+    "_postman_id": "mantenimientos-backend-collection",
+    "name": "MantenimientosBackend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Áreas",
+      "item": [
+        {
+          "name": "Listar áreas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas"] }
+          }
+        },
+        {
+          "name": "Crear área",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"codigoArea\": \"LAB02\",\n  \"nombre\": \"Química Forense\",\n  \"tipoArea\": \"Técnico Científico\",\n  \"estado\": true\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas"] }
+          }
+        },
+        {
+          "name": "Actualizar área",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"codigoArea\": \"LAB02\",\n  \"nombre\": \"Química Forense Modificada\",\n  \"tipoArea\": \"Técnico Científico\",\n  \"estado\": false\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas/LAB02", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas", "LAB02"] }
+          }
+        },
+        {
+          "name": "Eliminar área",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas/LAB02", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas", "LAB02"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Equipos",
+      "item": [
+        {
+          "name": "Listar equipos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos"] }
+          }
+        },
+        {
+          "name": "Crear equipo",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"numeroInventario\": \"EQ-0002\",\n  \"numeroSerie\": \"SN-54321\",\n  \"descripcion\": \"Centrífuga\",\n  \"estado\": true\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos"] }
+          }
+        },
+        {
+          "name": "Actualizar equipo",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"numeroInventario\": \"EQ-0002\",\n  \"numeroSerie\": \"SN-54321\",\n  \"descripcion\": \"Centrífuga Modificada\",\n  \"estado\": false\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos/EQ-0002", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos", "EQ-0002"] }
+          }
+        },
+        {
+          "name": "Eliminar equipo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos/EQ-0002", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos", "EQ-0002"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Proveedores",
+      "item": [
+        {
+          "name": "Listar proveedores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores"] }
+          }
+        },
+        {
+          "name": "Crear proveedor",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nit\": \"9876543-2\",\n  \"nombre\": \"Proveedor B\",\n  \"estado\": true\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores"] }
+          }
+        },
+        {
+          "name": "Actualizar proveedor",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nit\": \"9876543-2\",\n  \"nombre\": \"Proveedor B Modificado\",\n  \"estado\": false\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores/9876543-2", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores", "9876543-2"] }
+          }
+        },
+        {
+          "name": "Eliminar proveedor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores/9876543-2", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores", "9876543-2"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Historial Equipo",
+      "item": [
+        {
+          "name": "Listar historial equipo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo"] }
+          }
+        },
+        {
+          "name": "Crear historial equipo",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"numeroInventario\": \"EQ-0002\",\n  \"descripcion\": \"Mantenimiento preventivo\",\n  \"fecha\": \"2024-06-25\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo"] }
+          }
+        },
+        {
+          "name": "Actualizar historial equipo",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"numeroInventario\": \"EQ-0002\",\n  \"descripcion\": \"Mantenimiento correctivo\",\n  \"fecha\": \"2024-06-26\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar historial equipo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipos Mantenimiento",
+      "item": [
+        {
+          "name": "Listar tipos mantenimiento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento"] }
+          }
+        },
+        {
+          "name": "Crear tipo mantenimiento",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Preventivo\",\n  \"descripcion\": \"Mantenimiento preventivo\",\n  \"estado\": true\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento"] }
+          }
+        },
+        {
+          "name": "Actualizar tipo mantenimiento",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Correctivo\",\n  \"descripcion\": \"Mantenimiento correctivo\",\n  \"estado\": false\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar tipo mantenimiento",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contratos",
+      "item": [
+        {
+          "name": "Listar contratos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos"] }
+          }
+        },
+        {
+          "name": "Crear contrato",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Contrato de mantenimiento anual\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2024-12-31\",\n  \"estado\": true\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos"] }
+          }
+        },
+        {
+          "name": "Actualizar contrato",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Contrato modificado\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2024-12-31\",\n  \"estado\": false\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar contrato",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ejecuciones Mantenimiento",
+      "item": [
+        {
+          "name": "Listar ejecuciones mantenimiento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento"] }
+          }
+        },
+        {
+          "name": "Crear ejecución mantenimiento",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"contratoId\": 1,\n  \"fechaEjecucion\": \"2024-06-25\",\n  \"observaciones\": \"Ejecución satisfactoria\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento"] }
+          }
+        },
+        {
+          "name": "Actualizar ejecución mantenimiento",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"contratoId\": 1,\n  \"fechaEjecucion\": \"2024-06-26\",\n  \"observaciones\": \"Observación modificada\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar ejecución mantenimiento",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Listar tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets"] }
+          }
+        },
+        {
+          "name": "Crear ticket",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"descripcion\": \"Prueba de ticket\",\n  \"prioridad\": \"Media\",\n  \"estado\": \"Abierto\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets"] }
+          }
+        },
+        {
+          "name": "Actualizar ticket",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Ticket modificado\",\n  \"prioridad\": \"Alta\",\n  \"estado\": \"Cerrado\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipos Comentario",
+      "item": [
+        {
+          "name": "Listar tipos comentario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario"] }
+          }
+        },
+        {
+          "name": "Crear tipo comentario",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Observación\",\n  \"estado\": true\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario"] }
+          }
+        },
+        {
+          "name": "Actualizar tipo comentario",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Observación Modificada\",\n  \"estado\": false\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar tipo comentario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comentarios Ticket",
+      "item": [
+        {
+          "name": "Listar comentarios ticket",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket"] }
+          }
+        },
+        {
+          "name": "Crear comentario ticket",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"tipoComentarioId\": 1,\n  \"comentario\": \"Comentario de prueba\",\n  \"fecha\": \"2024-06-25\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket"] }
+          }
+        },
+        {
+          "name": "Actualizar comentario ticket",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"tipoComentarioId\": 1,\n  \"comentario\": \"Comentario modificado\",\n  \"fecha\": \"2024-06-26\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar comentario ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evidencias",
+      "item": [
+        {
+          "name": "Listar evidencias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias"] }
+          }
+        },
+        {
+          "name": "Crear evidencia",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"urlArchivo\": \"http://ejemplo.com/archivo.pdf\",\n  \"descripcion\": \"Evidencia de prueba\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias"] }
+          }
+        },
+        {
+          "name": "Actualizar evidencia",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"urlArchivo\": \"http://ejemplo.com/archivo2.pdf\",\n  \"descripcion\": \"Evidencia modificada\"\n}" },
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias", "1"] }
+          }
+        },
+        {
+          "name": "Eliminar evidencia",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias", "1"] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -20,7 +20,7 @@ import org.jose4j.lang.JoseException;
  * @author tuxtor
  *
  */
-@WebFilter(urlPatterns = {"/*"})
+@WebFilter(urlPatterns = { "/*" })
 public class CORSResponseFilter implements Filter {
 
     private JwtConsumer jwtConsumer;
@@ -37,10 +37,13 @@ public class CORSResponseFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
         // Authorize (allow) all domains to consume the content
-        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "X-Count-Total, Content-Type, Accept, Origin, Authorization");
-        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Expose-Headers", "X-Count-Total, Content-Type, Accept, Origin, Authorization");
+        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers",
+                "X-Count-Total, Content-Type, Accept, Origin, Authorization");
+        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Expose-Headers",
+                "X-Count-Total, Content-Type, Accept, Origin, Authorization");
         ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", "*");
-        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST, DELETE");
+        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods",
+                "GET, OPTIONS, HEAD, PUT, POST, DELETE");
 
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
@@ -50,20 +53,28 @@ public class CORSResponseFilter implements Filter {
             return;
         }
 
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT requerido");
-            return;
-        }
-
-        String token = authHeader.substring(7);
-        try {
-            JwtClaims claims = jwtConsumer.processToClaims(token);
-            // Opcional: aquí puedes leer claims, como el usuario, roles, etc.
-        } catch (org.jose4j.jwt.consumer.InvalidJwtException e) {
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT inválido o expirado");
-            return;
-        }
+        // --- INICIO BLOQUE JWT ---
+        /*
+         * String authHeader = request.getHeader("Authorization");
+         * if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+         * ((HttpServletResponse)
+         * servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED,
+         * "Token JWT requerido");
+         * return;
+         * }
+         * 
+         * String token = authHeader.substring(7);
+         * try {
+         * JwtClaims claims = jwtConsumer.processToClaims(token);
+         * // Opcional: aquí puedes leer claims, como el usuario, roles, etc.
+         * } catch (org.jose4j.jwt.consumer.InvalidJwtException e) {
+         * ((HttpServletResponse)
+         * servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED,
+         * "Token JWT inválido o expirado");
+         * return;
+         * }
+         */
+        // --- FIN BLOQUE JWT ---
 
         chain.doFilter(request, servletResponse);
     }
