@@ -14,14 +14,6 @@ public class TipoComentarioModel implements Serializable {
     @Column(name = "nombre", length = 50, unique = true)
     private String nombre;
 
-    public Integer getIdTipo() {
-        return idTipo;
-    }
-
-    public void setIdTipo(Integer idTipo) {
-        this.idTipo = idTipo;
-    }
-
     // Getters y setters
     public Integer getIdTipo() { return idTipo; }
     public void setIdTipo(Integer idTipo) { this.idTipo = idTipo; }

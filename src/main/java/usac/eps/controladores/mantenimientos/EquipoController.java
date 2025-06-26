@@ -9,6 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 @Path("/equipos")
@@ -23,7 +24,7 @@ public class EquipoController {
 
     @GET
     public List<EquipoModel> getAll() {
-        List<EquipoModel> equipos = equipoRepository.findAll();
+        List<EquipoModel> equipos = new ArrayList<>(equipoRepository.findAll());
         for (EquipoModel e : equipos) {
             LOGGER.info("Equipo: id=" + e.getIdEquipo() + ", inventario=" + e.getNumeroInventario() + ", serie=" + e.getNumeroSerie() + ", descripcion=" + e.getDescripcion() + ", estado=" + e.getEstado());
         }

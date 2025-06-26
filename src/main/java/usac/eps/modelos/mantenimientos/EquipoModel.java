@@ -3,6 +3,7 @@ package usac.eps.modelos.mantenimientos;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
@@ -59,6 +60,7 @@ public class EquipoModel implements Serializable {
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public Boolean getEstado() { return estado; }
     public void setEstado(Boolean estado) { this.estado = estado; }
+    @JsonbTransient
     public AreaModel getArea() { return area; }
     public void setArea(AreaModel area) { this.area = area; }
     public Date getFechaCreacion() { return fechaCreacion; }
@@ -69,6 +71,7 @@ public class EquipoModel implements Serializable {
     public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) { this.usuarioCreacion = usuarioCreacion; }
     public UsuarioMantenimientoModel getUsuarioModificacion() { return usuarioModificacion; }
     public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) { this.usuarioModificacion = usuarioModificacion; }
+    @JsonbTransient
     public List<HistorialEquipoModel> getHistorialEquipos() { return historialEquipos; }
     public void setHistorialEquipos(List<HistorialEquipoModel> historialEquipos) { this.historialEquipos = historialEquipos; }
 }

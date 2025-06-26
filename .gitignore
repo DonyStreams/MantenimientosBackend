@@ -8,7 +8,7 @@ nbactions.xml
 nb-configuration.xml
 .idea
 # Ignorar logs de TomEE
-/Configuraciones/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/logs/
+/Configuraciones/
 # Ignorar carpeta temp de TomEE
-/Configuraciones/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/temp/
+
 

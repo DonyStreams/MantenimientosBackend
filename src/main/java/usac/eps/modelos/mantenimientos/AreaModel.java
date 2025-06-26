@@ -3,6 +3,7 @@ package usac.eps.modelos.mantenimientos;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
@@ -117,6 +118,8 @@ public class AreaModel implements Serializable {
         this.usuarioModificacion = usuarioModificacion;
     }
 
+
+    @JsonbTransient
     public List<EquipoModel> getEquipos() {
         return equipos;
     }

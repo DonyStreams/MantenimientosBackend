@@ -45,16 +45,16 @@ public class ApplicationConfig extends Application {
         resources.add(usac.eps.controladores.UnidadMedidaController.class);
         resources.add(usac.eps.controladores.UsuarioController.class);
         resources.add(usac.eps.controladores.mantenimientos.AreaController.class);
-        resources.add(usac.eps.controladores.mantenimientos.EquipoController.class);
-        resources.add(usac.eps.controladores.mantenimientos.HistorialEquipoController.class);
-        resources.add(usac.eps.controladores.mantenimientos.TipoMantenimientoController.class);
-        resources.add(usac.eps.controladores.mantenimientos.ProveedorController.class);
+        resources.add(usac.eps.controladores.mantenimientos.ComentarioTicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.ContratoController.class);
         resources.add(usac.eps.controladores.mantenimientos.EjecucionMantenimientoController.class);
+        resources.add(usac.eps.controladores.mantenimientos.EquipoController.class);
+        resources.add(usac.eps.controladores.mantenimientos.EvidenciaController.class);
+        resources.add(usac.eps.controladores.mantenimientos.HistorialEquipoController.class);
+        resources.add(usac.eps.controladores.mantenimientos.ProveedorController.class);
         resources.add(usac.eps.controladores.mantenimientos.TicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.TipoComentarioController.class);
-        resources.add(usac.eps.controladores.mantenimientos.ComentarioTicketController.class);
-        resources.add(usac.eps.controladores.mantenimientos.EvidenciaController.class);
+        resources.add(usac.eps.controladores.mantenimientos.TipoMantenimientoController.class);
     }
 
 }
