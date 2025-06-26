@@ -59,9 +59,20 @@
           "name": "Crear equipo",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"numeroInventario\": \"EQ-0002\",\n  \"numeroSerie\": \"SN-54321\",\n  \"descripcion\": \"Centrífuga\",\n  \"estado\": true\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos"] }
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Microscopio Forense\",\n  \"codigoInacif\": \"INACIF-002\",\n  \"marca\": \"Nikon\",\n  \"modelo\": \"E200\",\n  \"numeroInventario\": \"INV-2025-002\",\n  \"numeroSerie\": \"SN987654321\",\n  \"ubicacion\": \"Laboratorio Central\",\n  \"magnitudMedicion\": \"Aumento óptico\",\n  \"rangoCapacidad\": \"40x–1000x\",\n  \"manualFabricante\": \"MAN-002 Microscopio E200\",\n  \"fotografia\": \"ruta/imagen/microscopio2.jpg\",\n  \"softwareFirmware\": \"FW v2.1.0\",\n  \"condicionesOperacion\": \"Temperatura 20-25°C, Humedad <60%\",\n  \"descripcion\": \"Microscopio para análisis de muestras biológicas en criminalística\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/MantenimientosBackend/api/equipos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["MantenimientosBackend", "api", "equipos"]
+            }
           }
         },
         {

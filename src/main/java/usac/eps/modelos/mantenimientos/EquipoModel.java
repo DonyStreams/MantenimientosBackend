@@ -49,29 +49,215 @@ public class EquipoModel implements Serializable {
     @OneToMany(mappedBy = "equipo", fetch = FetchType.LAZY)
     private List<HistorialEquipoModel> historialEquipos;
 
+    @Column(name = "nombre", length = 100)
+    private String nombre;
+
+    @Column(name = "codigo_inacif", length = 50)
+    private String codigoInacif;
+
+    @Column(name = "marca", length = 50)
+    private String marca;
+
+    @Column(name = "modelo", length = 50)
+    private String modelo;
+
+    @Column(name = "ubicacion", length = 100)
+    private String ubicacion;
+
+    @Column(name = "magnitud_medicion", length = 100)
+    private String magnitudMedicion;
+
+    @Column(name = "rango_capacidad", length = 100)
+    private String rangoCapacidad;
+
+    @Column(name = "manual_fabricante", length = 100)
+    private String manualFabricante;
+
+    @Column(name = "fotografia", length = 255)
+    private String fotografia;
+
+    @Column(name = "software_firmware", length = 100)
+    private String softwareFirmware;
+
+    @Column(name = "condiciones_operacion", length = 255)
+    private String condicionesOperacion;
+
     // Getters y setters
-    public Integer getIdEquipo() { return idEquipo; }
-    public void setIdEquipo(Integer idEquipo) { this.idEquipo = idEquipo; }
-    public String getNumeroInventario() { return numeroInventario; }
-    public void setNumeroInventario(String numeroInventario) { this.numeroInventario = numeroInventario; }
-    public String getNumeroSerie() { return numeroSerie; }
-    public void setNumeroSerie(String numeroSerie) { this.numeroSerie = numeroSerie; }
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    public Boolean getEstado() { return estado; }
-    public void setEstado(Boolean estado) { this.estado = estado; }
+    public Integer getIdEquipo() {
+        return idEquipo;
+    }
+
+    public void setIdEquipo(Integer idEquipo) {
+        this.idEquipo = idEquipo;
+    }
+
+    public String getNumeroInventario() {
+        return numeroInventario;
+    }
+
+    public void setNumeroInventario(String numeroInventario) {
+        this.numeroInventario = numeroInventario;
+    }
+
+    public String getNumeroSerie() {
+        return numeroSerie;
+    }
+
+    public void setNumeroSerie(String numeroSerie) {
+        this.numeroSerie = numeroSerie;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
     @JsonbTransient
-    public AreaModel getArea() { return area; }
-    public void setArea(AreaModel area) { this.area = area; }
-    public Date getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(Date fechaCreacion) { this.fechaCreacion = fechaCreacion; }
-    public Date getFechaModificacion() { return fechaModificacion; }
-    public void setFechaModificacion(Date fechaModificacion) { this.fechaModificacion = fechaModificacion; }
-    public UsuarioMantenimientoModel getUsuarioCreacion() { return usuarioCreacion; }
-    public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) { this.usuarioCreacion = usuarioCreacion; }
-    public UsuarioMantenimientoModel getUsuarioModificacion() { return usuarioModificacion; }
-    public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) { this.usuarioModificacion = usuarioModificacion; }
+    public AreaModel getArea() {
+        return area;
+    }
+
+    public void setArea(AreaModel area) {
+        this.area = area;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
+    public UsuarioMantenimientoModel getUsuarioCreacion() {
+        return usuarioCreacion;
+    }
+
+    public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) {
+        this.usuarioCreacion = usuarioCreacion;
+    }
+
+    public UsuarioMantenimientoModel getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
     @JsonbTransient
-    public List<HistorialEquipoModel> getHistorialEquipos() { return historialEquipos; }
-    public void setHistorialEquipos(List<HistorialEquipoModel> historialEquipos) { this.historialEquipos = historialEquipos; }
+    public List<HistorialEquipoModel> getHistorialEquipos() {
+        return historialEquipos;
+    }
+
+    public void setHistorialEquipos(List<HistorialEquipoModel> historialEquipos) {
+        this.historialEquipos = historialEquipos;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getCodigoInacif() {
+        return codigoInacif;
+    }
+
+    public void setCodigoInacif(String codigoInacif) {
+        this.codigoInacif = codigoInacif;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public String getMagnitudMedicion() {
+        return magnitudMedicion;
+    }
+
+    public void setMagnitudMedicion(String magnitudMedicion) {
+        this.magnitudMedicion = magnitudMedicion;
+    }
+
+    public String getRangoCapacidad() {
+        return rangoCapacidad;
+    }
+
+    public void setRangoCapacidad(String rangoCapacidad) {
+        this.rangoCapacidad = rangoCapacidad;
+    }
+
+    public String getManualFabricante() {
+        return manualFabricante;
+    }
+
+    public void setManualFabricante(String manualFabricante) {
+        this.manualFabricante = manualFabricante;
+    }
+
+    public String getFotografia() {
+        return fotografia;
+    }
+
+    public void setFotografia(String fotografia) {
+        this.fotografia = fotografia;
+    }
+
+    public String getSoftwareFirmware() {
+        return softwareFirmware;
+    }
+
+    public void setSoftwareFirmware(String softwareFirmware) {
+        this.softwareFirmware = softwareFirmware;
+    }
+
+    public String getCondicionesOperacion() {
+        return condicionesOperacion;
+    }
+
+    public void setCondicionesOperacion(String condicionesOperacion) {
+        this.condicionesOperacion = condicionesOperacion;
+    }
 }

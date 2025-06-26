@@ -29,8 +29,19 @@ CREATE TABLE Areas (
 -- CATÁLOGO DE EQUIPOS
 CREATE TABLE Equipos (
     id_equipo INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100),
+    codigo_inacif VARCHAR(50),
+    marca VARCHAR(50),
+    modelo VARCHAR(50),
     numero_inventario VARCHAR(50) UNIQUE,
     numero_serie VARCHAR(50),
+    ubicacion VARCHAR(100),
+    magnitud_medicion VARCHAR(100),
+    rango_capacidad VARCHAR(100),
+    manual_fabricante VARCHAR(100),
+    fotografia VARCHAR(255),
+    software_firmware VARCHAR(100),
+    condiciones_operacion VARCHAR(255),
     descripcion TEXT,
     estado BIT,
     id_area INT,
@@ -220,8 +231,49 @@ INSERT INTO Areas (codigo_area, nombre, tipo_area, estado, fecha_creacion, usuar
 VALUES ('LAB01', 'Laboratorio Criminalística', 'Técnico Científico', 1, GETDATE(), 1);
 
 -- Equipos
-INSERT INTO Equipos (numero_inventario, numero_serie, descripcion, estado, id_area, fecha_creacion, usuario_creacion)
-VALUES ('EQ-0001', 'SN-12345', 'Microscopio óptico', 1, 1, GETDATE(), 1);
+INSERT INTO Equipos (nombre, codigo_inacif, marca, modelo, numero_inventario, numero_serie, ubicacion, magnitud_medicion, rango_capacidad, manual_fabricante, fotografia, software_firmware, condiciones_operacion, descripcion, estado, id_area, fecha_creacion, usuario_creacion)
+VALUES ('Microscopio óptico', 'INACIF-001', 'MarcaX', 'ModeloY', 'EQ-0001', 'SN-12345', 'Laboratorio 1', '0.01 µm', '50-1000x', 'Manual de usuario', 'foto_microscopio.jpg', 'Firmware 1.0', '20-25°C, 30-70% HR', 'Microscopio para análisis forense', 1, 1, GETDATE(), 1);
+
+-- Ejemplo de inserción de un equipo forense con todos los campos nuevos
+INSERT INTO Equipos (
+    nombre,
+    codigo_inacif,
+    marca,
+    modelo,
+    numero_inventario,
+    numero_serie,
+    ubicacion,
+    magnitud_medicion,
+    rango_capacidad,
+    manual_fabricante,
+    fotografia,
+    software_firmware,
+    condiciones_operacion,
+    descripcion,
+    estado,
+    id_area,
+    fecha_creacion,
+    usuario_creacion
+) VALUES (
+    'Microscopio Forense',
+    'INACIF-002',
+    'Nikon',
+    'E200',
+    'INV-2025-002',
+    'SN987654321',
+    'Laboratorio Central',
+    'Aumento óptico',
+    '40x–1000x',
+    'MAN-002 Microscopio E200',
+    'ruta/imagen/microscopio2.jpg',
+    'FW v2.1.0',
+    'Temperatura 20-25°C, Humedad <60%',
+    'Microscopio para análisis de muestras biológicas en criminalística',
+    1,
+    1, -- id_area
+    GETDATE(),
+    1  -- usuario_creacion
+);
 
 -- Historial de Equipo
 INSERT INTO Historial_Equipo (id_equipo, fecha_registro, descripcion)

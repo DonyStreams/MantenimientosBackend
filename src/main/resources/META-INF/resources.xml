@@ -2,9 +2,9 @@
 <resources>
     <Resource id="inacifDataSource" type="javax.sql.DataSource">
         jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
-        jdbcUrl = jdbc:sqlserver://localhost:1433;instanceName=SQLEXPRESS;databaseName=MANTENIMIENTOS_INACIF;encrypt=true;trustServerCertificate=true;
+        jdbcUrl = jdbc:sqlserver://172.16.0.15:6060;databaseName=inventarios;encrypt=true;trustServerCertificate=true;
         jtaManaged = true
-        password = Tifanyamormio1$
+        password = wPqbTMsN
         userName = bsoto
     </Resource>    
 </resources>
