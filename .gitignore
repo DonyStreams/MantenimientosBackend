@@ -7,3 +7,8 @@
 nbactions.xml
 nb-configuration.xml
 .idea
+# Ignorar logs de TomEE
+/Configuraciones/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/logs/
+# Ignorar carpeta temp de TomEE
+/Configuraciones/apache-tomee-8.0.9-plume/apache-tomee-plume-8.0.9/temp/
+src/main/java/usac/eps/dtos/mantenimientos/EquipoDTO.java

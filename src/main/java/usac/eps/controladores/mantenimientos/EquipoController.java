@@ -9,6 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Path("/equipos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -18,9 +19,15 @@ public class EquipoController {
     @Inject
     private EquipoRepository equipoRepository;
 
+    private static final Logger LOGGER = Logger.getLogger(EquipoController.class.getName());
+
     @GET
     public List<EquipoModel> getAll() {
-        return equipoRepository.findAll();
+        List<EquipoModel> equipos = equipoRepository.findAll();
+        for (EquipoModel e : equipos) {
+            LOGGER.info("Equipo: id=" + e.getIdEquipo() + ", inventario=" + e.getNumeroInventario() + ", serie=" + e.getNumeroSerie() + ", descripcion=" + e.getDescripcion() + ", estado=" + e.getEstado());
+        }
+        return equipos;
     }
 
     @GET
