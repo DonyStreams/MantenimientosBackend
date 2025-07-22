@@ -30,11 +30,7 @@ public class EquipoController {
 
     @GET
     public List<EquipoModel> getAll() {
-        List<EquipoModel> equipos = new ArrayList<>(equipoRepository.findAll());
-        for (EquipoModel e : equipos) {
-            LOGGER.info("Equipo: id=" + e.getIdEquipo() + ", inventario=" + e.getNumeroInventario() + ", serie="
-                    + e.getNumeroSerie() + ", descripcion=" + e.getDescripcion() + ", estado=" + e.getEstado());
-        }
+        List<EquipoModel> equipos = new ArrayList<>(equipoRepository.findAll());        
         return equipos;
     }
 
@@ -46,6 +42,8 @@ public class EquipoController {
 
     @POST
     public Response create(EquipoModel equipo) {
+        equipo.setFechaCreacion(new java.util.Date());
+        equipo.setFechaModificacion(new java.util.Date());
         equipoRepository.save(equipo);
         return Response.status(Response.Status.CREATED).entity(equipo).build();
     }
@@ -54,6 +52,7 @@ public class EquipoController {
     @Path("/{id}")
     public Response update(@PathParam("id") Integer id, EquipoModel equipo) {
         equipo.setIdEquipo(id);
+        equipo.setFechaModificacion(new java.util.Date());
         equipoRepository.save(equipo);
         return Response.ok(equipo).build();
     }

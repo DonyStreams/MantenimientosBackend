@@ -33,7 +33,6 @@ CREATE TABLE Equipos (
     codigo_inacif VARCHAR(50),
     marca VARCHAR(50),
     modelo VARCHAR(50),
-    numero_inventario VARCHAR(50) UNIQUE,
     numero_serie VARCHAR(50),
     ubicacion VARCHAR(100),
     magnitud_medicion VARCHAR(100),
@@ -43,15 +42,8 @@ CREATE TABLE Equipos (
     software_firmware VARCHAR(100),
     condiciones_operacion VARCHAR(255),
     descripcion TEXT,
-    estado BIT,
-    id_area INT,
     fecha_creacion DATETIME DEFAULT GETDATE(),
-    usuario_creacion INT,
-    fecha_modificacion DATETIME,
-    usuario_modificacion INT,
-    FOREIGN KEY (id_area) REFERENCES Areas(id_area),
-    FOREIGN KEY (usuario_creacion) REFERENCES Usuarios(id),
-    FOREIGN KEY (usuario_modificacion) REFERENCES Usuarios(id)
+    fecha_modificacion DATETIME
 );
 
 -- HISTORIAL DE EQUIPOS
@@ -231,13 +223,13 @@ INSERT INTO Areas (codigo_area, nombre, tipo_area, estado, fecha_creacion, usuar
 VALUES ('LAB01', 'Laboratorio Criminalística', 'Técnico Científico', 1, GETDATE(), 1);
 
 -- Equipos
-INSERT INTO Equipos (nombre, codigo_inacif, marca, modelo, numero_inventario, numero_serie, ubicacion, magnitud_medicion, rango_capacidad, manual_fabricante, fotografia, software_firmware, condiciones_operacion, descripcion, estado, id_area, fecha_creacion, usuario_creacion)
+INSERT INTO Equipos (nombre, codigo_inacif, marca, modelo, numero_serie, ubicacion, magnitud_medicion, rango_capacidad, manual_fabricante, fotografia, software_firmware, condiciones_operacion, descripcion, fecha_creacion)
 VALUES 
-('Microscopio óptico', 'INACIF-001', 'MarcaX', 'ModeloY', 'EQ-0001', 'SN-12345', 'Laboratorio 1', '0.01 µm', '50-1000x', 'Manual de usuario', 'foto_microscopio.jpg', 'Firmware 1.0', '20-25°C, 30-70% HR', 'Microscopio para análisis forense', 1, 1, GETDATE(), 1),
-('Centrífuga de laboratorio', 'INACIF-003', 'Eppendorf', '5702', 'EQ-0002', 'SN-54321', 'Laboratorio 2', 'RCF', '1000-4000 rpm', 'Manual centrífuga', 'foto_centrifuga.jpg', 'FW 2.0', '15-30°C', 'Centrífuga para separación de muestras', 1, 1, GETDATE(), 1),
-('Cámara digital forense', 'INACIF-004', 'Canon', 'EOS 90D', 'EQ-0003', 'SN-67890', 'Laboratorio Fotografía', 'Resolución', '32 MP', 'Manual cámara', 'foto_camara.jpg', 'FW 1.2', '0-40°C', 'Cámara para documentación de evidencias', 1, 1, GETDATE(), 1),
-('Balanza analítica', 'INACIF-005', 'Mettler Toledo', 'XPR', 'EQ-0004', 'SN-11223', 'Laboratorio Química', 'Precisión', '0.1 mg - 220 g', 'Manual balanza', 'foto_balanza.jpg', 'FW 3.1', '18-25°C', 'Balanza para pesaje de muestras', 1, 1, GETDATE(), 1),
-('Termociclador PCR', 'INACIF-006', 'Bio-Rad', 'T100', 'EQ-0005', 'SN-33445', 'Laboratorio Biología', 'Temperatura', '4-100°C', 'Manual termociclador', 'foto_termociclador.jpg', 'FW 1.5', '15-30°C', 'Equipo para amplificación de ADN', 1, 1, GETDATE(), 1);
+('Microscopio óptico', 'INACIF-001', 'MarcaX', 'ModeloY', 'SN-12345', 'Laboratorio 1', '0.01 µm', '50-1000x', 'Manual de usuario', 'foto_microscopio.jpg', 'Firmware 1.0', '20-25°C, 30-70% HR', 'Microscopio para análisis forense', GETDATE()),
+('Centrífuga de laboratorio', 'INACIF-003', 'Eppendorf', '5702', 'SN-54321', 'Laboratorio 2', 'RCF', '1000-4000 rpm', 'Manual centrífuga', 'foto_centrifuga.jpg', 'FW 2.0', '15-30°C', 'Centrífuga para separación de muestras', GETDATE()),
+('Cámara digital forense', 'INACIF-004', 'Canon', 'EOS 90D', 'SN-67890', 'Laboratorio Fotografía', 'Resolución', '32 MP', 'Manual cámara', 'foto_camara.jpg', 'FW 1.2', '0-40°C', 'Cámara para documentación de evidencias', GETDATE()),
+('Balanza analítica', 'INACIF-005', 'Mettler Toledo', 'XPR', 'SN-11223', 'Laboratorio Química', 'Precisión', '0.1 mg - 220 g', 'Manual balanza', 'foto_balanza.jpg', 'FW 3.1', '18-25°C', 'Balanza para pesaje de muestras', GETDATE()),
+('Termociclador PCR', 'INACIF-006', 'Bio-Rad', 'T100', 'SN-33445', 'Laboratorio Biología', 'Temperatura', '4-100°C', 'Manual termociclador', 'foto_termociclador.jpg', 'FW 1.5', '15-30°C', 'Equipo para amplificación de ADN', GETDATE());
 
 -- Ejemplo de inserción de un equipo forense con todos los campos nuevos
 INSERT INTO Equipos (
@@ -245,7 +237,6 @@ INSERT INTO Equipos (
     codigo_inacif,
     marca,
     modelo,
-    numero_inventario,
     numero_serie,
     ubicacion,
     magnitud_medicion,
@@ -255,16 +246,12 @@ INSERT INTO Equipos (
     software_firmware,
     condiciones_operacion,
     descripcion,
-    estado,
-    id_area,
-    fecha_creacion,
-    usuario_creacion
+    fecha_creacion
 ) VALUES (
     'Microscopio Forense',
     'INACIF-002',
     'Nikon',
     'E200',
-    'INV-2025-002',
     'SN987654321',
     'Laboratorio Central',
     'Aumento óptico',
@@ -274,10 +261,7 @@ INSERT INTO Equipos (
     'FW v2.1.0',
     'Temperatura 20-25°C, Humedad <60%',
     'Microscopio para análisis de muestras biológicas en criminalística',
-    1,
-    1, -- id_area
-    GETDATE(),
-    1  -- usuario_creacion
+    GETDATE()
 );
 
 -- Historial de Equipo

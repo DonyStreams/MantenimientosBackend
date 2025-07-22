@@ -42,8 +42,7 @@ public class AreaModel implements Serializable {
     @JoinColumn(name = "usuario_modificacion", referencedColumnName = "id")
     private UsuarioMantenimientoModel usuarioModificacion;
 
-    @OneToMany(mappedBy = "area", fetch = FetchType.LAZY)
-    private List<EquipoModel> equipos;
+    // Relación con equipos eliminada para evitar error de mapeo
 
     // Getters y setters
     public Integer getIdArea() {
@@ -119,12 +118,5 @@ public class AreaModel implements Serializable {
     }
 
 
-    @JsonbTransient
-    public List<EquipoModel> getEquipos() {
-        return equipos;
-    }
-
-    public void setEquipos(List<EquipoModel> equipos) {
-        this.equipos = equipos;
-    }
+    // Métodos getEquipos y setEquipos eliminados
 }
