@@ -55,6 +55,8 @@ public class ApplicationConfig extends Application {
         resources.add(usac.eps.controladores.mantenimientos.TicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.TipoComentarioController.class);
         resources.add(usac.eps.controladores.mantenimientos.TipoMantenimientoController.class);
+        resources.add(usac.eps.controladores.mantenimientos.FtpController.class);
+        resources.add(org.glassfish.jersey.media.multipart.MultiPartFeature.class);
     }
 
 }

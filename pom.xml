@@ -13,7 +13,7 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <deltaspike.version>1.9.4</deltaspike.version>
-        <version.eclipselink>3.0.3</version.eclipselink>
+        <version.eclipselink>2.7.9</version.eclipselink>
     </properties>
     
     <dependencyManagement>
@@ -33,19 +33,16 @@
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
             <version>2.34</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
             <version>2.34</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-moxy</artifactId>
             <version>2.34</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bitbucket.b_c</groupId>
@@ -158,6 +155,22 @@
             <version>1.0.3</version>
         </dependency>
         
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>2.34</version>
+        </dependency>
+                <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.34</version>
+        </dependency>
+
     </dependencies>
 
     <build>
