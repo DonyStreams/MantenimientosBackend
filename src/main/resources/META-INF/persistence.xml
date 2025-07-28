@@ -9,7 +9,6 @@
       <property name="eclipselink.logging.level" value="FINE"/>
       <property name="eclipselink.logging.level.sql" value="FINE"/>
       <property name="eclipselink.logging.parameters" value="true"/>
-      <property name="eclipselink.target-server" value="None"/>
     </properties>
   </persistence-unit>
 </persistence>

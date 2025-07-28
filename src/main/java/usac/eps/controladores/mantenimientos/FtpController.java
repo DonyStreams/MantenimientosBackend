@@ -16,10 +16,10 @@ import java.io.InputStream;
 @Path("/ftp")
 public class FtpController {
 
-    private static final String FTP_HOST = ConfigUtil.get("ftp.host", "localhost");
-    private static final int FTP_PORT = Integer.parseInt(ConfigUtil.get("ftp.port", "21"));
-    private static final String FTP_USER = ConfigUtil.get("ftp.user", "usuario");
-    private static final String FTP_PASS = ConfigUtil.get("ftp.pass", "contraseña");
+    private static final String FTP_HOST = ConfigUtil.get("ftp.host");
+    private static final int FTP_PORT = Integer.parseInt(ConfigUtil.get("ftp.port"));
+    private static final String FTP_USER = ConfigUtil.get("ftp.user");
+    private static final String FTP_PASS = ConfigUtil.get("ftp.pass");
 
     @GET
     @Path("/test")
@@ -48,18 +48,16 @@ public class FtpController {
 
     @POST
     @Path("/upload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@Multipart MultipartBody multipartBody) {
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    public Response uploadFile(InputStream inputStream, @HeaderParam("X-Filename") String fileName) {
         FTPClient ftpClient = new FTPClient();
+        boolean uploaded = false;
+        String rutaCompleta = null;
         try {
-            Attachment attachment = multipartBody.getRootAttachment(); // o getAttachment("file") si necesitas por
-                                                                       // nombre
-            if (attachment == null) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Archivo no recibido").build();
+            if (fileName == null || fileName.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Debe enviar el nombre del archivo en el header X-Filename").build();
             }
-
-            InputStream inputStream = attachment.getDataHandler().getInputStream();
-            String fileName = attachment.getContentDisposition().getParameter("filename");
 
             ftpClient.connect(FTP_HOST, FTP_PORT);
             boolean login = ftpClient.login(FTP_USER, FTP_PASS);
@@ -69,20 +67,45 @@ public class FtpController {
             }
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
-            boolean uploaded = ftpClient.storeFile(fileName, inputStream);
-            inputStream.close();
-            ftpClient.logout();
-            ftpClient.disconnect();
+            // Crear el directorio /imagenes/equipos si no existe
+            String directorio = "/imagenes/equipos";
+            ftpClient.makeDirectory(directorio);
 
-            if (uploaded) {
-                return Response.ok("Archivo subido correctamente al FTP").build();
-            } else {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity("No se pudo subir el archivo al FTP").build();
+            // Guardar el archivo en la ruta /imagenes/equipos/nombreArchivo
+            rutaCompleta = directorio + "/" + fileName;
+
+            // Verificar si el archivo ya existe
+            if (ftpClient.listFiles(rutaCompleta) != null && ftpClient.listFiles(rutaCompleta).length > 0) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("Ya existe un archivo con ese nombre en la ruta: " + rutaCompleta).build();
             }
+
+            uploaded = ftpClient.storeFile(rutaCompleta, inputStream);
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al subir archivo al FTP: " + e.getMessage()).build();
+        } finally {
+            try {
+                if (inputStream != null)
+                    inputStream.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                ftpClient.logout();
+            } catch (Exception ignored) {
+            }
+            try {
+                ftpClient.disconnect();
+            } catch (Exception ignored) {
+            }
+        }
+        if (uploaded) {
+            String json = String.format("{\"mensaje\":\"Archivo subido correctamente al FTP\",\"ruta\":\"%s\"}",
+                    rutaCompleta);
+            return Response.ok(json).type(MediaType.APPLICATION_JSON).build();
+        } else {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("No se pudo subir el archivo al FTP").build();
         }
     }
 
