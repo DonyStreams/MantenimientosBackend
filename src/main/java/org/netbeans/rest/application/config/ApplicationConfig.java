@@ -6,6 +6,7 @@ package org.netbeans.rest.application.config;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
+import org.apache.cxf.jaxrs.provider.MultipartProvider;
 
 /**
  *
@@ -56,7 +57,8 @@ public class ApplicationConfig extends Application {
         resources.add(usac.eps.controladores.mantenimientos.TipoComentarioController.class);
         resources.add(usac.eps.controladores.mantenimientos.TipoMantenimientoController.class);
         resources.add(usac.eps.controladores.mantenimientos.FtpController.class);
-        resources.add(org.glassfish.jersey.media.multipart.MultiPartFeature.class);
+        resources.add(MultipartProvider.class);
+
     }
 
 }

@@ -444,6 +444,36 @@
           }
         }
       ]
+    },
+    {
+      "name": "FTP",
+      "item": [
+        {
+          "name": "Subir archivo a FTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "C:/Users/USER/Downloads/screenshot.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/MantenimientosBackend/api/ftp/upload",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["MantenimientosBackend", "api", "ftp", "upload"]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
