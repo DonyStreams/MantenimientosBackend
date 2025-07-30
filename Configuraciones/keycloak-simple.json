@@ -1,0 +1,203 @@
+{
+  "realm": "MantenimientosINACIF",
+  "displayName": "Mantenimientos INACIF Realm",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "clients": [
+    {
+      "clientId": "inacif-frontend",
+      "name": "INACIF Frontend",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ],
+      "protocolMappers": [
+        {
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "multivalued": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "inacif-backend",
+      "name": "INACIF Backend",
+      "enabled": true,
+      "bearerOnly": true,
+      "protocol": "openid-connect"
+    }
+  ],
+  "roles": {
+    "client": {
+      "inacif-frontend": [
+        {
+          "name": "ADMIN",
+          "description": "Administrador del sistema"
+        },
+        {
+          "name": "SUPERVISOR",
+          "description": "Supervisor de laboratorio"
+        },
+        {
+          "name": "TECNICO",
+          "description": "Técnico de mantenimiento"
+        },
+        {
+          "name": "TECNICO_EQUIPOS",
+          "description": "Técnico de equipos"
+        },
+        {
+          "name": "USER",
+          "description": "Usuario de solo lectura"
+        }
+      ]
+    }
+  },
+  "groups": [
+    {
+      "name": "Administradores",
+      "path": "/Administradores",
+      "clientRoles": {
+        "inacif-frontend": ["ADMIN"]
+      }
+    },
+    {
+      "name": "Supervisores", 
+      "path": "/Supervisores",
+      "clientRoles": {
+        "inacif-frontend": ["SUPERVISOR"]
+      }
+    },
+    {
+      "name": "Tecnicos",
+      "path": "/Tecnicos", 
+      "clientRoles": {
+        "inacif-frontend": ["TECNICO"]
+      }
+    },
+    {
+      "name": "Tecnicos-Equipos",
+      "path": "/Tecnicos-Equipos",
+      "clientRoles": {
+        "inacif-frontend": ["TECNICO_EQUIPOS"]
+      }
+    },
+    {
+      "name": "Usuarios-Lectura",
+      "path": "/Usuarios-Lectura",
+      "clientRoles": {
+        "inacif-frontend": ["USER"]
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "firstName": "Administrador",
+      "lastName": "Sistema",
+      "email": "admin@inacif.gob.gt",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": true
+        }
+      ],
+      "clientRoles": {
+        "inacif-frontend": ["ADMIN"]
+      },
+      "groups": ["/Administradores"]
+    },
+    {
+      "username": "supervisor",
+      "enabled": true,
+      "firstName": "Supervisor",
+      "lastName": "Laboratorio",
+      "email": "supervisor@inacif.gob.gt",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "supervisor123",
+          "temporary": true
+        }
+      ],
+      "clientRoles": {
+        "inacif-frontend": ["SUPERVISOR"]
+      },
+      "groups": ["/Supervisores"]
+    },
+    {
+      "username": "tecnico",
+      "enabled": true,
+      "firstName": "Técnico",
+      "lastName": "Mantenimiento",
+      "email": "tecnico@inacif.gob.gt",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tecnico123",
+          "temporary": true
+        }
+      ],
+      "clientRoles": {
+        "inacif-frontend": ["TECNICO"]
+      },
+      "groups": ["/Tecnicos"]
+    },
+    {
+      "username": "tecnico.equipos",
+      "enabled": true,
+      "firstName": "Técnico",
+      "lastName": "Equipos",
+      "email": "tecnico.equipos@inacif.gob.gt",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "equipos123",
+          "temporary": true
+        }
+      ],
+      "clientRoles": {
+        "inacif-frontend": ["TECNICO_EQUIPOS"]
+      },
+      "groups": ["/Tecnicos-Equipos"]
+    },
+    {
+      "username": "usuario.lectura",
+      "enabled": true,
+      "firstName": "Usuario",
+      "lastName": "Lectura",
+      "email": "usuario.lectura@inacif.gob.gt",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "lectura123",
+          "temporary": true
+        }
+      ],
+      "clientRoles": {
+        "inacif-frontend": ["USER"]
+      },
+      "groups": ["/Usuarios-Lectura"]
+    }
+  ]
+}

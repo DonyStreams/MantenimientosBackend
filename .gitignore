@@ -8,7 +8,6 @@ nbactions.xml
 nb-configuration.xml
 .idea
 # Ignorar logs de TomEE
-/Configuraciones/
-# Ignorar carpeta temp de TomEE
+/Server/
 
 
