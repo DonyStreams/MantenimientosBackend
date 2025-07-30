@@ -2,9 +2,6 @@ package usac.eps.controladores.mantenimientos;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import usac.eps.util.ConfigUtil;
 
 import javax.ws.rs.*;
@@ -135,6 +132,59 @@ public class FtpController {
         } catch (IOException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al eliminar archivo: " + e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/image/{filename}")
+    @Produces("image/*")
+    public Response getImage(@PathParam("filename") String filename) {
+        FTPClient ftpClient = new FTPClient();
+        try {
+            ftpClient.connect(FTP_HOST, FTP_PORT);
+            boolean login = ftpClient.login(FTP_USER, FTP_PASS);
+            if (!login) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("No se pudo autenticar en el servidor FTP").build();
+            }
+
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+
+            // Construir la ruta completa del archivo
+            String rutaCompleta = "/imagenes/equipos/" + filename;
+
+            // Obtener el archivo desde el FTP
+            java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
+            boolean retrieved = ftpClient.retrieveFile(rutaCompleta, outputStream);
+
+            ftpClient.logout();
+            ftpClient.disconnect();
+
+            if (retrieved && outputStream.size() > 0) {
+                byte[] imageData = outputStream.toByteArray();
+
+                // Determinar el tipo de contenido basado en la extensión del archivo
+                String contentType = "image/jpeg"; // default
+                if (filename.toLowerCase().endsWith(".png")) {
+                    contentType = "image/png";
+                } else if (filename.toLowerCase().endsWith(".gif")) {
+                    contentType = "image/gif";
+                } else if (filename.toLowerCase().endsWith(".webp")) {
+                    contentType = "image/webp";
+                }
+
+                return Response.ok(imageData)
+                        .header("Content-Type", contentType)
+                        .header("Cache-Control", "max-age=3600")
+                        .build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Imagen no encontrada: " + filename).build();
+            }
+
+        } catch (IOException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error al obtener imagen: " + e.getMessage()).build();
         }
     }
 }

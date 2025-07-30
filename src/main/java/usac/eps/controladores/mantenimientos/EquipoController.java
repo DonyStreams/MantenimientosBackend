@@ -30,7 +30,7 @@ public class EquipoController {
 
     @GET
     public List<EquipoModel> getAll() {
-        List<EquipoModel> equipos = new ArrayList<>(equipoRepository.findAll());        
+        List<EquipoModel> equipos = new ArrayList<>(equipoRepository.findAll());
         return equipos;
     }
 
