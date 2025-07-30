@@ -29,22 +29,6 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(usac.eps.controladores.Autenticacion.class);
-        resources.add(usac.eps.controladores.DepartamentoController.class);
-        resources.add(usac.eps.controladores.PresentacionProductoController.class);
-        resources.add(usac.eps.controladores.ProductoController.class);
-        resources.add(usac.eps.controladores.RequisicionBitacoraController.class);
-        resources.add(usac.eps.controladores.RequisicionController.class);
-        resources.add(usac.eps.controladores.RequisicionDetalleController.class);
-        resources.add(usac.eps.controladores.RolController.class);
-        resources.add(usac.eps.controladores.SedeController.class);
-        resources.add(usac.eps.controladores.StockBitacoraController.class);
-        resources.add(usac.eps.controladores.StockController.class);
-        resources.add(usac.eps.controladores.TipoProductoController.class);
-        resources.add(usac.eps.controladores.TipoRequisicionController.class);
-        resources.add(usac.eps.controladores.UnidadController.class);
-        resources.add(usac.eps.controladores.UnidadMedidaController.class);
-        resources.add(usac.eps.controladores.UsuarioController.class);
         resources.add(usac.eps.controladores.mantenimientos.AreaController.class);
         resources.add(usac.eps.controladores.mantenimientos.ComentarioTicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.ContratoController.class);
