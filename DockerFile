@@ -1,2 +1,2 @@
 FROM tomee:11-jre-8.0.9-plume
-COPY target/ControlSuministros.war /usr/local/tomee/webapps/ControlSuministros.war
+COPY target/MantenimientosBackend.war /usr/local/tomee/webapps/MantenimientosBackend.war

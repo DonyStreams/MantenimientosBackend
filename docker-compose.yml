@@ -5,5 +5,26 @@ services:
       context: .  # Utiliza un punto para indicar el directorio actual
       dockerfile: DockerFile  # Asegúrate de que el nombre coincida con tu archivo Dockerfile
     ports:
-      - "8080:8080" # Mapeo del puerto del contenedor (8080) al puerto del host (8080)
+      - "${TOMEE_PORT:-8081}:8080" # Mapeo del puerto del contenedor (8080) al puerto del host (8081 por defecto)
     container_name: tomee-server
+    networks:
+      - app-network
+    depends_on:
+      - keycloak
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.3
+    container_name: keycloak-server
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: dev-file
+    ports:
+      - "8080:8080"
+    command: ["start-dev"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

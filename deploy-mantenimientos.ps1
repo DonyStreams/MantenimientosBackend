@@ -1,27 +1,34 @@
-# Detener todos los procesos java.exe (TomEE/Tomcat)
-Get-Process java -ErrorAction SilentlyContinue | Stop-Process -Force
+# Detener contenedores existentes
+docker stop tomee-server keycloak-server 2>$null
+docker rm tomee-server keycloak-server 2>$null
 
-# Esperar a que los procesos terminen
-Start-Sleep -Seconds 3
+Write-Host "Iniciando Keycloak..."
+# Iniciar Keycloak primero
+cd Configuraciones
+docker-compose -f docker-compose-keycloak.yml up -d
+cd ..
 
-# Limpiar carpeta y WAR anterior en TomEE
-$warPath = ".\Server\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\MantenimientosBackend.war"
-$dirPath = ".\Server\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\MantenimientosBackend"
-if (Test-Path $warPath) { Remove-Item -Force $warPath }
-if (Test-Path $dirPath) { Remove-Item -Recurse -Force $dirPath }
+Write-Host "Esperando a que Keycloak se inicie completamente..."
+Start-Sleep -Seconds 30
 
 # Compilar el proyecto
-mvn clean package
+mvn clean package -q
 
-# Copiar el .war al webapps de TomEE
-Copy-Item -Force .\target\MantenimientosBackend.war .\Server\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9\webapps\
+# Construir y ejecutar el contenedor de la aplicación en puerto 8081
+$env:TOMEE_PORT = "8081"
+docker-compose up --build -d
 
-# Definir CATALINA_HOME para TomEE
-$TomEEHome = Resolve-Path ".\Server\apache-tomee-8.0.9-plume\apache-tomee-plume-8.0.9"
-$env:CATALINA_HOME = $TomEEHome
-
-# Iniciar TomEE
-$startup = Join-Path $TomEEHome "bin\startup.bat"
-& $startup
-
-Write-Host "Despliegue y reinicio completados. Accede a http://localhost:8080/MantenimientosBackend/"
+Write-Host "Despliegue completado!"
+Write-Host "Keycloak Admin: http://localhost:8080/admin (admin/admin)"
+Write-Host "Aplicación: http://localhost:8081/MantenimientosBackend/"
+Write-Host "Frontend: http://localhost:4200 (ejecutar 'ng serve' en EPS-FRONTEND-USAC)"
+Write-Host ""
+Write-Host "Usuarios de prueba:"
+Write-Host "- admin / admin123"
+Write-Host "- supervisor / supervisor123"
+Write-Host "- tecnico / tecnico123"
+Write-Host ""
+Write-Host "Esperando a que el servidor se inicie completamente..."
+Start-Sleep -Seconds 10
+Write-Host "Verificando logs de despliegue..."
+docker logs tomee-server --tail 20
