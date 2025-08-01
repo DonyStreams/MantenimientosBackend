@@ -8,6 +8,12 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwk.HttpsJwks;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -78,65 +84,36 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
         }
     }
 
+}
+
     private Map<String, Object> validateToken(String token) throws Exception {
         try {
-            // Por ahora validamos solo la estructura básica del JWT
-            // En producción deberías validar la firma con la clave pública de Keycloak
-            String[] parts = token.split("\\.");
-            if (parts.length != 3) {
-                throw new Exception("Token JWT mal formado");
-            }
+            // URL del JWKS de Keycloak
+            String jwksUrl = KEYCLOAK_URL + "/realms/" + REALM + "/protocol/openid-connect/certs";
+            
+            // Crear HttpsJwks para obtener las claves públicas de Keycloak
+            HttpsJwks httpsJkws = new HttpsJwks(jwksUrl);
+            JwksVerificationKeyResolver jwksResolver = new JwksVerificationKeyResolver(httpsJkws.getJsonWebKeys());
 
-            // Decodificar el payload (segunda parte)
-            java.util.Base64.Decoder decoder = java.util.Base64.getUrlDecoder();
-            String payload = new String(decoder.decode(parts[1]));
+            // Configurar el consumer JWT
+            JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                    .setRequireExpirationTime() // Token debe tener exp
+                    .setAllowedClockSkewInSeconds(30) // Permitir 30 segundos de diferencia de reloj
+                    .setRequireSubject() // Token debe tener subject
+                    .setExpectedIssuer(KEYCLOAK_URL + "/realms/" + REALM) // Verificar emisor
+                    .setVerificationKeyResolver(jwksResolver) // Usar claves públicas de Keycloak
+                    .build();
 
-            // Convertir JSON a Map (simplificado)
-            // En producción deberías usar una librería JSON como Jackson
-            java.util.Map<String, Object> claims = new java.util.HashMap<>();
-
-            // Parseo básico del JSON (para demo)
-            if (payload.contains("\"preferred_username\"")) {
-                // Extraer username
-                String username = extractJsonValue(payload, "preferred_username");
-                claims.put("preferred_username", username);
-            }
-
-            if (payload.contains("\"email\"")) {
-                // Extraer email
-                String email = extractJsonValue(payload, "email");
-                claims.put("email", email);
-            }
-
-            // Simular roles para testing
-            claims.put("resource_access", createMockResourceAccess());
-
-            return claims;
+            // Validar y procesar el token
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
+            
+            // Convertir claims a Map para compatibilidad
+            Map<String, Object> claimsMap = jwtClaims.getClaimsMap();
+            
+            return claimsMap;
 
         } catch (Exception e) {
+            System.err.println("[JWT Validation] Error validating token: " + e.getMessage());
             throw new Exception("Token JWT inválido: " + e.getMessage());
         }
-    }
-
-    private String extractJsonValue(String json, String key) {
-        try {
-            String pattern = "\"" + key + "\"\\s*:\\s*\"([^\"]+)\"";
-            java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
-            java.util.regex.Matcher m = p.matcher(json);
-            if (m.find()) {
-                return m.group(1);
-            }
-        } catch (Exception e) {
-            // Ignorar errores de parsing
-        }
-        return null;
-    }
-
-    private Map<String, Object> createMockResourceAccess() {
-        Map<String, Object> resourceAccess = new java.util.HashMap<>();
-        Map<String, Object> clientAccess = new java.util.HashMap<>();
-        clientAccess.put("roles", Arrays.asList("ADMIN", "SUPERVISOR")); // Roles de prueba
-        resourceAccess.put("inacif-frontend", clientAccess);
-        return resourceAccess;
-    }
 }
