@@ -25,13 +25,16 @@ public class AuthController {
             String username = (String) request.getAttribute("username");
             String email = (String) request.getAttribute("email");
             @SuppressWarnings("unchecked")
-            List<String> roles = (List<String>) request.getAttribute("roles");
+            Map<String, Object> jwtClaims = (Map<String, Object>) request.getAttribute("jwt_claims");
+
+            // Extraer roles desde los claims JWT
+            List<String> roles = extractRolesFromClaims(jwtClaims);
 
             Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("username", username != null ? username : "admin");
-            userInfo.put("email", email != null ? email : "admin@inacif.gob.gt");
-            userInfo.put("roles", roles != null ? roles : java.util.Arrays.asList("ADMIN"));
-            userInfo.put("authenticated", true);
+            userInfo.put("username", username != null ? username : "anonymous");
+            userInfo.put("email", email != null ? email : "");
+            userInfo.put("roles", roles);
+            userInfo.put("authenticated", username != null);
 
             return Response.ok(userInfo).build();
         } catch (Exception e) {
@@ -39,6 +42,41 @@ public class AuthController {
                     .entity("Error al obtener información del usuario: " + e.getMessage())
                     .build();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> extractRolesFromClaims(Map<String, Object> claims) {
+        if (claims == null)
+            return java.util.Arrays.asList("USER");
+
+        try {
+            // Intentar extraer roles del cliente inacif-frontend
+            Map<String, Object> resourceAccess = (Map<String, Object>) claims.get("resource_access");
+            if (resourceAccess != null) {
+                Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get("inacif-frontend");
+                if (clientAccess != null) {
+                    List<String> clientRoles = (List<String>) clientAccess.get("roles");
+                    if (clientRoles != null && !clientRoles.isEmpty()) {
+                        return clientRoles;
+                    }
+                }
+            }
+
+            // Fallback: intentar extraer roles del realm
+            Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
+            if (realmAccess != null) {
+                List<String> realmRoles = (List<String>) realmAccess.get("roles");
+                if (realmRoles != null && !realmRoles.isEmpty()) {
+                    return realmRoles;
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("[AuthController] Error extrayendo roles: " + e.getMessage());
+        }
+
+        // Fallback por defecto
+        return java.util.Arrays.asList("USER");
     }
 
     @GET

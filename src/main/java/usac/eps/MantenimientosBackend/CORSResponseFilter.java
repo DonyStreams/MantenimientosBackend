@@ -37,6 +37,19 @@ public class CORSResponseFilter implements Filter {
                 HttpServletRequest request = (HttpServletRequest) servletRequest;
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+                // DEBUG: Logging detallado de todas las peticiones
+                String method = request.getMethod();
+                String uri = request.getRequestURI();
+                String authHeader = request.getHeader("Authorization");
+
+                System.out.println("=== CORS FILTER DEBUG ===");
+                System.out.println("Method: " + method);
+                System.out.println("URI: " + uri);
+                System.out.println("Authorization Header: " + (authHeader != null
+                                ? authHeader.substring(0, Math.min(50, authHeader.length())) + "..."
+                                : "NULL"));
+                System.out.println("========================");
+
                 // Configurar headers CORS para el frontend Angular
                 response.addHeader("Access-Control-Allow-Headers",
                                 "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Requested-With, Cache-Control");
@@ -50,55 +63,47 @@ public class CORSResponseFilter implements Filter {
 
                 // Manejar pre-flight requests
                 if (request.getMethod().equals("OPTIONS")) {
+                        System.out.println("[CORS Filter] OPTIONS request - permitiendo pre-flight");
                         response.addHeader("Content-Type", "application/json");
                         response.setStatus(HttpServletResponse.SC_OK);
                         return;
                 }
 
-                // --- AUTENTICACIÓN MOCK PARA TESTING ---
-                // Simular usuario autenticado en todas las peticiones
-                // Esto permite que el frontend funcione sin un token JWT real
-                request.setAttribute("username", "admin");
-                request.setAttribute("email", "admin@inacif.gob.gt");
-                request.setAttribute("fullName", "Administrador Sistema");
-                request.setAttribute("userId", "admin-001");
-                request.setAttribute("roles", java.util.Arrays.asList("ADMIN", "SUPERVISOR", "USER"));
+                // --- AUTENTICACIÓN JWT ACTIVADA PARA PRODUCCIÓN ---
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                        System.err.println("[CORS Filter] BLOQUEANDO ACCESO - Sin token JWT válido");
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT requerido");
+                        return;
+                }
 
-                // Simular claims de Keycloak
-                request.setAttribute("preferred_username", "admin");
-                request.setAttribute("realm_access_roles", java.util.Arrays.asList("ADMIN"));
-                request.setAttribute("resource_access_roles", java.util.Arrays.asList("ADMIN", "SUPERVISOR"));
-                request.setAttribute("authenticated", true);
+                String token = authHeader.substring(7);
+                try {
+                        JwtClaims claims = jwtConsumer.processToClaims(token);
 
-                System.out.println("[CORS Filter] Usuario mock autenticado: admin con roles: " +
-                                java.util.Arrays.asList("ADMIN", "SUPERVISOR", "USER"));
+                        // Extraer información del usuario desde el token
+                        String username = claims.getStringClaimValue("preferred_username");
+                        String email = claims.getStringClaimValue("email");
 
-                // --- BLOQUE JWT COMENTADO PARA TESTING ---
-                /*
-                 * String authHeader = request.getHeader("Authorization");
-                 * if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                 * response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                 * "Token JWT requerido");
-                 * return;
-                 * }
-                 * 
-                 * String token = authHeader.substring(7);
-                 * try {
-                 * JwtClaims claims = jwtConsumer.processToClaims(token);
-                 * // Opcional: aquí puedes leer claims, como el usuario, roles, etc.
-                 * } catch (org.jose4j.jwt.consumer.InvalidJwtException e) {
-                 * response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                 * "Token JWT inválido o expirado");
-                 * return;
-                 * }
-                 */
+                        // Almacenar en atributos del request para uso posterior
+                        request.setAttribute("username", username);
+                        request.setAttribute("email", email);
+                        request.setAttribute("jwt_claims", claims.getClaimsMap());
+                        request.setAttribute("authenticated", true);
+
+                        System.out.println("[CORS Filter] ✅ Usuario JWT autenticado: " + username);
+
+                } catch (Exception e) {
+                        System.err.println("[CORS Filter] ❌ Error validando JWT: " + e.getMessage());
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT inválido o expirado");
+                        return;
+                }
 
                 chain.doFilter(request, servletResponse);
         }
 
         @Override
         public void init(FilterConfig fConfig) throws ServletException {
-                String jwksUrl = "http://localhost:8080/realms/demo/protocol/openid-connect/certs";
+                String jwksUrl = "http://172.16.1.192:8080/auth/realms/MantenimientosINACIF/protocol/openid-connect/certs";
 
                 HttpsJwks httpsJwks = new HttpsJwks(jwksUrl);
                 HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(httpsJwks);
@@ -107,7 +112,9 @@ public class CORSResponseFilter implements Filter {
                                 .setRequireExpirationTime() // requiere tiempo de expiración
                                 .setAllowedClockSkewInSeconds(30) // tolerancia de reloj
                                 .setRequireSubject() // requiere claim "sub"
-                                .setExpectedAudience("account")
+                                .setExpectedIssuer("http://172.16.1.192:8080/auth/realms/MantenimientosINACIF") // verificar
+                                // emisor
+                                .setSkipDefaultAudienceValidation() // temporalmente sin audience
                                 .setVerificationKeyResolver(keyResolver) // usa la clave pública de Keycloak para
                                                                          // verificar firma
                                 .build();

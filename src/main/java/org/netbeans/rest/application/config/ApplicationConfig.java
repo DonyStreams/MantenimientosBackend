@@ -29,6 +29,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        // Controllers de mantenimientos
         resources.add(usac.eps.controladores.mantenimientos.AreaController.class);
         resources.add(usac.eps.controladores.mantenimientos.ComentarioTicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.ContratoController.class);
@@ -41,8 +42,15 @@ public class ApplicationConfig extends Application {
         resources.add(usac.eps.controladores.mantenimientos.TipoComentarioController.class);
         resources.add(usac.eps.controladores.mantenimientos.TipoMantenimientoController.class);
         resources.add(usac.eps.controladores.mantenimientos.FtpController.class);
-        resources.add(MultipartProvider.class);
 
+        // Controller de autenticación
+        resources.add(usac.eps.controladores.auth.AuthController.class);
+
+        // Filtros de seguridad
+        resources.add(usac.eps.seguridad.JWTAuthenticationFilter.class);
+
+        // Providers
+        resources.add(MultipartProvider.class);
     }
 
 }

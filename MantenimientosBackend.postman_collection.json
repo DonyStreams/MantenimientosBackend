@@ -4,16 +4,529 @@
     "name": "MantenimientosBackend API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// Auto-generar token JWT si no existe",
+          "if (!pm.collectionVariables.get('jwt_token')) {",
+          "    pm.sendRequest({",
+          "        url: 'http://172.16.1.192:8080/auth/realms/MantenimientosINACIF/protocol/openid-connect/token',",
+          "        method: 'POST',",
+          "        header: {",
+          "            'Content-Type': 'application/x-www-form-urlencoded'",
+          "        },",
+          "        body: {",
+          "            mode: 'urlencoded',",
+          "            urlencoded: [",
+          "                {key: 'grant_type', value: 'password'},",
+          "                {key: 'client_id', value: 'inacif-frontend'},",
+          "                {key: 'username', value: 'admin'},",
+          "                {key: 'password', value: 'admin123'}",
+          "            ]",
+          "        }",
+          "    }, function (err, res) {",
+          "        if (err) {",
+          "            console.log('Error obteniendo token:', err);",
+          "        } else {",
+          "            const responseJson = res.json();",
+          "            pm.collectionVariables.set('jwt_token', responseJson.access_token);",
+          "            console.log('Token JWT obtenido exitosamente');",
+          "        }",
+          "    });",
+          "}"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8081/MantenimientosBackend/api",
+      "type": "string"
+    },
+    {
+      "key": "keycloak_url",
+      "value": "http://172.16.1.192:8080/auth/realms/MantenimientosINACIF",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "Áreas",
+      "name": "🔐 Autenticación JWT",
+      "item": [
+        {
+          "name": "Obtener Token JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has access_token', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('access_token');",
+                  "    pm.collectionVariables.set('jwt_token', responseJson.access_token);",
+                  "    ",
+                  "    // Guardar refresh token si está disponible",
+                  "    if (responseJson.refresh_token) {",
+                  "        pm.collectionVariables.set('refresh_token', responseJson.refresh_token);",
+                  "        console.log('✅ Refresh token también almacenado');",
+                  "    }",
+                  "    ",
+                  "    console.log('✅ Token JWT almacenado en variable de colección');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "client_id",
+                  "value": "inacif-frontend",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "admin123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/protocol/openid-connect/token",
+              "host": ["{{keycloak_url}}"],
+              "path": ["protocol", "openid-connect", "token"]
+            }
+          }
+        },
+        {
+          "name": "Validar Token - Info Usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has user info', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('username');",
+                  "    pm.expect(responseJson).to.have.property('roles');",
+                  "    pm.expect(responseJson.authenticated).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Health Check Auth",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/health",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "health"]
+            }
+          }
+        },
+        {
+          "name": "Test Sin Token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401 Unauthorized', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Response contains JWT error message', function () {",
+                  "    pm.expect(pm.response.text()).to.include('Token JWT requerido');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "🗑️ Logout Completo (Keycloak + Local)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Verificar si tenemos token para hacer logout",
+                  "const currentToken = pm.collectionVariables.get('jwt_token');",
+                  "const refreshToken = pm.collectionVariables.get('refresh_token');",
+                  "",
+                  "if (!currentToken) {",
+                  "    console.log('⚠️ No hay token activo para cerrar sesión');",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "if (!refreshToken) {",
+                  "    console.log('⚠️ No hay refresh token - usando logout simple');",
+                  "    console.log('� Considera obtener un nuevo token que incluya refresh_token');",
+                  "}",
+                  "",
+                  "console.log('�🔐 Iniciando logout completo...');",
+                  "console.log('🎯 Token a invalidar:', currentToken.substring(0, 20) + '...');",
+                  "",
+                  "if (refreshToken) {",
+                  "    console.log('✅ Usando refresh token para logout completo');",
+                  "} else {",
+                  "    console.log('⚠️ Sin refresh token - logout puede ser limitado');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Limpiar tokens locales independientemente del resultado",
+                  "pm.collectionVariables.set('jwt_token', '');",
+                  "pm.collectionVariables.set('refresh_token', '');",
+                  "",
+                  "// También limpiar de variables de ambiente si existen",
+                  "if (pm.environment.has('jwt_token')) {",
+                  "    pm.environment.set('jwt_token', '');",
+                  "}",
+                  "if (pm.environment.has('refresh_token')) {",
+                  "    pm.environment.set('refresh_token', '');",
+                  "}",
+                  "",
+                  "// Evaluar el resultado",
+                  "if (pm.response.code === 204 || pm.response.code === 200) {",
+                  "    pm.test('✅ Logout exitoso en Keycloak', function () {",
+                  "        pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "    });",
+                  "    console.log('✅ Sesión cerrada exitosamente en Keycloak');",
+                  "} else if (pm.response.code === 400) {",
+                  "    const responseText = pm.response.text();",
+                  "    if (responseText.includes('invalid_grant') || responseText.includes('Invalid refresh token')) {",
+                  "        console.log('⚠️ Refresh token inválido o expirado');",
+                  "        console.log('💡 El token principal probablemente ya expiró naturalmente');",
+                  "        pm.test('⚠️ Logout con refresh token inválido (esperado)', function () {",
+                  "            pm.expect(pm.response.code).to.equal(400);",
+                  "        });",
+                  "    } else {",
+                  "        console.log('⚠️ Error 400 inesperado:', responseText);",
+                  "    }",
+                  "} else {",
+                  "    console.log('⚠️ Error en logout de Keycloak (código:', pm.response.code, ')');",
+                  "    console.log('📝 Respuesta:', pm.response.text());",
+                  "}",
+                  "",
+                  "pm.test('✅ Tokens locales eliminados', function () {",
+                  "    const token = pm.collectionVariables.get('jwt_token');",
+                  "    const refresh = pm.collectionVariables.get('refresh_token');",
+                  "    pm.expect(token).to.equal('');",
+                  "    pm.expect(refresh).to.equal('');",
+                  "});",
+                  "",
+                  "console.log('🔐 Logout completo finalizado');",
+                  "console.log('🧹 Tokens locales limpiados');",
+                  "console.log('🛡️ Las próximas peticiones requerirán nueva autenticación');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "client_id",
+                  "value": "inacif-frontend",
+                  "type": "text"
+                },
+                {
+                  "key": "refresh_token",
+                  "value": "{{refresh_token}}",
+                  "type": "text",
+                  "description": "Requerido para logout completo - se obtiene al hacer login"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/protocol/openid-connect/logout",
+              "host": ["{{keycloak_url}}"],
+              "path": ["protocol", "openid-connect", "logout"]
+            },
+            "description": "Cierra sesión tanto en Keycloak (invalidando el token) como localmente en Postman. Requiere refresh_token para funcionar correctamente."
+          }
+        },
+        {
+          "name": "🗑️ Limpiar Solo Token Local",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Limpiar el token JWT de las variables de colección",
+                  "pm.collectionVariables.set('jwt_token', '');",
+                  "console.log('✅ Token JWT limpiado de las variables de colección');",
+                  "",
+                  "// También limpiar de variables de ambiente si existen",
+                  "if (pm.environment.has('jwt_token')) {",
+                  "    pm.environment.set('jwt_token', '');",
+                  "    console.log('✅ Token JWT limpiado de variables de ambiente');",
+                  "}",
+                  "",
+                  "// Mostrar confirmación",
+                  "console.log('🔐 Token local eliminado - sesión cerrada localmente');",
+                  "console.log('⚠️ NOTA: El token sigue siendo válido en Keycloak');",
+                  "console.log('🛡️ Para logout completo usa: \"Logout Completo (Keycloak + Local)\"');",
+                  "",
+                  "// Cancelar la petición HTTP ya que solo queremos limpiar variables",
+                  "pm.execution.skipRequest();"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Como cancelamos la petición, estos tests no se ejecutan",
+                  "// pero están aquí para referencia futura",
+                  "pm.test('Token JWT limpiado exitosamente', function () {",
+                  "    const token = pm.collectionVariables.get('jwt_token');",
+                  "    pm.expect(token).to.equal('');",
+                  "    console.log('✅ Verificación: Token JWT está vacío');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/health",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "health"]
+            },
+            "description": "Solo limpia el token JWT localmente en Postman. El token sigue siendo válido en Keycloak hasta que expire naturalmente."
+          }
+        },
+        {
+          "name": "🗑️ Logout Alternativo (Solo Access Token)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Verificar si tenemos token para hacer logout",
+                  "const currentToken = pm.collectionVariables.get('jwt_token');",
+                  "",
+                  "if (!currentToken) {",
+                  "    console.log('⚠️ No hay token activo para cerrar sesión');",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "console.log('🔐 Iniciando logout alternativo...');",
+                  "console.log('🎯 Token a invalidar:', currentToken.substring(0, 20) + '...');",
+                  "console.log('📝 Método: Revocación de access token directamente');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Limpiar tokens locales independientemente del resultado",
+                  "pm.collectionVariables.set('jwt_token', '');",
+                  "pm.collectionVariables.set('refresh_token', '');",
+                  "",
+                  "// También limpiar de variables de ambiente si existen",
+                  "if (pm.environment.has('jwt_token')) {",
+                  "    pm.environment.set('jwt_token', '');",
+                  "}",
+                  "if (pm.environment.has('refresh_token')) {",
+                  "    pm.environment.set('refresh_token', '');",
+                  "}",
+                  "",
+                  "// Evaluar el resultado",
+                  "if (pm.response.code === 200 || pm.response.code === 204) {",
+                  "    pm.test('✅ Token revocado exitosamente', function () {",
+                  "        pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "    });",
+                  "    console.log('✅ Token revocado exitosamente en Keycloak');",
+                  "} else {",
+                  "    console.log('⚠️ Error en revocación (código:', pm.response.code, ')');",
+                  "    console.log('📝 Respuesta:', pm.response.text());",
+                  "    console.log('💡 El token puede ya estar expirado');",
+                  "}",
+                  "",
+                  "pm.test('✅ Tokens locales eliminados', function () {",
+                  "    const token = pm.collectionVariables.get('jwt_token');",
+                  "    const refresh = pm.collectionVariables.get('refresh_token');",
+                  "    pm.expect(token).to.equal('');",
+                  "    pm.expect(refresh).to.equal('');",
+                  "});",
+                  "",
+                  "console.log('🔐 Logout alternativo finalizado');",
+                  "console.log('🧹 Tokens locales limpiados');",
+                  "console.log('🛡️ Las próximas peticiones requerirán nueva autenticación');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "client_id",
+                  "value": "inacif-frontend",
+                  "type": "text"
+                },
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "text",
+                  "description": "Access token a revocar"
+                },
+                {
+                  "key": "token_type_hint",
+                  "value": "access_token",
+                  "type": "text",
+                  "description": "Indica que es un access token"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/protocol/openid-connect/revoke",
+              "host": ["{{keycloak_url}}"],
+              "path": ["protocol", "openid-connect", "revoke"]
+            },
+            "description": "Método alternativo de logout que revoca directamente el access token usando el endpoint de revocación de Keycloak. No requiere refresh token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "📁 Áreas",
       "item": [
         {
           "name": "Listar áreas",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas"] }
+            "url": {
+              "raw": "{{base_url}}/areas",
+              "host": ["{{base_url}}"],
+              "path": ["areas"]
+            }
           }
         },
         {
@@ -22,7 +535,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"codigoArea\": \"LAB02\",\n  \"nombre\": \"Química Forense\",\n  \"tipoArea\": \"Técnico Científico\",\n  \"estado\": true\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas"] }
+            "url": {
+              "raw": "{{base_url}}/areas",
+              "host": ["{{base_url}}"],
+              "path": ["areas"]
+            }
           }
         },
         {
@@ -31,7 +548,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"codigoArea\": \"LAB02\",\n  \"nombre\": \"Química Forense Modificada\",\n  \"tipoArea\": \"Técnico Científico\",\n  \"estado\": false\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas/LAB02", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas", "LAB02"] }
+            "url": {
+              "raw": "{{base_url}}/areas/LAB02",
+              "host": ["{{base_url}}"],
+              "path": ["areas", "LAB02"]
+            }
           }
         },
         {
@@ -39,20 +560,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/areas/LAB02", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "areas", "LAB02"] }
+            "url": {
+              "raw": "{{base_url}}/areas/LAB02",
+              "host": ["{{base_url}}"],
+              "path": ["areas", "LAB02"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Equipos",
+      "name": "🔧 Equipos",
       "item": [
         {
           "name": "Listar equipos",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos"] }
+            "url": {
+              "raw": "{{base_url}}/equipos",
+              "host": ["{{base_url}}"],
+              "path": ["equipos"]
+            }
           }
         },
         {
@@ -67,11 +596,9 @@
               "raw": "{\n  \"nombre\": \"Microscopio Forense\",\n  \"codigoInacif\": \"INACIF-002\",\n  \"marca\": \"Nikon\",\n  \"modelo\": \"E200\",\n  \"numeroInventario\": \"INV-2025-002\",\n  \"numeroSerie\": \"SN987654321\",\n  \"ubicacion\": \"Laboratorio Central\",\n  \"magnitudMedicion\": \"Aumento óptico\",\n  \"rangoCapacidad\": \"40x–1000x\",\n  \"manualFabricante\": \"MAN-002 Microscopio E200\",\n  \"fotografia\": \"ruta/imagen/microscopio2.jpg\",\n  \"softwareFirmware\": \"FW v2.1.0\",\n  \"condicionesOperacion\": \"Temperatura 20-25°C, Humedad <60%\",\n  \"descripcion\": \"Microscopio para análisis de muestras biológicas en criminalística\",\n  \"estado\": true\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/MantenimientosBackend/api/equipos",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["MantenimientosBackend", "api", "equipos"]
+              "raw": "{{base_url}}/equipos",
+              "host": ["{{base_url}}"],
+              "path": ["equipos"]
             }
           }
         },
@@ -81,7 +608,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"numeroInventario\": \"EQ-0002\",\n  \"numeroSerie\": \"SN-54321\",\n  \"descripcion\": \"Centrífuga Modificada\",\n  \"estado\": false\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos/EQ-0002", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos", "EQ-0002"] }
+            "url": {
+              "raw": "{{base_url}}/equipos/EQ-0002",
+              "host": ["{{base_url}}"],
+              "path": ["equipos", "EQ-0002"]
+            }
           }
         },
         {
@@ -89,20 +620,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/equipos/EQ-0002", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "equipos", "EQ-0002"] }
+            "url": {
+              "raw": "{{base_url}}/equipos/EQ-0002",
+              "host": ["{{base_url}}"],
+              "path": ["equipos", "EQ-0002"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Proveedores",
+      "name": "🏢 Proveedores",
       "item": [
         {
           "name": "Listar proveedores",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores"] }
+            "url": {
+              "raw": "{{base_url}}/proveedores",
+              "host": ["{{base_url}}"],
+              "path": ["proveedores"]
+            }
           }
         },
         {
@@ -111,7 +650,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"nit\": \"9876543-2\",\n  \"nombre\": \"Proveedor B\",\n  \"estado\": true\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores"] }
+            "url": {
+              "raw": "{{base_url}}/proveedores",
+              "host": ["{{base_url}}"],
+              "path": ["proveedores"]
+            }
           }
         },
         {
@@ -120,7 +663,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"nit\": \"9876543-2\",\n  \"nombre\": \"Proveedor B Modificado\",\n  \"estado\": false\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores/9876543-2", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores", "9876543-2"] }
+            "url": {
+              "raw": "{{base_url}}/proveedores/9876543-2",
+              "host": ["{{base_url}}"],
+              "path": ["proveedores", "9876543-2"]
+            }
           }
         },
         {
@@ -128,20 +675,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/proveedores/9876543-2", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "proveedores", "9876543-2"] }
+            "url": {
+              "raw": "{{base_url}}/proveedores/9876543-2",
+              "host": ["{{base_url}}"],
+              "path": ["proveedores", "9876543-2"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Historial Equipo",
+      "name": "📋 Historial Equipo",
       "item": [
         {
           "name": "Listar historial equipo",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo"] }
+            "url": {
+              "raw": "{{base_url}}/historial-equipo",
+              "host": ["{{base_url}}"],
+              "path": ["historial-equipo"]
+            }
           }
         },
         {
@@ -150,7 +705,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"numeroInventario\": \"EQ-0002\",\n  \"descripcion\": \"Mantenimiento preventivo\",\n  \"fecha\": \"2024-06-25\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo"] }
+            "url": {
+              "raw": "{{base_url}}/historial-equipo",
+              "host": ["{{base_url}}"],
+              "path": ["historial-equipo"]
+            }
           }
         },
         {
@@ -159,7 +718,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"numeroInventario\": \"EQ-0002\",\n  \"descripcion\": \"Mantenimiento correctivo\",\n  \"fecha\": \"2024-06-26\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo", "1"] }
+            "url": {
+              "raw": "{{base_url}}/historial-equipo/1",
+              "host": ["{{base_url}}"],
+              "path": ["historial-equipo", "1"]
+            }
           }
         },
         {
@@ -167,20 +730,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/historial-equipo/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "historial-equipo", "1"] }
+            "url": {
+              "raw": "{{base_url}}/historial-equipo/1",
+              "host": ["{{base_url}}"],
+              "path": ["historial-equipo", "1"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Tipos Mantenimiento",
+      "name": "🔧 Tipos Mantenimiento",
       "item": [
         {
           "name": "Listar tipos mantenimiento",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento"] }
+            "url": {
+              "raw": "{{base_url}}/tipos-mantenimiento",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-mantenimiento"]
+            }
           }
         },
         {
@@ -189,7 +760,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Preventivo\",\n  \"descripcion\": \"Mantenimiento preventivo\",\n  \"estado\": true\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento"] }
+            "url": {
+              "raw": "{{base_url}}/tipos-mantenimiento",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-mantenimiento"]
+            }
           }
         },
         {
@@ -198,7 +773,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Correctivo\",\n  \"descripcion\": \"Mantenimiento correctivo\",\n  \"estado\": false\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento", "1"] }
+            "url": {
+              "raw": "{{base_url}}/tipos-mantenimiento/1",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-mantenimiento", "1"]
+            }
           }
         },
         {
@@ -206,20 +785,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-mantenimiento", "1"] }
+            "url": {
+              "raw": "{{base_url}}/tipos-mantenimiento/1",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-mantenimiento", "1"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Contratos",
+      "name": "📄 Contratos",
       "item": [
         {
           "name": "Listar contratos",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos"] }
+            "url": {
+              "raw": "{{base_url}}/contratos",
+              "host": ["{{base_url}}"],
+              "path": ["contratos"]
+            }
           }
         },
         {
@@ -228,7 +815,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Contrato de mantenimiento anual\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2024-12-31\",\n  \"estado\": true\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos"] }
+            "url": {
+              "raw": "{{base_url}}/contratos",
+              "host": ["{{base_url}}"],
+              "path": ["contratos"]
+            }
           }
         },
         {
@@ -237,7 +828,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Contrato modificado\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2024-12-31\",\n  \"estado\": false\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos", "1"] }
+            "url": {
+              "raw": "{{base_url}}/contratos/1",
+              "host": ["{{base_url}}"],
+              "path": ["contratos", "1"]
+            }
           }
         },
         {
@@ -245,20 +840,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/contratos/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "contratos", "1"] }
+            "url": {
+              "raw": "{{base_url}}/contratos/1",
+              "host": ["{{base_url}}"],
+              "path": ["contratos", "1"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Ejecuciones Mantenimiento",
+      "name": "⚙️ Ejecuciones Mantenimiento",
       "item": [
         {
           "name": "Listar ejecuciones mantenimiento",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento"] }
+            "url": {
+              "raw": "{{base_url}}/ejecuciones-mantenimiento",
+              "host": ["{{base_url}}"],
+              "path": ["ejecuciones-mantenimiento"]
+            }
           }
         },
         {
@@ -267,7 +870,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"contratoId\": 1,\n  \"fechaEjecucion\": \"2024-06-25\",\n  \"observaciones\": \"Ejecución satisfactoria\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento"] }
+            "url": {
+              "raw": "{{base_url}}/ejecuciones-mantenimiento",
+              "host": ["{{base_url}}"],
+              "path": ["ejecuciones-mantenimiento"]
+            }
           }
         },
         {
@@ -276,7 +883,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"contratoId\": 1,\n  \"fechaEjecucion\": \"2024-06-26\",\n  \"observaciones\": \"Observación modificada\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento", "1"] }
+            "url": {
+              "raw": "{{base_url}}/ejecuciones-mantenimiento/1",
+              "host": ["{{base_url}}"],
+              "path": ["ejecuciones-mantenimiento", "1"]
+            }
           }
         },
         {
@@ -284,20 +895,28 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/ejecuciones-mantenimiento/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "ejecuciones-mantenimiento", "1"] }
+            "url": {
+              "raw": "{{base_url}}/ejecuciones-mantenimiento/1",
+              "host": ["{{base_url}}"],
+              "path": ["ejecuciones-mantenimiento", "1"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Tickets",
+      "name": "🎫 Tickets",
       "item": [
         {
           "name": "Listar tickets",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets"] }
+            "url": {
+              "raw": "{{base_url}}/tickets",
+              "host": ["{{base_url}}"],
+              "path": ["tickets"]
+            }
           }
         },
         {
@@ -306,7 +925,11 @@
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"descripcion\": \"Prueba de ticket\",\n  \"prioridad\": \"Media\",\n  \"estado\": \"Abierto\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets"] }
+            "url": {
+              "raw": "{{base_url}}/tickets",
+              "host": ["{{base_url}}"],
+              "path": ["tickets"]
+            }
           }
         },
         {
@@ -315,7 +938,11 @@
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Ticket modificado\",\n  \"prioridad\": \"Alta\",\n  \"estado\": \"Cerrado\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets", "1"] }
+            "url": {
+              "raw": "{{base_url}}/tickets/1",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "1"]
+            }
           }
         },
         {
@@ -323,133 +950,39 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tickets/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tickets", "1"] }
+            "url": {
+              "raw": "{{base_url}}/tickets/1",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "1"]
+            }
           }
         }
       ]
     },
     {
-      "name": "Tipos Comentario",
+      "name": "📁 FTP & Archivos",
       "item": [
         {
-          "name": "Listar tipos comentario",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario"] }
-          }
-        },
-        {
-          "name": "Crear tipo comentario",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Observación\",\n  \"estado\": true\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario"] }
-          }
-        },
-        {
-          "name": "Actualizar tipo comentario",
-          "request": {
-            "method": "PUT",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Observación Modificada\",\n  \"estado\": false\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario", "1"] }
-          }
-        },
-        {
-          "name": "Eliminar tipo comentario",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/tipos-comentario/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "tipos-comentario", "1"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Comentarios Ticket",
-      "item": [
-        {
-          "name": "Listar comentarios ticket",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket"] }
-          }
-        },
-        {
-          "name": "Crear comentario ticket",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"tipoComentarioId\": 1,\n  \"comentario\": \"Comentario de prueba\",\n  \"fecha\": \"2024-06-25\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket"] }
-          }
-        },
-        {
-          "name": "Actualizar comentario ticket",
-          "request": {
-            "method": "PUT",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"tipoComentarioId\": 1,\n  \"comentario\": \"Comentario modificado\",\n  \"fecha\": \"2024-06-26\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket", "1"] }
-          }
-        },
-        {
-          "name": "Eliminar comentario ticket",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/comentarios-ticket/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "comentarios-ticket", "1"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Evidencias",
-      "item": [
-        {
-          "name": "Listar evidencias",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias"] }
-          }
-        },
-        {
-          "name": "Crear evidencia",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"urlArchivo\": \"http://ejemplo.com/archivo.pdf\",\n  \"descripcion\": \"Evidencia de prueba\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias"] }
-          }
-        },
-        {
-          "name": "Actualizar evidencia",
-          "request": {
-            "method": "PUT",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"urlArchivo\": \"http://ejemplo.com/archivo2.pdf\",\n  \"descripcion\": \"Evidencia modificada\"\n}" },
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias", "1"] }
-          }
-        },
-        {
-          "name": "Eliminar evidencia",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": { "raw": "http://localhost:8080/MantenimientosBackend/api/evidencias/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["MantenimientosBackend", "api", "evidencias", "1"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "FTP",
-      "item": [
-        {
-          "name": "Subir archivo a FTP",
+          "name": "Subir archivo via FTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has file URL', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('url');",
+                  "    console.log('Archivo subido en:', responseJson.url);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
@@ -459,19 +992,268 @@
                 {
                   "key": "file",
                   "type": "file",
-                  "src": "C:/Users/USER/Downloads/screenshot.png"
+                  "src": "C:/Users/USER/Downloads/screenshot.png",
+                  "description": "Archivo a subir al servidor FTP"
+                },
+                {
+                  "key": "descripcion",
+                  "value": "Archivo de prueba subido via Postman",
+                  "type": "text"
                 }
               ]
             },
             "url": {
-              "raw": "http://localhost:8080/MantenimientosBackend/api/ftp/upload",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["MantenimientosBackend", "api", "ftp", "upload"]
+              "raw": "{{base_url}}/ftp/upload",
+              "host": ["{{base_url}}"],
+              "path": ["ftp", "upload"]
             }
-          },
-          "response": []
+          }
+        },
+        {
+          "name": "Listar archivos FTP",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ftp/files",
+              "host": ["{{base_url}}"],
+              "path": ["ftp", "files"]
+            }
+          }
+        },
+        {
+          "name": "Descargar archivo FTP",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ftp/download/{{filename}}",
+              "host": ["{{base_url}}"],
+              "path": ["ftp", "download", "{{filename}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar archivo FTP",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ftp/delete/{{filename}}",
+              "host": ["{{base_url}}"],
+              "path": ["ftp", "delete", "{{filename}}"]
+            }
+          }
+        },
+        {
+          "name": "Estado servidor FTP",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ftp/status",
+              "host": ["{{base_url}}"],
+              "path": ["ftp", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏷️ Tipos Comentario",
+      "item": [
+        {
+          "name": "Listar tipos comentario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tipos-comentario",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-comentario"]
+            }
+          }
+        },
+        {
+          "name": "Crear tipo comentario",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Observación\",\n  \"estado\": true\n}" },
+            "url": {
+              "raw": "{{base_url}}/tipos-comentario",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-comentario"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar tipo comentario",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Observación Modificada\",\n  \"estado\": false\n}" },
+            "url": {
+              "raw": "{{base_url}}/tipos-comentario/1",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-comentario", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar tipo comentario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tipos-comentario/1",
+              "host": ["{{base_url}}"],
+              "path": ["tipos-comentario", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Comentarios Ticket",
+      "item": [
+        {
+          "name": "Listar comentarios ticket",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/comentarios-ticket",
+              "host": ["{{base_url}}"],
+              "path": ["comentarios-ticket"]
+            }
+          }
+        },
+        {
+          "name": "Crear comentario ticket",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"tipoComentarioId\": 1,\n  \"comentario\": \"Comentario de prueba\",\n  \"fecha\": \"2024-06-25\"\n}" },
+            "url": {
+              "raw": "{{base_url}}/comentarios-ticket",
+              "host": ["{{base_url}}"],
+              "path": ["comentarios-ticket"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar comentario ticket",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"tipoComentarioId\": 1,\n  \"comentario\": \"Comentario modificado\",\n  \"fecha\": \"2024-06-26\"\n}" },
+            "url": {
+              "raw": "{{base_url}}/comentarios-ticket/1",
+              "host": ["{{base_url}}"],
+              "path": ["comentarios-ticket", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar comentario ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/comentarios-ticket/1",
+              "host": ["{{base_url}}"],
+              "path": ["comentarios-ticket", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📎 Evidencias",
+      "item": [
+        {
+          "name": "Listar evidencias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/evidencias",
+              "host": ["{{base_url}}"],
+              "path": ["evidencias"]
+            }
+          }
+        },
+        {
+          "name": "Subir evidencia (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Archivo de evidencia"
+                },
+                {
+                  "key": "ticketId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "descripcion",
+                  "value": "Evidencia del problema",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/evidencias/upload",
+              "host": ["{{base_url}}"],
+              "path": ["evidencias", "upload"]
+            }
+          }
+        },
+        {
+          "name": "Crear evidencia (JSON)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"urlArchivo\": \"http://ejemplo.com/archivo.pdf\",\n  \"descripcion\": \"Evidencia de prueba\"\n}" },
+            "url": {
+              "raw": "{{base_url}}/evidencias",
+              "host": ["{{base_url}}"],
+              "path": ["evidencias"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar evidencia",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"ticketId\": 1,\n  \"urlArchivo\": \"http://ejemplo.com/archivo2.pdf\",\n  \"descripcion\": \"Evidencia modificada\"\n}" },
+            "url": {
+              "raw": "{{base_url}}/evidencias/1",
+              "host": ["{{base_url}}"],
+              "path": ["evidencias", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar evidencia",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/evidencias/1",
+              "host": ["{{base_url}}"],
+              "path": ["evidencias", "1"]
+            }
+          }
         }
       ]
     }
