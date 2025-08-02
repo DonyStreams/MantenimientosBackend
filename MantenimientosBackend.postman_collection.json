@@ -19,32 +19,17 @@
       "listen": "prerequest",
       "script": {
         "exec": [
-          "// Auto-generar token JWT si no existe",
-          "if (!pm.collectionVariables.get('jwt_token')) {",
-          "    pm.sendRequest({",
-          "        url: 'http://172.16.1.192:8080/auth/realms/MantenimientosINACIF/protocol/openid-connect/token',",
-          "        method: 'POST',",
-          "        header: {",
-          "            'Content-Type': 'application/x-www-form-urlencoded'",
-          "        },",
-          "        body: {",
-          "            mode: 'urlencoded',",
-          "            urlencoded: [",
-          "                {key: 'grant_type', value: 'password'},",
-          "                {key: 'client_id', value: 'inacif-frontend'},",
-          "                {key: 'username', value: 'admin'},",
-          "                {key: 'password', value: 'admin123'}",
-          "            ]",
-          "        }",
-          "    }, function (err, res) {",
-          "        if (err) {",
-          "            console.log('Error obteniendo token:', err);",
-          "        } else {",
-          "            const responseJson = res.json();",
-          "            pm.collectionVariables.set('jwt_token', responseJson.access_token);",
-          "            console.log('Token JWT obtenido exitosamente');",
-          "        }",
-          "    });",
+          "// 🔧 GESTIÓN MANUAL DE TOKENS",
+          "// Los tokens se manejan completamente de forma manual:",
+          "// 1. Ejecuta 'Obtener Token JWT' para autenticarte",
+          "// 2. El token se guarda automáticamente en la variable jwt_token",
+          "// 3. Todas las peticiones usan ese token hasta que expire o hagas logout",
+          "",
+          "const currentToken = pm.collectionVariables.get('jwt_token');",
+          "if (currentToken && currentToken !== '') {",
+          "    console.log('🔑 Usando token manual:', currentToken.substring(0, 20) + '...');",
+          "} else {",
+          "    console.log('⚠️ No hay token configurado - ejecuta \"Obtener Token JWT\" primero');",
           "}"
         ],
         "type": "text/javascript"
@@ -78,7 +63,7 @@
       "name": "🔐 Autenticación JWT",
       "item": [
         {
-          "name": "Obtener Token JWT",
+          "name": "🔑 Obtener Token JWT (Manual)",
           "event": [
             {
               "listen": "test",
@@ -91,6 +76,8 @@
                   "pm.test('Response has access_token', function () {",
                   "    const responseJson = pm.response.json();",
                   "    pm.expect(responseJson).to.have.property('access_token');",
+                  "    ",
+                  "    // 🔑 GUARDAR TOKEN EN VARIABLE DE COLECCIÓN",
                   "    pm.collectionVariables.set('jwt_token', responseJson.access_token);",
                   "    ",
                   "    // Guardar refresh token si está disponible",
@@ -99,7 +86,10 @@
                   "        console.log('✅ Refresh token también almacenado');",
                   "    }",
                   "    ",
-                  "    console.log('✅ Token JWT almacenado en variable de colección');",
+                  "    console.log('✅ TOKEN ALMACENADO EXITOSAMENTE');",
+                  "    console.log('🎯 Token:', responseJson.access_token.substring(0, 30) + '...');",
+                  "    console.log('⏰ Expira en:', responseJson.expires_in, 'segundos');",
+                  "    console.log('🚀 Ahora puedes usar cualquier endpoint de la API');",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -146,7 +136,50 @@
               "raw": "{{keycloak_url}}/protocol/openid-connect/token",
               "host": ["{{keycloak_url}}"],
               "path": ["protocol", "openid-connect", "token"]
+            },
+            "description": "🔑 AUTENTICACIÓN MANUAL\n\n1. Ejecuta esta petición para obtener tu token JWT\n2. El token se guarda automáticamente en la variable 'jwt_token'\n3. Todas las demás peticiones de la API usarán este token\n4. Si el token expira, vuelve a ejecutar esta petición\n5. Para cerrar sesión, usa '🗑️ Cerrar Sesión (Logout)'\n\n⚙️ Modifica username/password según necesites."
+          }
+        },
+        {
+          "name": "📊 Estado del Token Actual",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const token = pm.collectionVariables.get('jwt_token');",
+                  "const refresh = pm.collectionVariables.get('refresh_token');",
+                  "",
+                  "console.log('🔍 VERIFICANDO ESTADO DEL TOKEN:');",
+                  "if (token && token !== '') {",
+                  "    console.log('✅ Token JWT: CONFIGURADO (' + token.substring(0, 20) + '...)');",
+                  "} else {",
+                  "    console.log('❌ Token JWT: NO CONFIGURADO');",
+                  "    console.log('💡 Ejecuta \"🔑 Obtener Token JWT (Manual)\" primero');",
+                  "}",
+                  "",
+                  "if (refresh && refresh !== '') {",
+                  "    console.log('✅ Refresh Token: DISPONIBLE');",
+                  "} else {",
+                  "    console.log('⚠️ Refresh Token: NO DISPONIBLE');",
+                  "}",
+                  "",
+                  "// Cancelar la petición - esto es solo para mostrar el estado",
+                  "pm.execution.skipRequest();"
+                ],
+                "type": "text/javascript"
+              }
             }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/health",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "health"]
+            },
+            "description": "🔍 VERIFICADOR DE ESTADO\n\nEsta petición NO se ejecuta, solo muestra en la consola:\n- Si tienes un token configurado\n- Si tienes refresh token\n- Primeros caracteres del token actual\n\nÚsala para verificar tu estado de autenticación antes de hacer otras peticiones."
           }
         },
         {
@@ -226,34 +259,48 @@
           }
         },
         {
-          "name": "🗑️ Logout Completo (Keycloak + Local)",
+          "name": "🗑️ Cerrar Sesión (Logout)",
           "event": [
             {
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// Verificar si tenemos token para hacer logout",
+                  "// SIEMPRE limpiar tokens locales ANTES de intentar logout en Keycloak",
                   "const currentToken = pm.collectionVariables.get('jwt_token');",
                   "const refreshToken = pm.collectionVariables.get('refresh_token');",
                   "",
+                  "console.log('🔐 Iniciando cierre de sesión completo...');",
+                  "",
                   "if (!currentToken) {",
                   "    console.log('⚠️ No hay token activo para cerrar sesión');",
+                  "    console.log('🧹 Limpiando variables por si acaso...');",
+                  "    ",
+                  "    // Limpiar todo por si acaso",
+                  "    pm.collectionVariables.set('jwt_token', '');",
+                  "    pm.collectionVariables.set('refresh_token', '');",
+                  "    if (pm.environment.has('jwt_token')) pm.environment.set('jwt_token', '');",
+                  "    if (pm.environment.has('refresh_token')) pm.environment.set('refresh_token', '');",
+                  "    ",
                   "    pm.execution.skipRequest();",
                   "    return;",
                   "}",
                   "",
-                  "if (!refreshToken) {",
-                  "    console.log('⚠️ No hay refresh token - usando logout simple');",
-                  "    console.log('� Considera obtener un nuevo token que incluya refresh_token');",
-                  "}",
+                  "console.log('🎯 Token encontrado:', currentToken.substring(0, 20) + '...');",
                   "",
-                  "console.log('�🔐 Iniciando logout completo...');",
-                  "console.log('🎯 Token a invalidar:', currentToken.substring(0, 20) + '...');",
+                  "// LIMPIAR TOKENS INMEDIATAMENTE para forzar el logout local",
+                  "pm.collectionVariables.set('jwt_token', '');",
+                  "pm.collectionVariables.set('refresh_token', '');",
+                  "if (pm.environment.has('jwt_token')) pm.environment.set('jwt_token', '');",
+                  "if (pm.environment.has('refresh_token')) pm.environment.set('refresh_token', '');",
                   "",
+                  "console.log('✅ Tokens locales eliminados inmediatamente');",
+                  "",
+                  "// Continuar con logout en Keycloak usando el refresh token si existe",
                   "if (refreshToken) {",
-                  "    console.log('✅ Usando refresh token para logout completo');",
+                  "    console.log('🔑 Intentando logout en Keycloak con refresh token...');",
                   "} else {",
-                  "    console.log('⚠️ Sin refresh token - logout puede ser limitado');",
+                  "    console.log('⚠️ Sin refresh token - solo logout local aplicado');",
+                  "    console.log('💡 El token expirará naturalmente en Keycloak');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -263,50 +310,44 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Limpiar tokens locales independientemente del resultado",
-                  "pm.collectionVariables.set('jwt_token', '');",
-                  "pm.collectionVariables.set('refresh_token', '');",
+                  "// Verificar que tokens estén eliminados (debería estar ya)",
+                  "const token = pm.collectionVariables.get('jwt_token');",
+                  "const refresh = pm.collectionVariables.get('refresh_token');",
                   "",
-                  "// También limpiar de variables de ambiente si existen",
-                  "if (pm.environment.has('jwt_token')) {",
-                  "    pm.environment.set('jwt_token', '');",
-                  "}",
-                  "if (pm.environment.has('refresh_token')) {",
-                  "    pm.environment.set('refresh_token', '');",
-                  "}",
-                  "",
-                  "// Evaluar el resultado",
+                  "// Evaluar resultado del logout en Keycloak",
                   "if (pm.response.code === 204 || pm.response.code === 200) {",
-                  "    pm.test('✅ Logout exitoso en Keycloak', function () {",
+                  "    console.log('✅ Logout exitoso en Keycloak también');",
+                  "    pm.test('✅ Logout completo exitoso', function () {",
                   "        pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
                   "    });",
-                  "    console.log('✅ Sesión cerrada exitosamente en Keycloak');",
                   "} else if (pm.response.code === 400) {",
                   "    const responseText = pm.response.text();",
                   "    if (responseText.includes('invalid_grant') || responseText.includes('Invalid refresh token')) {",
-                  "        console.log('⚠️ Refresh token inválido o expirado');",
-                  "        console.log('💡 El token principal probablemente ya expiró naturalmente');",
-                  "        pm.test('⚠️ Logout con refresh token inválido (esperado)', function () {",
+                  "        console.log('⚠️ Refresh token ya inválido (normal si el token principal expiró)');",
+                  "        pm.test('⚠️ Token ya expirado en Keycloak', function () {",
                   "            pm.expect(pm.response.code).to.equal(400);",
                   "        });",
                   "    } else {",
-                  "        console.log('⚠️ Error 400 inesperado:', responseText);",
+                  "        console.log('⚠️ Error 400 en Keycloak:', responseText);",
                   "    }",
                   "} else {",
                   "    console.log('⚠️ Error en logout de Keycloak (código:', pm.response.code, ')');",
                   "    console.log('📝 Respuesta:', pm.response.text());",
                   "}",
                   "",
-                  "pm.test('✅ Tokens locales eliminados', function () {",
-                  "    const token = pm.collectionVariables.get('jwt_token');",
-                  "    const refresh = pm.collectionVariables.get('refresh_token');",
+                  "// Verificar limpieza local (lo más importante)",
+                  "pm.test('✅ Tokens locales eliminados (crítico)', function () {",
                   "    pm.expect(token).to.equal('');",
                   "    pm.expect(refresh).to.equal('');",
                   "});",
                   "",
-                  "console.log('🔐 Logout completo finalizado');",
-                  "console.log('🧹 Tokens locales limpiados');",
-                  "console.log('🛡️ Las próximas peticiones requerirán nueva autenticación');"
+                  "console.log('🔐 LOGOUT COMPLETADO');",
+                  "console.log('🧹 Tokens locales eliminados');",
+                  "console.log('🛡️ Próximas peticiones mostrarán 401 No Autorizado');",
+                  "console.log('💡 Para acceder nuevamente, obtén un nuevo token');",
+                  "console.log('');",
+                  "console.log('🔍 PRUEBA: Ejecuta ahora \"Validar Token - Info Usuario\" ');",
+                  "console.log('   Debería mostrar error 401 confirmando el logout');"
                 ],
                 "type": "text/javascript"
               }
@@ -335,7 +376,7 @@
                   "key": "refresh_token",
                   "value": "{{refresh_token}}",
                   "type": "text",
-                  "description": "Requerido para logout completo - se obtiene al hacer login"
+                  "description": "Se usa si está disponible para logout completo en Keycloak"
                 }
               ]
             },
@@ -344,172 +385,7 @@
               "host": ["{{keycloak_url}}"],
               "path": ["protocol", "openid-connect", "logout"]
             },
-            "description": "Cierra sesión tanto en Keycloak (invalidando el token) como localmente en Postman. Requiere refresh_token para funcionar correctamente."
-          }
-        },
-        {
-          "name": "🗑️ Limpiar Solo Token Local",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "// Limpiar el token JWT de las variables de colección",
-                  "pm.collectionVariables.set('jwt_token', '');",
-                  "console.log('✅ Token JWT limpiado de las variables de colección');",
-                  "",
-                  "// También limpiar de variables de ambiente si existen",
-                  "if (pm.environment.has('jwt_token')) {",
-                  "    pm.environment.set('jwt_token', '');",
-                  "    console.log('✅ Token JWT limpiado de variables de ambiente');",
-                  "}",
-                  "",
-                  "// Mostrar confirmación",
-                  "console.log('🔐 Token local eliminado - sesión cerrada localmente');",
-                  "console.log('⚠️ NOTA: El token sigue siendo válido en Keycloak');",
-                  "console.log('🛡️ Para logout completo usa: \"Logout Completo (Keycloak + Local)\"');",
-                  "",
-                  "// Cancelar la petición HTTP ya que solo queremos limpiar variables",
-                  "pm.execution.skipRequest();"
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "// Como cancelamos la petición, estos tests no se ejecutan",
-                  "// pero están aquí para referencia futura",
-                  "pm.test('Token JWT limpiado exitosamente', function () {",
-                  "    const token = pm.collectionVariables.get('jwt_token');",
-                  "    pm.expect(token).to.equal('');",
-                  "    console.log('✅ Verificación: Token JWT está vacío');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/auth/health",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "health"]
-            },
-            "description": "Solo limpia el token JWT localmente en Postman. El token sigue siendo válido en Keycloak hasta que expire naturalmente."
-          }
-        },
-        {
-          "name": "🗑️ Logout Alternativo (Solo Access Token)",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "// Verificar si tenemos token para hacer logout",
-                  "const currentToken = pm.collectionVariables.get('jwt_token');",
-                  "",
-                  "if (!currentToken) {",
-                  "    console.log('⚠️ No hay token activo para cerrar sesión');",
-                  "    pm.execution.skipRequest();",
-                  "    return;",
-                  "}",
-                  "",
-                  "console.log('🔐 Iniciando logout alternativo...');",
-                  "console.log('🎯 Token a invalidar:', currentToken.substring(0, 20) + '...');",
-                  "console.log('📝 Método: Revocación de access token directamente');"
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "// Limpiar tokens locales independientemente del resultado",
-                  "pm.collectionVariables.set('jwt_token', '');",
-                  "pm.collectionVariables.set('refresh_token', '');",
-                  "",
-                  "// También limpiar de variables de ambiente si existen",
-                  "if (pm.environment.has('jwt_token')) {",
-                  "    pm.environment.set('jwt_token', '');",
-                  "}",
-                  "if (pm.environment.has('refresh_token')) {",
-                  "    pm.environment.set('refresh_token', '');",
-                  "}",
-                  "",
-                  "// Evaluar el resultado",
-                  "if (pm.response.code === 200 || pm.response.code === 204) {",
-                  "    pm.test('✅ Token revocado exitosamente', function () {",
-                  "        pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "    });",
-                  "    console.log('✅ Token revocado exitosamente en Keycloak');",
-                  "} else {",
-                  "    console.log('⚠️ Error en revocación (código:', pm.response.code, ')');",
-                  "    console.log('📝 Respuesta:', pm.response.text());",
-                  "    console.log('💡 El token puede ya estar expirado');",
-                  "}",
-                  "",
-                  "pm.test('✅ Tokens locales eliminados', function () {",
-                  "    const token = pm.collectionVariables.get('jwt_token');",
-                  "    const refresh = pm.collectionVariables.get('refresh_token');",
-                  "    pm.expect(token).to.equal('');",
-                  "    pm.expect(refresh).to.equal('');",
-                  "});",
-                  "",
-                  "console.log('🔐 Logout alternativo finalizado');",
-                  "console.log('🧹 Tokens locales limpiados');",
-                  "console.log('🛡️ Las próximas peticiones requerirán nueva autenticación');"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/x-www-form-urlencoded"
-              }
-            ],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "client_id",
-                  "value": "inacif-frontend",
-                  "type": "text"
-                },
-                {
-                  "key": "token",
-                  "value": "{{jwt_token}}",
-                  "type": "text",
-                  "description": "Access token a revocar"
-                },
-                {
-                  "key": "token_type_hint",
-                  "value": "access_token",
-                  "type": "text",
-                  "description": "Indica que es un access token"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{keycloak_url}}/protocol/openid-connect/revoke",
-              "host": ["{{keycloak_url}}"],
-              "path": ["protocol", "openid-connect", "revoke"]
-            },
-            "description": "Método alternativo de logout que revoca directamente el access token usando el endpoint de revocación de Keycloak. No requiere refresh token."
+            "description": "Cierra sesión COMPLETAMENTE: elimina tokens locales inmediatamente y luego intenta logout en Keycloak. Garantiza que las próximas peticiones sean rechazadas con 401."
           }
         }
       ]

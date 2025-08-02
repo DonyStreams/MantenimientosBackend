@@ -144,7 +144,7 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
                     .setAllowedClockSkewInSeconds(30) // Permitir 30 segundos de diferencia de reloj
                     .setRequireSubject() // Token debe tener subject
                     .setExpectedIssuer(KEYCLOAK_URL + "/realms/" + REALM) // Verificar emisor
-                    .setSkipDefaultAudienceValidation() // temporalmente sin audience para debug
+                    .setExpectedAudience("inacif-frontend") // Validar que el token es para nuestro cliente
                     .setVerificationKeyResolver(jwksResolver) // Usar claves públicas de Keycloak
                     .build();
 
