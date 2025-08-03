@@ -30,6 +30,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         // Controllers de mantenimientos
+        resources.add(usac.eps.controladores.mantenimientos.AlertaMantenimientoController.class);
         resources.add(usac.eps.controladores.mantenimientos.AreaController.class);
         resources.add(usac.eps.controladores.mantenimientos.ComentarioTicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.ContratoController.class);
@@ -37,6 +38,8 @@ public class ApplicationConfig extends Application {
         resources.add(usac.eps.controladores.mantenimientos.EquipoController.class);
         resources.add(usac.eps.controladores.mantenimientos.EvidenciaController.class);
         resources.add(usac.eps.controladores.mantenimientos.HistorialEquipoController.class);
+        resources.add(usac.eps.controladores.mantenimientos.MantenimientoController.class);
+        resources.add(usac.eps.controladores.mantenimientos.ProgramacionMantenimientoController.class);
         resources.add(usac.eps.controladores.mantenimientos.ProveedorController.class);
         resources.add(usac.eps.controladores.mantenimientos.TicketController.class);
         resources.add(usac.eps.controladores.mantenimientos.TipoComentarioController.class);

@@ -24,6 +24,12 @@ public class TipoMantenimientoController {
     }
 
     @GET
+    @Path("/activos")
+    public List<TipoMantenimientoModel> getActivos() {
+        return tipoMantenimientoRepository.findActivos();
+    }
+
+    @GET
     @Path("/{id}")
     public TipoMantenimientoModel getById(@PathParam("id") Integer id) {
         return tipoMantenimientoRepository.findByIdTipo(id);

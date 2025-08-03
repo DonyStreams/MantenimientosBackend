@@ -29,11 +29,11 @@ public class TipoMantenimientoModel implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "usuario_creacion", referencedColumnName = "id")
     private UsuarioMantenimientoModel usuarioCreacion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "usuario_modificacion", referencedColumnName = "id")
     private UsuarioMantenimientoModel usuarioModificacion;
 
