@@ -24,6 +24,12 @@ public class ProveedorController {
     }
 
     @GET
+    @Path("/activos")
+    public List<ProveedorModel> getActivos() {
+        return proveedorRepository.findByEstado(true);
+    }
+
+    @GET
     @Path("/{id}")
     public ProveedorModel getById(@PathParam("id") Integer id) {
         return proveedorRepository.findByIdProveedor(id);

@@ -24,6 +24,12 @@ public class ContratoController {
     }
 
     @GET
+    @Path("/activos")
+    public List<ContratoModel> getActivos() {
+        return contratoRepository.findByEstado(true);
+    }
+
+    @GET
     @Path("/{id}")
     public ContratoModel getById(@PathParam("id") Integer id) {
         return contratoRepository.findByIdContrato(id);
