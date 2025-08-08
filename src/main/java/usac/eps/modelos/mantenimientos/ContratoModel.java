@@ -1,5 +1,6 @@
 package usac.eps.modelos.mantenimientos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ public class ContratoModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
+    @JsonIgnore
     private ProveedorModel proveedor;
 
     @Column(name = "fecha_creacion")
@@ -44,43 +46,129 @@ public class ContratoModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_creacion", referencedColumnName = "id")
+    @JsonIgnore
     private UsuarioMantenimientoModel usuarioCreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_modificacion", referencedColumnName = "id")
+    @JsonIgnore
     private UsuarioMantenimientoModel usuarioModificacion;
 
     @OneToMany(mappedBy = "contrato", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ContratoEquipoModel> equipos;
 
     @OneToMany(mappedBy = "contrato", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ContratoTipoMantenimientoModel> tiposMantenimiento;
 
     // Getters y setters
-    public Integer getIdContrato() { return idContrato; }
-    public void setIdContrato(Integer idContrato) { this.idContrato = idContrato; }
-    public Date getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(Date fechaInicio) { this.fechaInicio = fechaInicio; }
-    public Date getFechaFin() { return fechaFin; }
-    public void setFechaFin(Date fechaFin) { this.fechaFin = fechaFin; }
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    public String getFrecuencia() { return frecuencia; }
-    public void setFrecuencia(String frecuencia) { this.frecuencia = frecuencia; }
-    public Boolean getEstado() { return estado; }
-    public void setEstado(Boolean estado) { this.estado = estado; }
-    public ProveedorModel getProveedor() { return proveedor; }
-    public void setProveedor(ProveedorModel proveedor) { this.proveedor = proveedor; }
-    public Date getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(Date fechaCreacion) { this.fechaCreacion = fechaCreacion; }
-    public Date getFechaModificacion() { return fechaModificacion; }
-    public void setFechaModificacion(Date fechaModificacion) { this.fechaModificacion = fechaModificacion; }
-    public UsuarioMantenimientoModel getUsuarioCreacion() { return usuarioCreacion; }
-    public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) { this.usuarioCreacion = usuarioCreacion; }
-    public UsuarioMantenimientoModel getUsuarioModificacion() { return usuarioModificacion; }
-    public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) { this.usuarioModificacion = usuarioModificacion; }
-    public List<ContratoEquipoModel> getEquipos() { return equipos; }
-    public void setEquipos(List<ContratoEquipoModel> equipos) { this.equipos = equipos; }
-    public List<ContratoTipoMantenimientoModel> getTiposMantenimiento() { return tiposMantenimiento; }
-    public void setTiposMantenimiento(List<ContratoTipoMantenimientoModel> tiposMantenimiento) { this.tiposMantenimiento = tiposMantenimiento; }
+    public Integer getIdContrato() {
+        return idContrato;
+    }
+
+    public void setIdContrato(Integer idContrato) {
+        this.idContrato = idContrato;
+    }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getFrecuencia() {
+        return frecuencia;
+    }
+
+    public void setFrecuencia(String frecuencia) {
+        this.frecuencia = frecuencia;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    @JsonIgnore
+    public ProveedorModel getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(ProveedorModel proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
+    @JsonIgnore
+    public UsuarioMantenimientoModel getUsuarioCreacion() {
+        return usuarioCreacion;
+    }
+
+    public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) {
+        this.usuarioCreacion = usuarioCreacion;
+    }
+
+    @JsonIgnore
+    public UsuarioMantenimientoModel getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    @JsonIgnore
+    public List<ContratoEquipoModel> getEquipos() {
+        return equipos;
+    }
+
+    public void setEquipos(List<ContratoEquipoModel> equipos) {
+        this.equipos = equipos;
+    }
+
+    @JsonIgnore
+    public List<ContratoTipoMantenimientoModel> getTiposMantenimiento() {
+        return tiposMantenimiento;
+    }
+
+    public void setTiposMantenimiento(List<ContratoTipoMantenimientoModel> tiposMantenimiento) {
+        this.tiposMantenimiento = tiposMantenimiento;
+    }
 }

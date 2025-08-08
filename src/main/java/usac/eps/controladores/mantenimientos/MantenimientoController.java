@@ -6,6 +6,7 @@ import usac.eps.modelos.mantenimientos.ProveedorModel;
 import usac.eps.modelos.mantenimientos.TipoMantenimientoModel;
 import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.ContratoRepository;
+import usac.eps.repositorios.mantenimientos.ContratoEquipoRepository;
 import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.ProveedorRepository;
 import usac.eps.repositorios.mantenimientos.TipoMantenimientoRepository;
@@ -31,6 +32,9 @@ public class MantenimientoController {
 
     @Inject
     private ContratoRepository contratoRepository;
+
+    @Inject
+    private ContratoEquipoRepository contratoEquipoRepository;
 
     @Inject
     private EquipoRepository equipoRepository;
@@ -218,6 +222,32 @@ public class MantenimientoController {
         return contratoRepository.findAll().stream()
                 .filter(c -> c.getEstado() != null && c.getEstado())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtener equipos asociados a un contrato específico
+     */
+    @GET
+    @Path("/{id}/equipos")
+    public Response getEquiposByContrato(@PathParam("id") Integer id) {
+        try {
+            // Buscar el contrato para verificar que existe
+            ContratoModel contrato = contratoRepository.findByIdContrato(id);
+            if (contrato == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Contrato no encontrado").build();
+            }
+
+            // Usar el repositorio para obtener equipos directamente
+            List<EquipoModel> equipos = contratoEquipoRepository.findEquiposByContratoId(id);
+
+            return Response.ok(equipos).build();
+        } catch (Exception e) {
+            System.err.println("Error al obtener equipos del contrato " + id + ": " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error al obtener equipos del contrato").build();
+        }
     }
 
     /**
