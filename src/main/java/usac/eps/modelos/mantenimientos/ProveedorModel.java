@@ -1,5 +1,6 @@
 package usac.eps.modelos.mantenimientos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -21,12 +22,14 @@ public class ProveedorModel implements Serializable {
     @Column(name = "estado")
     private Boolean estado;
 
-    @Column(name = "fecha_creacion")
+    @Column(name = "fecha_creacion", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private Date fechaCreacion;
 
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private Date fechaModificacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -100,5 +103,19 @@ public class ProveedorModel implements Serializable {
 
     public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
+    }
+
+    // Métodos callback de JPA para establecer fechas automáticamente
+    @PrePersist
+    protected void onCreate() {
+        this.fechaCreacion = new Date();
+        if (this.estado == null) {
+            this.estado = true;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.fechaModificacion = new Date();
     }
 }

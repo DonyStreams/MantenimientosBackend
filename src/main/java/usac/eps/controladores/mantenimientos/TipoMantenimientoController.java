@@ -37,6 +37,7 @@ public class TipoMantenimientoController {
 
     @POST
     public Response create(TipoMantenimientoModel tipo) {
+        // Las fechas y estado por defecto se establecen automáticamente con @PrePersist
         tipoMantenimientoRepository.save(tipo);
         return Response.status(Response.Status.CREATED).entity(tipo).build();
     }
@@ -44,7 +45,22 @@ public class TipoMantenimientoController {
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Integer id, TipoMantenimientoModel tipo) {
+        // Verificar que el tipo existe
+        TipoMantenimientoModel tipoExistente = tipoMantenimientoRepository.findByIdTipo(id);
+        if (tipoExistente == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        // Establecer el ID y preservar campos que no deben cambiar
         tipo.setIdTipo(id);
+
+        // IMPORTANTE: Preservar la fecha de creación original
+        tipo.setFechaCreacion(tipoExistente.getFechaCreacion());
+
+        // Preservar el usuario creador original
+        tipo.setUsuarioCreacion(tipoExistente.getUsuarioCreacion());
+
+        // La fecha de modificación se establece automáticamente con @PreUpdate
         tipoMantenimientoRepository.save(tipo);
         return Response.ok(tipo).build();
     }
@@ -54,8 +70,13 @@ public class TipoMantenimientoController {
     public Response delete(@PathParam("id") Integer id) {
         TipoMantenimientoModel tipo = tipoMantenimientoRepository.findByIdTipo(id);
         if (tipo != null) {
-            tipoMantenimientoRepository.remove(tipo);
-            return Response.noContent().build();
+            try {
+                tipoMantenimientoRepository.deleteByIdTipo(id);
+                return Response.noContent().build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
