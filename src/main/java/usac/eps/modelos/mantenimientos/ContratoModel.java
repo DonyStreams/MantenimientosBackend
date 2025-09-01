@@ -31,10 +31,17 @@ public class ContratoModel implements Serializable {
     @Column(name = "estado")
     private Boolean estado;
 
+    @Column(name = "id_estado")
+    private Integer idEstado;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
     @JsonIgnore
     private ProveedorModel proveedor;
+
+    // Campo transiente para recibir el ID del proveedor desde JSON
+    @Transient
+    private Integer idProveedor;
 
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
@@ -111,6 +118,14 @@ public class ContratoModel implements Serializable {
         this.estado = estado;
     }
 
+    public Integer getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(Integer idEstado) {
+        this.idEstado = idEstado;
+    }
+
     @JsonIgnore
     public ProveedorModel getProveedor() {
         return proveedor;
@@ -170,5 +185,98 @@ public class ContratoModel implements Serializable {
 
     public void setTiposMantenimiento(List<ContratoTipoMantenimientoModel> tiposMantenimiento) {
         this.tiposMantenimiento = tiposMantenimiento;
+    }
+
+    // 🔧 MÉTODOS DE NEGOCIO AÑADIDOS
+
+    /**
+     * Verifica si el contrato está vigente
+     */
+    public boolean isVigente() {
+        if (estado == null || !estado)
+            return false;
+
+        Date hoy = new Date();
+        boolean inicioValido = fechaInicio == null || fechaInicio.before(hoy) || fechaInicio.equals(hoy);
+        boolean finValido = fechaFin == null || fechaFin.after(hoy) || fechaFin.equals(hoy);
+
+        return inicioValido && finValido;
+    }
+
+    /**
+     * Verifica si el contrato está próximo a vencer (30 días)
+     */
+    public boolean isProximoAVencer() {
+        if (estado == null || !estado || fechaFin == null)
+            return false;
+
+        Date hoy = new Date();
+        long diasRestantes = (fechaFin.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24);
+
+        return diasRestantes <= 30 && diasRestantes >= 0;
+    }
+
+    /**
+     * Obtiene el estado descriptivo del contrato
+     */
+    public String getEstadoDescriptivo() {
+        if (estado == null || !estado)
+            return "Inactivo";
+
+        Date hoy = new Date();
+
+        if (fechaFin != null && fechaFin.before(hoy))
+            return "Vencido";
+        if (fechaInicio != null && fechaInicio.after(hoy))
+            return "Pendiente";
+        if (isVigente())
+            return "Vigente";
+
+        return "Desconocido";
+    }
+
+    /**
+     * Obtiene el nombre del proveedor de forma segura
+     */
+    public String getNombreProveedor() {
+        return proveedor != null ? proveedor.getNombre() : "Sin proveedor";
+    }
+
+    /**
+     * Obtiene el ID del proveedor de forma segura
+     */
+    public Integer getIdProveedor() {
+        // Priorizar el campo transiente si está seteado, sino usar la relación
+        if (idProveedor != null) {
+            return idProveedor;
+        }
+        return proveedor != null ? proveedor.getIdProveedor() : null;
+    }
+
+    /**
+     * Establece el proveedor por ID (usado para deserialización JSON)
+     */
+    public void setIdProveedor(Integer idProveedor) {
+        this.idProveedor = idProveedor;
+    }
+
+    /**
+     * Obtiene el nombre del usuario creador de forma segura
+     */
+    public String getNombreUsuarioCreacion() {
+        return usuarioCreacion != null ? usuarioCreacion.getNombreCompleto() : "Sistema";
+    }
+
+    @Override
+    public String toString() {
+        return "ContratoModel{" +
+                "idContrato=" + idContrato +
+                ", fechaInicio=" + fechaInicio +
+                ", fechaFin=" + fechaFin +
+                ", frecuencia='" + frecuencia + '\'' +
+                ", estado=" + estado +
+                ", proveedor=" + getNombreProveedor() +
+                ", estadoDescriptivo='" + getEstadoDescriptivo() + '\'' +
+                '}';
     }
 }

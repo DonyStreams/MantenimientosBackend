@@ -1,17 +1,25 @@
 package usac.eps.controladores.mantenimientos;
 
 import usac.eps.modelos.mantenimientos.ContratoModel;
-import usac.eps.modelos.mantenimientos.EquipoModel;
+import usac.eps.modelos.mantenimientos.ProveedorModel;
+import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.ContratoRepository;
 import usac.eps.repositorios.mantenimientos.ContratoEquipoRepository;
+import usac.eps.repositorios.mantenimientos.ProveedorRepository;
+import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Date;
 
 @Path("/contratos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,57 +32,295 @@ public class ContratoController {
     @Inject
     private ContratoEquipoRepository contratoEquipoRepository;
 
+    @Inject
+    private ProveedorRepository proveedorRepository;
+
+    @Inject
+    private UsuarioMantenimientoRepository usuarioRepository;
+
+    @Context
+    private HttpServletRequest request;
+
     @GET
-    public List<ContratoModel> getAll() {
-        return contratoRepository.findAll();
+    public Response getAll() {
+        try {
+            // Obtener TODOS los contratos (activos e inactivos)
+            List<ContratoModel> contratos = contratoRepository.findAll();
+            List<Map<String, Object>> contratosDTO = new ArrayList<>();
+
+            for (ContratoModel contrato : contratos) {
+                contratosDTO.add(convertirADTO(contrato));
+            }
+
+            System.out.println("📋 Devolviendo " + contratosDTO.size() + " contratos (activos e inactivos)");
+            return Response.ok(contratosDTO).build();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener contratos: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al obtener contratos\"}")
+                    .build();
+        }
     }
 
     @GET
-    @Path("/activos")
-    public List<ContratoModel> getActivos() {
-        return contratoRepository.findByEstado(true);
+    @Path("/stats")
+    public Response getStats() {
+        try {
+            // Obtener estadísticas reales usando las consultas del repositorio
+            long totalContratos = contratoRepository.count();
+            long vigentes = contratoRepository.countVigentes();
+
+            // Calcular fecha límite para contratos por vencer (30 días desde hoy)
+            Date fechaLimite = new Date(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000));
+            long porVencer = contratoRepository.countPorVencer(fechaLimite);
+
+            long vencidos = contratoRepository.countVencidos();
+
+            // Contar contratos inactivos (estado = false)
+            long inactivos = contratoRepository.countByEstado(false);
+
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("total", totalContratos);
+            stats.put("vigentes", vigentes);
+            stats.put("porVencer", porVencer);
+            stats.put("vencidos", vencidos);
+            stats.put("inactivos", inactivos);
+
+            System.out.println("📊 Estadísticas calculadas:");
+            System.out.println("  - Total: " + totalContratos);
+            System.out.println("  - Vigentes: " + vigentes);
+            System.out.println("  - Por vencer (30 días): " + porVencer);
+            System.out.println("  - Vencidos: " + vencidos);
+            System.out.println("  - Inactivos: " + inactivos);
+
+            return Response.ok(stats).build();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener estadísticas: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al obtener estadísticas\"}")
+                    .build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    public ContratoModel getById(@PathParam("id") Integer id) {
-        return contratoRepository.findByIdContrato(id);
+    public Response getById(@PathParam("id") Integer id) {
+        try {
+            ContratoModel contrato = contratoRepository.findByIdContrato(id);
+            if (contrato == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Contrato no encontrado\"}")
+                        .build();
+            }
+            return Response.ok(convertirADTO(contrato)).build();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener contrato: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al obtener contrato\"}")
+                    .build();
+        }
     }
 
     @POST
-    public Response create(ContratoModel contrato) {
-        contratoRepository.save(contrato);
-        return Response.status(Response.Status.CREATED).entity(contrato).build();
+    public Response create(ContratoModel contratoInput) {
+        try {
+            System.out.println("📥 Recibiendo contrato para crear: " + contratoInput);
+            System.out.println("📋 Descripción: " + contratoInput.getDescripcion());
+            System.out.println("📋 Frecuencia: " + contratoInput.getFrecuencia());
+            System.out.println("📋 ID Proveedor: " + contratoInput.getIdProveedor());
+            System.out.println("📋 Estado: " + contratoInput.getEstado());
+
+            ContratoModel contrato = new ContratoModel();
+            contrato.setDescripcion(contratoInput.getDescripcion());
+            contrato.setFrecuencia(contratoInput.getFrecuencia());
+            contrato.setEstado(true); // Nuevo contrato siempre activo
+            contrato.setIdEstado(1); // Estado inicial: PLANIFICADO
+            contrato.setFechaInicio(contratoInput.getFechaInicio());
+            contrato.setFechaFin(contratoInput.getFechaFin());
+
+            System.out.println("🔧 Estado seteado antes de guardar: " + contrato.getEstado());
+            System.out.println("🔧 ID Estado seteado antes de guardar: " + contrato.getIdEstado());
+
+            // Buscar proveedor por ID si se proporciona idProveedor
+            if (contratoInput.getIdProveedor() != null) {
+                System.out.println("🔍 Buscando proveedor con ID: " + contratoInput.getIdProveedor());
+                ProveedorModel proveedor = proveedorRepository.findByIdProveedor(contratoInput.getIdProveedor());
+                if (proveedor != null) {
+                    contrato.setProveedor(proveedor);
+                    System.out.println("✅ Proveedor asignado: " + proveedor.getNombre());
+                } else {
+                    System.out.println("⚠️ Proveedor no encontrado con ID: " + contratoInput.getIdProveedor());
+                }
+            } else {
+                System.out.println("⚠️ No se proporcionó ID de proveedor");
+            }
+
+            contrato.setFechaCreacion(new Date());
+
+            // Asignar usuario creación desde el token JWT
+            try {
+                String keycloakId = (String) request.getAttribute("keycloakId");
+                String username = (String) request.getAttribute("username");
+                System.out.println("🔍 Usuario actual - Keycloak ID: " + keycloakId + ", Username: " + username);
+
+                if (keycloakId != null) {
+                    UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
+                    if (usuario != null) {
+                        contrato.setUsuarioCreacion(usuario);
+                        System.out.println("✅ Usuario creación asignado: " + usuario.getNombreCompleto());
+                    } else {
+                        System.out.println("⚠️ Usuario no encontrado en BD para Keycloak ID: " + keycloakId);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("⚠️ Error al asignar usuario creación: " + e.getMessage());
+            }
+            contrato = contratoRepository.save(contrato);
+            System.out.println("✅ Contrato creado con ID: " + contrato.getIdContrato());
+
+            return Response.status(Response.Status.CREATED).entity(convertirADTO(contrato)).build();
+        } catch (Exception e) {
+            System.out.println("❌ Error al crear contrato: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al crear contrato: " + e.getMessage() + "\"}")
+                    .build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") Integer id, ContratoModel contrato) {
-        contrato.setIdContrato(id);
-        contratoRepository.save(contrato);
-        return Response.ok(contrato).build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    public Response delete(@PathParam("id") Integer id) {
-        ContratoModel contrato = contratoRepository.findByIdContrato(id);
-        if (contrato != null) {
-            contratoRepository.remove(contrato);
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
-    }
-
-    @GET
-    @Path("/{id}/equipos")
-    public Response getEquiposByContrato(@PathParam("id") Integer id) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, ContratoModel contratoInput) {
         try {
-            List<EquipoModel> equipos = contratoEquipoRepository.findEquiposByContratoId(id);
-            return Response.ok(equipos).build();
+            System.out.println("📝 Actualizando contrato ID: " + id);
+            System.out.println("📥 Datos recibidos: " + contratoInput);
+
+            // Buscar contrato existente
+            ContratoModel contratoExistente = contratoRepository.findByIdContrato(id);
+            if (contratoExistente == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Contrato no encontrado\"}")
+                        .build();
+            }
+
+            System.out.println("📋 Estado actual en BD: " + contratoExistente.getEstado());
+            System.out.println("📥 Estado recibido del frontend: " + contratoInput.getEstado());
+            System.out.println("📥 Tipo de estado recibido: "
+                    + (contratoInput.getEstado() != null ? contratoInput.getEstado().getClass() : "null"));
+
+            // Actualizar campos
+            contratoExistente.setDescripcion(contratoInput.getDescripcion());
+            contratoExistente.setFrecuencia(contratoInput.getFrecuencia());
+            contratoExistente.setFechaInicio(contratoInput.getFechaInicio());
+            contratoExistente.setFechaFin(contratoInput.getFechaFin());
+
+            // Manejar estado - usar el del input o mantener el actual si no se envía
+            if (contratoInput.getEstado() != null) {
+                contratoExistente.setEstado(contratoInput.getEstado());
+                System.out.println("🔧 Estado actualizado a: " + contratoInput.getEstado());
+            } else {
+                System.out.println("⚠️ Estado no proporcionado, manteniendo: " + contratoExistente.getEstado());
+            }
+
+            // Manejar ID estado - usar el del input o mantener el actual si no se envía
+            if (contratoInput.getIdEstado() != null) {
+                contratoExistente.setIdEstado(contratoInput.getIdEstado());
+                System.out.println("🔧 ID Estado actualizado a: " + contratoInput.getIdEstado());
+            }
+
+            // Buscar proveedor por ID si se proporciona idProveedor
+            if (contratoInput.getIdProveedor() != null) {
+                System.out.println("🔍 Buscando proveedor con ID: " + contratoInput.getIdProveedor());
+                ProveedorModel proveedor = proveedorRepository.findByIdProveedor(contratoInput.getIdProveedor());
+                if (proveedor != null) {
+                    contratoExistente.setProveedor(proveedor);
+                    System.out.println("✅ Proveedor actualizado: " + proveedor.getNombre());
+                } else {
+                    System.out.println("⚠️ Proveedor no encontrado con ID: " + contratoInput.getIdProveedor());
+                }
+            }
+
+            // ✅ FECHA Y USUARIO DE MODIFICACIÓN
+            contratoExistente.setFechaModificacion(new Date());
+
+            // Asignar usuario modificación desde el token JWT
+            try {
+                String keycloakId = (String) request.getAttribute("keycloakId");
+                String username = (String) request.getAttribute("username");
+                System.out.println("🔍 Usuario modificador - Keycloak ID: " + keycloakId + ", Username: " + username);
+
+                if (keycloakId != null) {
+                    UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
+                    if (usuario != null) {
+                        contratoExistente.setUsuarioModificacion(usuario);
+                        System.out.println("✅ Usuario modificación asignado: " + usuario.getNombreCompleto());
+                    } else {
+                        System.out.println("⚠️ Usuario no encontrado en BD para Keycloak ID: " + keycloakId);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("⚠️ Error al asignar usuario modificación: " + e.getMessage());
+            }
+
+            contratoExistente = contratoRepository.save(contratoExistente);
+            System.out.println("✅ Contrato actualizado con ID: " + contratoExistente.getIdContrato());
+
+            return Response.ok(convertirADTO(contratoExistente)).build();
         } catch (Exception e) {
+            System.out.println("❌ Error al actualizar contrato: " + e.getMessage());
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error al obtener equipos del contrato").build();
+                    .entity("{\"error\": \"Error al actualizar contrato: " + e.getMessage() + "\"}")
+                    .build();
         }
+    }
+
+    // 🔧 MÉTODO AUXILIAR PARA CONVERTIR A DTO
+    private Map<String, Object> convertirADTO(ContratoModel contrato) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("id", contrato.getIdContrato());
+        dto.put("fechaInicio", contrato.getFechaInicio());
+        dto.put("fechaFin", contrato.getFechaFin());
+        dto.put("descripcion", contrato.getDescripcion());
+        dto.put("frecuencia", contrato.getFrecuencia());
+        dto.put("estado", contrato.getEstado());
+        dto.put("fechaCreacion", contrato.getFechaCreacion());
+        dto.put("fechaModificacion", contrato.getFechaModificacion());
+
+        // Información del proveedor de forma segura
+        try {
+            if (contrato.getProveedor() != null) {
+                dto.put("proveedor", contrato.getProveedor().getNombre());
+                dto.put("idProveedor", contrato.getProveedor().getIdProveedor());
+            } else {
+                dto.put("proveedor", "Sin proveedor");
+                dto.put("idProveedor", null);
+            }
+        } catch (Exception e) {
+            dto.put("proveedor", "Error al cargar proveedor");
+            dto.put("idProveedor", null);
+        }
+
+        // Información del usuario de forma segura
+        try {
+            if (contrato.getUsuarioCreacion() != null) {
+                dto.put("usuarioCreacion", contrato.getUsuarioCreacion().getNombreCompleto());
+            } else {
+                dto.put("usuarioCreacion", "Sistema");
+            }
+        } catch (Exception e) {
+            dto.put("usuarioCreacion", "Sistema");
+        }
+
+        // Estados calculados básicos
+        dto.put("vigente", contrato.getEstado() != null ? contrato.getEstado() : false);
+        dto.put("proximoAVencer", false); // Por ahora false
+        dto.put("estadoDescriptivo", contrato.getEstado() ? "Vigente" : "Inactivo");
+
+        return dto;
     }
 }

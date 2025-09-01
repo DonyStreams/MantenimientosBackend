@@ -126,7 +126,10 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
         String[] publicPaths = {
                 "auth/health", // Health check público
                 "health", // Health check general si existe
-                "status" // Status general si existe
+                "status", // Status general si existe
+                "ftp/test", // 🆕 Test de conexión FTP (sin autenticación)
+                "ftp/upload", // 🆕 Upload FTP para testing (sin autenticación)
+                "ftp" // 🆕 Todas las rutas FTP para testing
         };
 
         for (String publicPath : publicPaths) {

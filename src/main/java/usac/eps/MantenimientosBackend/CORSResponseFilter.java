@@ -69,6 +69,14 @@ public class CORSResponseFilter implements Filter {
                         return;
                 }
 
+                // 🆕 VERIFICAR SI ES RUTA PÚBLICA ANTES DE REQUERIR JWT
+                if (isPublicPath(uri)) {
+                        System.out.println("[CORS Filter] ✅ Ruta pública permitida sin JWT: " + uri);
+                        // Continuar sin verificar JWT
+                        chain.doFilter(request, response);
+                        return;
+                }
+
                 // --- AUTENTICACIÓN JWT ACTIVADA PARA PRODUCCIÓN ---
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                         System.err.println("[CORS Filter] BLOQUEANDO ACCESO - Sin token JWT válido");
@@ -118,6 +126,28 @@ public class CORSResponseFilter implements Filter {
                                 .setVerificationKeyResolver(keyResolver) // usa la clave pública de Keycloak para
                                                                          // verificar firma
                                 .build();
+        }
+
+        /**
+         * 🆕 Verifica si la ruta es pública y no requiere autenticación JWT
+         */
+        private boolean isPublicPath(String uri) {
+                // Rutas públicas que NO requieren JWT
+                String[] publicPaths = {
+                        "/MantenimientosBackend/api/ftp/test",
+                        "/MantenimientosBackend/api/ftp/upload",
+                        "/MantenimientosBackend/api/ftp",
+                        "/MantenimientosBackend/api/auth/health",
+                        "/MantenimientosBackend/api/health",
+                        "/MantenimientosBackend/api/status"
+                };
+                
+                for (String publicPath : publicPaths) {
+                        if (uri.equals(publicPath) || uri.startsWith(publicPath + "/")) {
+                                return true;
+                        }
+                }
+                return false;
         }
 
 }
