@@ -242,10 +242,14 @@ public class ArchivoController {
                 if (i > 0)
                     jsonBuilder.append(",");
 
+                // Clarificación de los campos:
+                // row[1] = nombre_archivo (nombre original subido por el usuario)
+                // row[2] = ruta_archivo (nombre del archivo en el sistema de archivos para
+                // descarga)
                 jsonBuilder.append("{")
                         .append("\"id\": ").append(row[0]).append(",")
                         .append("\"nombreOriginal\": \"").append(row[1]).append("\",")
-                        .append("\"nombreArchivo\": \"").append(row[2]).append("\",")
+                        .append("\"nombreSistema\": \"").append(row[2]).append("\",")
                         .append("\"tipoDocumento\": \"").append(row[3]).append("\",")
                         .append("\"tamano\": ").append(row[4]).append(",")
                         .append("\"tipoMime\": \"").append(row[5]).append("\",")
