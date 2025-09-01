@@ -5,6 +5,8 @@ import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -20,6 +22,9 @@ public class UsuarioController {
 
     @Inject
     private UsuarioMantenimientoRepository usuarioRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Context
     private HttpServletRequest request;
@@ -109,12 +114,24 @@ public class UsuarioController {
 
             boolean nuevoEstado = !usuario.getActivo();
             usuario.setActivo(nuevoEstado);
+
+            // 🔄 IMPORTANTE: Guardar en BD primero
             usuarioRepository.save(usuario);
+
+            // 🚀 INVALIDAR CACHÉ: Forzar refresh del EntityManager
+            try {
+                entityManager.flush(); // Forzar escribir a BD
+                entityManager.clear(); // Limpiar caché L1
+                entityManager.getEntityManagerFactory().getCache().evictAll(); // Limpiar caché L2
+                System.out.println("🧹 Cache invalidada después de cambio de estado");
+            } catch (Exception cacheError) {
+                System.out.println("⚠️ Error al invalidar cache (no crítico): " + cacheError.getMessage());
+            }
 
             // Log de auditoría
             String accion = nuevoEstado ? "ACTIVADO" : "DESACTIVADO";
             System.out.println("👤 Usuario " + accion + ": " + usuario.getNombreCompleto() +
-                    " (ID: " + usuario.getId() + ")");
+                    " (ID: " + usuario.getId() + ") - Cache invalidada ✅");
 
             return Response.ok()
                     .entity("{\"mensaje\": \"Usuario " + accion.toLowerCase() + " exitosamente\", \"usuario\": " +
@@ -139,6 +156,32 @@ public class UsuarioController {
      * Los usuarios se gestionan únicamente mediante activación/desactivación.
      * Para eliminar completamente un usuario, debe hacerse desde Keycloak.
      */
+
+    /**
+     * 🧹 ENDPOINT ADMIN: Invalidar cache manualmente
+     */
+    @POST
+    @Path("/cache/invalidate")
+    public Response invalidateCache() {
+        try {
+            entityManager.flush();
+            entityManager.clear();
+            entityManager.getEntityManagerFactory().getCache().evictAll();
+
+            System.out.println("🧹 Cache invalidada manualmente por administrador");
+
+            return Response.ok()
+                    .entity("{\"mensaje\": \"Cache invalidada exitosamente\", \"timestamp\": \"" +
+                            java.time.LocalDateTime.now() + "\"}")
+                    .build();
+        } catch (Exception e) {
+            System.out.println("❌ Error al invalidar cache: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al invalidar cache: " + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
 
     // Endpoint para obtener estadísticas
     @GET
@@ -223,12 +266,36 @@ public class UsuarioController {
             try {
                 usuario = usuarioRepository.findByKeycloakId(keycloakId);
                 System.out.println("✅ Usuario encontrado en BD: " + usuario.getNombreCompleto());
+                System.out.println("📊 DETALLES COMPLETOS:");
+                System.out.println("   - ID: " + usuario.getId());
+                System.out.println("   - Nombre: " + usuario.getNombreCompleto());
+                System.out.println("   - Email: " + usuario.getCorreo());
+                System.out.println("   - Activo: " + usuario.getActivo() + " (tipo: "
+                        + usuario.getActivo().getClass().getSimpleName() + ")");
+                System.out.println("   - Keycloak ID: " + usuario.getKeycloakId());
             } catch (javax.persistence.NoResultException e) {
                 System.out.println("🔄 Usuario no encontrado en BD, necesita sincronización: " + keycloakId);
                 usuario = null; // Explícitamente establecer como null
             }
 
             if (usuario != null) {
+                // 🛡️ VALIDACIÓN CRÍTICA: Verificar estado activo
+                boolean estaActivo = usuario.getActivo();
+                System.out.println("🔍 VALIDACIÓN DE ESTADO:");
+                System.out.println("   - Valor activo leído: " + estaActivo);
+                System.out.println("   - ¿Es true?: " + (estaActivo == true));
+                System.out.println("   - ¿Es false?: " + (estaActivo == false));
+                System.out.println("   - Negación (!activo): " + (!estaActivo));
+
+                if (!estaActivo) {
+                    System.out.println("🚫 ACCESO DENEGADO: Usuario desactivado - " + usuario.getNombreCompleto());
+                    return Response.status(Response.Status.FORBIDDEN)
+                            .entity("{\"error\": \"Usuario desactivado\", \"codigo\": \"USUARIO_DESACTIVADO\", \"usuario\": \""
+                                    + usuario.getNombreCompleto() + "\"}")
+                            .build();
+                }
+
+                System.out.println("✅ Usuario activo verificado: " + usuario.getNombreCompleto());
                 return Response.ok(usuario).build();
             } else {
                 // Usuario no sincronizado - devolver info básica
