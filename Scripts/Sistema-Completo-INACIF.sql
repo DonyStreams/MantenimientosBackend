@@ -621,8 +621,8 @@ PRINT '   ✓ Funciones creadas'
 PRINT 'FASE 9: Insertando datos iniciales...'
 
 -- Usuarios
-INSERT INTO Usuarios (keycloak_id, nombre_completo, correo, activo)
-VALUES (NEWID(), 'Admin Mantenimientos', 'admin@inacif.gob.gt', 1);
+--INSERT INTO Usuarios (keycloak_id, nombre_completo, correo, activo)
+--VALUES (NEWID(), 'Admin Mantenimientos', 'admin@inacif.gob.gt', 1);
 
 -- Áreas
 INSERT INTO Areas (codigo_area, nombre, tipo_area, estado, fecha_creacion, usuario_creacion)

@@ -1,7 +1,6 @@
 package usac.eps.modelos.mantenimientos;
 
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.*;
 
 @Entity
@@ -13,7 +12,7 @@ public class UsuarioMantenimientoModel implements Serializable {
     private Integer id;
 
     @Column(name = "keycloak_id", unique = true, nullable = false)
-    private UUID keycloakId;
+    private String keycloakId;
 
     @Column(name = "nombre_completo", length = 100)
     private String nombreCompleto;
@@ -25,14 +24,43 @@ public class UsuarioMantenimientoModel implements Serializable {
     private Boolean activo;
 
     // Getters y setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public UUID getKeycloakId() { return keycloakId; }
-    public void setKeycloakId(UUID keycloakId) { this.keycloakId = keycloakId; }
-    public String getNombreCompleto() { return nombreCompleto; }
-    public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
-    public Boolean getActivo() { return activo; }
-    public void setActivo(Boolean activo) { this.activo = activo; }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 }

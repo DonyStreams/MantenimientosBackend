@@ -21,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Path("/mantenimientos")
@@ -251,40 +250,80 @@ public class MantenimientoController {
     }
 
     /**
-     * Método privado para obtener el usuario actual desde el JWT
+     * Método privado para obtener el usuario actual desde el JWT con
+     * AUTO-SINCRONIZACIÓN
      */
     private UsuarioMantenimientoModel obtenerUsuarioActual() {
         try {
             // Obtener información del usuario desde el JWT en el request
+            String keycloakId = (String) request.getAttribute("keycloakId");
             String username = (String) request.getAttribute("username");
             String email = (String) request.getAttribute("email");
 
-            if (username == null) {
+            if (keycloakId == null || username == null) {
+                System.err.println("Información de usuario incompleta en JWT - keycloakId: " + keycloakId
+                        + ", username: " + username);
                 return null;
             }
 
-            // Buscar usuario por email o username
-            List<UsuarioMantenimientoModel> usuarios = usuarioRepository.findAll();
-            for (UsuarioMantenimientoModel usuario : usuarios) {
-                if (username.equals(usuario.getNombreCompleto()) ||
-                        (email != null && email.equals(usuario.getCorreo()))) {
-                    return usuario;
-                }
-            }
-
-            // Si no existe, crear un usuario temporal (para desarrollo)
-            // En producción, todos los usuarios deberían existir en la BD
-            UsuarioMantenimientoModel nuevoUsuario = new UsuarioMantenimientoModel();
-            nuevoUsuario.setKeycloakId(UUID.randomUUID());
-            nuevoUsuario.setNombreCompleto(username);
-            nuevoUsuario.setCorreo(email);
-            nuevoUsuario.setActivo(true);
-
-            usuarioRepository.save(nuevoUsuario);
-            return nuevoUsuario;
+            // AUTO-SINCRONIZACIÓN: Buscar o crear usuario automáticamente
+            return getOrCreateUsuario(keycloakId, username, email);
 
         } catch (Exception e) {
             System.err.println("Error al obtener usuario actual: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Obtiene un usuario existente o lo crea automáticamente (AUTO-SINCRONIZACIÓN)
+     * Este método implementa la auto-sincronización al primer login
+     */
+    private UsuarioMantenimientoModel getOrCreateUsuario(String keycloakId, String username, String email) {
+        try {
+            // 1. Buscar usuario por Keycloak ID (método preferido)
+            UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
+
+            if (usuario != null) {
+                // Usuario ya existe - actualizar información si es necesario
+                boolean needsUpdate = false;
+
+                if (!username.equals(usuario.getNombreCompleto())) {
+                    usuario.setNombreCompleto(username);
+                    needsUpdate = true;
+                }
+
+                if (email != null && !email.equals(usuario.getCorreo())) {
+                    usuario.setCorreo(email);
+                    needsUpdate = true;
+                }
+
+                if (needsUpdate) {
+                    usuarioRepository.save(usuario);
+                    System.out.println("✅ Usuario actualizado automáticamente: " + username);
+                }
+
+                return usuario;
+            }
+
+            // 2. Usuario no existe - AUTO-SINCRONIZACIÓN
+            System.out.println("🔄 Auto-sincronizando nuevo usuario: " + username + " (" + keycloakId + ")");
+
+            UsuarioMantenimientoModel nuevoUsuario = new UsuarioMantenimientoModel();
+            nuevoUsuario.setKeycloakId(keycloakId);
+            nuevoUsuario.setNombreCompleto(username);
+            nuevoUsuario.setCorreo(email);
+            nuevoUsuario.setActivo(true); // Por defecto activo
+
+            usuarioRepository.save(nuevoUsuario);
+
+            System.out.println(
+                    "✅ Usuario auto-sincronizado exitosamente: " + username + " con ID: " + nuevoUsuario.getId());
+            return nuevoUsuario;
+
+        } catch (Exception e) {
+            System.err.println("❌ Error en auto-sincronización: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

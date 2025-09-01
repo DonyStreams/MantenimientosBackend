@@ -24,6 +24,12 @@ public class AreaController {
     }
 
     @GET
+    @Path("/activos")
+    public List<AreaModel> getActivos() {
+        return areaRepository.findByEstado(true);
+    }
+
+    @GET
     @Path("/{id}")
     public AreaModel getById(@PathParam("id") Integer id) {
         return areaRepository.findByIdArea(id);
@@ -31,16 +37,46 @@ public class AreaController {
 
     @POST
     public Response create(AreaModel area) {
-        areaRepository.save(area);
-        return Response.status(Response.Status.CREATED).entity(area).build();
+        try {
+            // Las fechas y estado por defecto se establecen automáticamente con @PrePersist
+            areaRepository.save(area);
+            return Response.status(Response.Status.CREATED).entity(area).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al crear área: " + e.getMessage() + "\"}")
+                    .build();
+        }
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Integer id, AreaModel area) {
-        area.setIdArea(id);
-        areaRepository.save(area);
-        return Response.ok(area).build();
+        try {
+            // Verificar que el área existe
+            AreaModel areaExistente = areaRepository.findByIdArea(id);
+            if (areaExistente == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            // Establecer el ID y preservar campos que no deben cambiar
+            area.setIdArea(id);
+
+            // IMPORTANTE: Preservar la fecha de creación original
+            area.setFechaCreacion(areaExistente.getFechaCreacion());
+
+            // Preservar el usuario creador original
+            area.setUsuarioCreacion(areaExistente.getUsuarioCreacion());
+
+            // La fecha de modificación se establece automáticamente con @PreUpdate
+            areaRepository.save(area);
+            return Response.ok(area).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al actualizar área: " + e.getMessage() + "\"}")
+                    .build();
+        }
     }
 
     @DELETE
@@ -48,8 +84,15 @@ public class AreaController {
     public Response delete(@PathParam("id") Integer id) {
         AreaModel area = areaRepository.findByIdArea(id);
         if (area != null) {
-            areaRepository.remove(area);
-            return Response.noContent().build();
+            try {
+                areaRepository.deleteByIdArea(id);
+                return Response.noContent().build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"error\": \"Error al eliminar área: " + e.getMessage() + "\"}")
+                        .build();
+            }
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }

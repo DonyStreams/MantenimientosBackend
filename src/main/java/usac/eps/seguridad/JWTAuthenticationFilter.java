@@ -67,8 +67,14 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
             System.out.println("[JWT Filter] ✅ Token válido para usuario: " + claims.get("preferred_username"));
 
             // Extraer información del usuario
+            String keycloakId = (String) claims.get("sub"); // ID único del usuario en Keycloak
             String username = (String) claims.get("preferred_username");
             String email = (String) claims.get("email");
+
+            System.out.println("[JWT Filter] 📋 Información extraída del token:");
+            System.out.println("[JWT Filter] - Keycloak ID: " + keycloakId);
+            System.out.println("[JWT Filter] - Username: " + username);
+            System.out.println("[JWT Filter] - Email: " + email);
 
             // Extraer roles del cliente
             @SuppressWarnings("unchecked")
@@ -87,6 +93,7 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
 
             // Almacenar información del usuario en el contexto de la petición
             // Usar tanto setProperty (para JAX-RS) como setAttribute (para Servlets)
+            requestContext.setProperty("keycloakId", keycloakId);
             requestContext.setProperty("username", username);
             requestContext.setProperty("email", email);
             requestContext.setProperty("roles", roles);
@@ -94,6 +101,7 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
 
             // También almacenar en el HttpServletRequest para compatibilidad
             if (httpRequest != null) {
+                httpRequest.setAttribute("keycloakId", keycloakId);
                 httpRequest.setAttribute("username", username);
                 httpRequest.setAttribute("email", email);
                 httpRequest.setAttribute("roles", roles);
