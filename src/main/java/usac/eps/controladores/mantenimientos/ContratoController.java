@@ -10,6 +10,8 @@ import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -37,6 +39,9 @@ public class ContratoController {
 
     @Inject
     private UsuarioMantenimientoRepository usuarioRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Context
     private HttpServletRequest request;
@@ -320,6 +325,19 @@ public class ContratoController {
         dto.put("vigente", contrato.getEstado() != null ? contrato.getEstado() : false);
         dto.put("proximoAVencer", false); // Por ahora false
         dto.put("estadoDescriptivo", contrato.getEstado() ? "Vigente" : "Inactivo");
+
+        // 🆕 CONTEO DE ARCHIVOS ADJUNTOS
+        try {
+            String sqlArchivos = "SELECT COUNT(*) FROM Documentos_Contrato WHERE id_contrato = ?";
+            Number totalArchivos = (Number) em.createNativeQuery(sqlArchivos)
+                    .setParameter(1, contrato.getIdContrato())
+                    .getSingleResult();
+            dto.put("totalArchivos", totalArchivos.intValue());
+        } catch (Exception e) {
+            System.out.println(
+                    "⚠️ Error al contar archivos para contrato " + contrato.getIdContrato() + ": " + e.getMessage());
+            dto.put("totalArchivos", 0);
+        }
 
         return dto;
     }

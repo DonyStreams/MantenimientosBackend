@@ -9,3 +9,14 @@ services:
     environment:
       - KEYCLOAK_URL=http://172.16.1.192:8080
     restart: unless-stopped
+    volumes:
+      # 🆕 VOLUMEN PARA PERSISTIR IMÁGENES Y ARCHIVOS
+      - inacif-files:/root/inacif-imagenes
+      - inacif-contracts:/root/contratos-archivos
+
+volumes:
+  # Volúmenes para persistir datos entre reinicios del contenedor
+  inacif-files:
+    driver: local
+  inacif-contracts:
+    driver: local

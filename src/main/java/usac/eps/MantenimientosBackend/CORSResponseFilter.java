@@ -134,14 +134,16 @@ public class CORSResponseFilter implements Filter {
         private boolean isPublicPath(String uri) {
                 // Rutas públicas que NO requieren JWT
                 String[] publicPaths = {
-                        "/MantenimientosBackend/api/ftp/test",
-                        "/MantenimientosBackend/api/ftp/upload",
-                        "/MantenimientosBackend/api/ftp",
-                        "/MantenimientosBackend/api/auth/health",
-                        "/MantenimientosBackend/api/health",
-                        "/MantenimientosBackend/api/status"
+                                "/MantenimientosBackend/api/ftp/test",
+                                "/MantenimientosBackend/api/ftp/upload",
+                                "/MantenimientosBackend/api/ftp",
+                                "/MantenimientosBackend/api/auth/health",
+                                "/MantenimientosBackend/api/health",
+                                "/MantenimientosBackend/api/status",
+                                "/MantenimientosBackend/api/imagenes/view",
+                                "/MantenimientosBackend/api/imagenes/test"
                 };
-                
+
                 for (String publicPath : publicPaths) {
                         if (uri.equals(publicPath) || uri.startsWith(publicPath + "/")) {
                                 return true;

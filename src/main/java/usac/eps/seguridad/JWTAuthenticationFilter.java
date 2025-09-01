@@ -129,7 +129,9 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
                 "status", // Status general si existe
                 "ftp/test", // 🆕 Test de conexión FTP (sin autenticación)
                 "ftp/upload", // 🆕 Upload FTP para testing (sin autenticación)
-                "ftp" // 🆕 Todas las rutas FTP para testing
+                "ftp", // 🆕 Todas las rutas FTP para testing
+                "imagenes/view", // 🆕 Ver imágenes sin autenticación
+                "imagenes/test" // 🆕 Test del sistema de imágenes
         };
 
         for (String publicPath : publicPaths) {
