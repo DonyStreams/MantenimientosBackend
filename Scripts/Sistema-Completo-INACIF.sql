@@ -258,6 +258,8 @@ CREATE TABLE Comentarios_Ticket (
     usuario_id INT NOT NULL,
     tipo_comentario_id INT NOT NULL,
     comentario NVARCHAR(MAX),
+    estado_anterior VARCHAR(50), -- Estado antes del cambio (opcional)
+    estado_nuevo VARCHAR(50),    -- Estado después del cambio (opcional)
     fecha_creacion DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (ticket_id) REFERENCES Tickets(id),
     FOREIGN KEY (usuario_id) REFERENCES Usuarios(id),
@@ -703,7 +705,7 @@ VALUES
 
 -- Tipos de Comentario
 INSERT INTO Tipos_Comentario (nombre)
-VALUES ('técnico'), ('seguimiento'), ('alerta'), ('resolución');
+VALUES ('técnico'), ('seguimiento'), ('alerta'), ('resolución'), ('sistema');
 
 -- Comentarios de Ticket
 INSERT INTO Comentarios_Ticket (ticket_id, usuario_id, tipo_comentario_id, comentario, fecha_creacion)
