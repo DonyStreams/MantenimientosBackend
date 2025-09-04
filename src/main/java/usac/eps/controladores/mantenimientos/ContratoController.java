@@ -341,4 +341,68 @@ public class ContratoController {
 
         return dto;
     }
+
+    /**
+     * 🆕 ENDPOINT ESPECÍFICO PARA PROGRAMACIONES
+     * Obtiene contratos vigentes (solo por fechas, sin filtrar por equipo/tipo)
+     */
+    @GET
+    @Path("/vigentes")
+    public Response getContratosVigentes(
+            @QueryParam("equipoId") Integer equipoId,
+            @QueryParam("tipoMantenimientoId") Integer tipoMantenimientoId) {
+        try {
+            System.out.println("🔍 Buscando contratos vigentes (sin filtrar por equipo/tipo)");
+
+            // 🚨 SIMPLIFICADO: Solo contratos vigentes por fechas
+            String sql = "SELECT DISTINCT c.id_contrato, c.descripcion, c.fecha_inicio, c.fecha_fin, " +
+                    "c.frecuencia, c.estado, " +
+                    "p.id_proveedor, p.nombre as proveedor_nombre, p.nit " +
+                    "FROM Contratos c " +
+                    "INNER JOIN Proveedores p ON c.id_proveedor = p.id_proveedor " +
+                    "WHERE c.estado = 1 " +
+                    "AND c.fecha_inicio <= GETDATE() " +
+                    "AND c.fecha_fin >= GETDATE() " +
+                    "ORDER BY c.fecha_fin ASC";
+
+            javax.persistence.Query query = em.createNativeQuery(sql);
+
+            @SuppressWarnings("unchecked")
+            List<Object[]> resultados = query.getResultList();
+
+            List<Map<String, Object>> contratosDTO = new ArrayList<>();
+
+            for (Object[] row : resultados) {
+                Map<String, Object> dto = new HashMap<>();
+                dto.put("idContrato", row[0]);
+                dto.put("descripcion", row[1] != null ? row[1].toString() : "Sin descripción");
+                dto.put("fechaInicio", row[2] != null ? row[2].toString() : null);
+                dto.put("fechaFin", row[3] != null ? row[3].toString() : null);
+                dto.put("frecuencia", row[4] != null ? row[4].toString() : "");
+                dto.put("estado", row[5] != null ? row[5] : false);
+
+                // Información del proveedor como strings simples
+                dto.put("idProveedor", row[6]);
+                dto.put("proveedorNombre", row[7] != null ? row[7].toString() : "Sin proveedor");
+                dto.put("proveedorNit", row[8] != null ? row[8].toString() : "");
+
+                // Descripción completa para el dropdown
+                String descripcion = row[1] != null ? row[1].toString() : "Sin descripción";
+                String proveedor = row[7] != null ? row[7].toString() : "Sin proveedor";
+                dto.put("descripcionCompleta", descripcion + " - " + proveedor);
+
+                contratosDTO.add(dto);
+            }
+
+            System.out.println("✅ Encontrados " + contratosDTO.size() + " contratos vigentes");
+            return Response.ok(contratosDTO).build();
+
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener contratos vigentes: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al obtener contratos vigentes\"}")
+                    .build();
+        }
+    }
 }
