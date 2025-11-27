@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
+import usac.eps.modelos.mantenimientos.ProgramacionMantenimientoModel;
+
 @Entity
 @Table(name = "Ejecuciones_Mantenimiento")
 public class EjecucionMantenimientoModel implements Serializable {
@@ -23,6 +25,17 @@ public class EjecucionMantenimientoModel implements Serializable {
     @Column(name = "fecha_ejecucion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaEjecucion;
+
+    @Column(name = "estado", length = 20)
+    private String estado;
+
+    @Column(name = "fecha_inicio_trabajo")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaInicioTrabajo;
+
+    @Column(name = "fecha_cierre")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCierre;
 
     @Column(name = "bitacora")
     private String bitacora;
@@ -47,6 +60,10 @@ public class EjecucionMantenimientoModel implements Serializable {
     @JoinColumn(name = "usuario_modificacion", referencedColumnName = "id")
     private UsuarioMantenimientoModel usuarioModificacion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_programacion", referencedColumnName = "id_programacion")
+    private ProgramacionMantenimientoModel programacion;
+
     // Getters y setters
     public Integer getIdEjecucion() { return idEjecucion; }
     public void setIdEjecucion(Integer idEjecucion) { this.idEjecucion = idEjecucion; }
@@ -56,6 +73,12 @@ public class EjecucionMantenimientoModel implements Serializable {
     public void setEquipo(EquipoModel equipo) { this.equipo = equipo; }
     public Date getFechaEjecucion() { return fechaEjecucion; }
     public void setFechaEjecucion(Date fechaEjecucion) { this.fechaEjecucion = fechaEjecucion; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+    public Date getFechaInicioTrabajo() { return fechaInicioTrabajo; }
+    public void setFechaInicioTrabajo(Date fechaInicioTrabajo) { this.fechaInicioTrabajo = fechaInicioTrabajo; }
+    public Date getFechaCierre() { return fechaCierre; }
+    public void setFechaCierre(Date fechaCierre) { this.fechaCierre = fechaCierre; }
     public String getBitacora() { return bitacora; }
     public void setBitacora(String bitacora) { this.bitacora = bitacora; }
     public UsuarioMantenimientoModel getUsuarioResponsable() { return usuarioResponsable; }
@@ -68,4 +91,6 @@ public class EjecucionMantenimientoModel implements Serializable {
     public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) { this.usuarioCreacion = usuarioCreacion; }
     public UsuarioMantenimientoModel getUsuarioModificacion() { return usuarioModificacion; }
     public void setUsuarioModificacion(UsuarioMantenimientoModel usuarioModificacion) { this.usuarioModificacion = usuarioModificacion; }
+    public ProgramacionMantenimientoModel getProgramacion() { return programacion; }
+    public void setProgramacion(ProgramacionMantenimientoModel programacion) { this.programacion = programacion; }
 }

@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface ProgramacionMantenimientoRepository extends EntityRepository<ProgramacionMantenimientoModel, Integer> {
 
+        ProgramacionMantenimientoModel findByIdProgramacion(Integer idProgramacion);
+
     /**
      * Busca todas las programaciones activas
      */

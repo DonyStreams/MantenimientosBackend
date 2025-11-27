@@ -2,6 +2,7 @@ package usac.eps.controladores.mantenimientos;
 
 import usac.eps.modelos.mantenimientos.TicketModel;
 import usac.eps.repositorios.mantenimientos.TicketRepository;
+import usac.eps.servicios.mantenimientos.BitacoraService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -24,6 +25,9 @@ public class TicketController {
 
     @Inject
     private TicketRepository ticketRepository;
+
+    @Inject
+    private BitacoraService bitacoraService;
 
     @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
@@ -215,6 +219,14 @@ public class TicketController {
             int result = insertQuery.executeUpdate();
 
             if (result > 0) {
+                // Obtener el ID del ticket recién creado
+                String getIdSQL = "SELECT IDENT_CURRENT('Tickets')";
+                Integer ticketId = ((Number) em.createNativeQuery(getIdSQL).getSingleResult()).intValue();
+                
+                // Registrar en bitácora
+                String descripcionCorta = descripcion.length() > 50 ? descripcion.substring(0, 47) + "..." : descripcion;
+                bitacoraService.registrarTicketCreado(equipoId, ticketId, descripcionCorta);
+                
                 System.out.println("✅ Ticket creado exitosamente");
                 return Response.status(Response.Status.CREATED)
                         .entity("{\"message\": \"Ticket creado exitosamente\", \"success\": true}")
@@ -373,21 +385,25 @@ public class TicketController {
 
     @DELETE
     @Path("/{id}")
+    @Transactional
     public Response delete(@PathParam("id") Integer id) {
         try {
-            System.out.println("🗑️ Desactivando ticket ID: " + id);
+            System.out.println("🗑️ Eliminando ticket ID: " + id);
 
-            // Soft delete: cambiar estado a "Inactivo" en lugar de eliminar físicamente
-            String updateSQL = "UPDATE Tickets SET estado = 'Inactivo', fecha_modificacion = GETDATE() WHERE id = ?";
+            // Primero eliminar comentarios asociados
+            String deleteComentariosSQL = "DELETE FROM Comentarios_Ticket WHERE ticket_id = ?";
+            em.createNativeQuery(deleteComentariosSQL).setParameter(1, id).executeUpdate();
 
-            Query updateQuery = em.createNativeQuery(updateSQL);
-            updateQuery.setParameter(1, id);
+            // Finalmente eliminar el ticket
+            String deleteTicketSQL = "DELETE FROM Tickets WHERE id = ?";
+            Query deleteQuery = em.createNativeQuery(deleteTicketSQL);
+            deleteQuery.setParameter(1, id);
 
-            int result = updateQuery.executeUpdate();
+            int result = deleteQuery.executeUpdate();
 
             if (result > 0) {
-                System.out.println("✅ Ticket desactivado correctamente (soft delete)");
-                return Response.ok("{\"message\": \"Ticket desactivado correctamente\", \"success\": true}")
+                System.out.println("✅ Ticket eliminado correctamente");
+                return Response.ok("{\"message\": \"Ticket eliminado correctamente\", \"success\": true}")
                         .build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -396,9 +412,10 @@ public class TicketController {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error al desactivar ticket: " + e.getMessage());
+            System.out.println("❌ Error al eliminar ticket: " + e.getMessage());
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\": \"Error al desactivar ticket: " + e.getMessage() + "\", \"success\": false}")
+                    .entity("{\"error\": \"Error al eliminar ticket: " + e.getMessage() + "\", \"success\": false}")
                     .build();
         }
     }
@@ -683,6 +700,22 @@ public class TicketController {
                         .setParameter(3, ticketId)
                         .executeUpdate();
 
+                // Si el ticket se cerró/resolvió, registrar en bitácora
+                if (nuevoEstado.equalsIgnoreCase("Cerrado") || nuevoEstado.equalsIgnoreCase("Resuelto")) {
+                    // Obtener equipo_id del ticket
+                    String getEquipoSQL = "SELECT equipo_id FROM Tickets WHERE id = ?";
+                    Integer equipoId = (Integer) em.createNativeQuery(getEquipoSQL)
+                            .setParameter(1, ticketId)
+                            .getSingleResult();
+                    
+                    if (equipoId != null) {
+                        String comentarioCorto = comentario != null && comentario.length() > 50 
+                                ? comentario.substring(0, 47) + "..." 
+                                : (comentario != null ? comentario : "Sin detalles");
+                        bitacoraService.registrarTicketResuelto(equipoId, ticketId, comentarioCorto);
+                    }
+                }
+
                 System.out.println("✅ Estado del ticket actualizado de '" + estadoActual + "' a '" + nuevoEstado + "'");
             }
 
@@ -741,6 +774,77 @@ public class TicketController {
             System.out.println("❌ Error al obtener evidencias: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener evidencias: " + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
+    @POST
+    @Path("/{id}/evidencias")
+    @Transactional
+    public Response addEvidencia(@PathParam("id") Integer ticketId, String jsonData) {
+        try {
+            System.out.println("📎 Agregando evidencia al ticket: " + ticketId);
+            System.out.println("Datos recibidos: " + jsonData);
+
+            // Extraer datos del JSON
+            String archivoUrl = extractJsonValue(jsonData, "archivoUrl");
+            String descripcion = extractJsonValue(jsonData, "descripcion");
+
+            if (archivoUrl == null || archivoUrl.trim().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\": \"La URL del archivo es obligatoria\", \"success\": false}")
+                        .build();
+            }
+
+            // Insertar evidencia
+            String insertSQL = "INSERT INTO Evidencias (entidad_relacionada, entidad_id, archivo_url, descripcion, fecha_creacion) " +
+                    "VALUES ('ticket', ?, ?, ?, GETDATE())";
+
+            em.createNativeQuery(insertSQL)
+                    .setParameter(1, ticketId)
+                    .setParameter(2, archivoUrl)
+                    .setParameter(3, descripcion != null ? descripcion : "")
+                    .executeUpdate();
+
+            System.out.println("✅ Evidencia agregada correctamente");
+            return Response.ok("{\"message\": \"Evidencia agregada correctamente\", \"success\": true}").build();
+
+        } catch (Exception e) {
+            System.out.println("❌ Error al agregar evidencia: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al agregar evidencia: " + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Path("/{ticketId}/evidencias/{evidenciaId}")
+    @Transactional
+    public Response deleteEvidencia(@PathParam("ticketId") Integer ticketId, @PathParam("evidenciaId") Integer evidenciaId) {
+        try {
+            System.out.println("🗑️ Eliminando evidencia " + evidenciaId + " del ticket " + ticketId);
+
+            String deleteSQL = "DELETE FROM Evidencias WHERE id = ? AND entidad_relacionada = 'ticket' AND entidad_id = ?";
+            int result = em.createNativeQuery(deleteSQL)
+                    .setParameter(1, evidenciaId)
+                    .setParameter(2, ticketId)
+                    .executeUpdate();
+
+            if (result > 0) {
+                System.out.println("✅ Evidencia eliminada correctamente");
+                return Response.ok("{\"message\": \"Evidencia eliminada correctamente\", \"success\": true}").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Evidencia no encontrada\", \"success\": false}")
+                        .build();
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Error al eliminar evidencia: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al eliminar evidencia: " + e.getMessage() + "\"}")
                     .build();
         }
     }

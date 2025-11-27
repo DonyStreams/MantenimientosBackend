@@ -26,6 +26,10 @@ public class ProgramacionMantenimientoModel implements Serializable {
     @JoinColumn(name = "id_tipo_mantenimiento", referencedColumnName = "id_tipo", nullable = false)
     private TipoMantenimientoModel tipoMantenimiento;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_contrato", referencedColumnName = "id_contrato")
+    private ContratoModel contrato;
+
     @Column(name = "frecuencia_dias", nullable = false)
     private Integer frecuenciaDias;
 
@@ -146,6 +150,14 @@ public class ProgramacionMantenimientoModel implements Serializable {
 
     public void setTipoMantenimiento(TipoMantenimientoModel tipoMantenimiento) {
         this.tipoMantenimiento = tipoMantenimiento;
+    }
+
+    public ContratoModel getContrato() {
+        return contrato;
+    }
+
+    public void setContrato(ContratoModel contrato) {
+        this.contrato = contrato;
     }
 
     public Integer getFrecuenciaDias() {

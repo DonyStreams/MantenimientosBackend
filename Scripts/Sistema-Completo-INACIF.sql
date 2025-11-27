@@ -211,17 +211,22 @@ CREATE TABLE Ejecuciones_Mantenimiento (
     id_contrato INT,
     id_equipo INT,
     fecha_ejecucion DATETIME DEFAULT GETDATE(),
+    estado VARCHAR(20) NOT NULL DEFAULT 'PROGRAMADO',
+    fecha_inicio_trabajo DATETIME NULL,
+    fecha_cierre DATETIME NULL,
     bitacora NVARCHAR(MAX), -- Cambiado de TEXT a NVARCHAR(MAX)
     usuario_responsable INT,
     fecha_creacion DATETIME DEFAULT GETDATE(),
     fecha_modificacion DATETIME,
     usuario_creacion INT,
     usuario_modificacion INT,
+    id_programacion INT NULL,
     FOREIGN KEY (id_contrato) REFERENCES Contratos(id_contrato),
     FOREIGN KEY (id_equipo) REFERENCES Equipos(id_equipo),
     FOREIGN KEY (usuario_responsable) REFERENCES Usuarios(id),
     FOREIGN KEY (usuario_creacion) REFERENCES Usuarios(id),
-    FOREIGN KEY (usuario_modificacion) REFERENCES Usuarios(id)
+    FOREIGN KEY (usuario_modificacion) REFERENCES Usuarios(id),
+    FOREIGN KEY (id_programacion) REFERENCES Programaciones_Mantenimiento(id_programacion)
 );
 
 -- TICKETS
@@ -692,10 +697,24 @@ VALUES
 (2, 3);
 
 -- Ejecuciones de Mantenimiento
-INSERT INTO Ejecuciones_Mantenimiento (id_contrato, id_equipo, fecha_ejecucion, bitacora, usuario_responsable, fecha_creacion, usuario_creacion)
+INSERT INTO Ejecuciones_Mantenimiento (
+    id_contrato,
+    id_equipo,
+    fecha_ejecucion,
+    estado,
+    fecha_inicio_trabajo,
+    fecha_cierre,
+    bitacora,
+    usuario_responsable,
+    fecha_creacion,
+    fecha_modificacion,
+    usuario_creacion,
+    usuario_modificacion,
+    id_programacion
+)
 VALUES 
-(1, 1, GETDATE(), 'Mantenimiento preventivo realizado correctamente. Se limpió la óptica y se ajustaron los mecanismos de enfoque.', 1, GETDATE(), 1),
-(1, 2, DATEADD(DAY, -7, GETDATE()), 'Revisión y limpieza de la centrífuga. Se verificó el balanceado del rotor.', 1, GETDATE(), 1);
+(1, 1, GETDATE(), 'COMPLETADO', DATEADD(HOUR, -2, GETDATE()), GETDATE(), 'Mantenimiento preventivo realizado correctamente. Se limpió la óptica y se ajustaron los mecanismos de enfoque.', 1, GETDATE(), GETDATE(), 1, NULL, NULL),
+(1, 2, DATEADD(DAY, -7, GETDATE()), 'COMPLETADO', DATEADD(DAY, -7, DATEADD(HOUR, -3, GETDATE())), DATEADD(DAY, -7, GETDATE()), 'Revisión y limpieza de la centrífuga. Se verificó el balanceado del rotor.', 1, GETDATE(), GETDATE(), 1, NULL, NULL);
 
 -- Tickets
 INSERT INTO Tickets (equipo_id, usuario_creador_id, descripcion, prioridad, estado, fecha_creacion, usuario_creacion)

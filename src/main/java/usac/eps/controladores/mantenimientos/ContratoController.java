@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -402,6 +403,51 @@ public class ContratoController {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener contratos vigentes\"}")
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public Response delete(@PathParam("id") Integer id) {
+        try {
+            System.out.println("🗑️ Intentando eliminar contrato ID: " + id);
+            
+            ContratoModel contrato = contratoRepository.findByIdContrato(id);
+            if (contrato == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Contrato no encontrado\", \"success\": false}")
+                        .build();
+            }
+
+            // Primero eliminar documentos asociados
+            String deleteDocumentosSQL = "DELETE FROM Documentos_Contrato WHERE id_contrato = ?";
+            int documentosEliminados = em.createNativeQuery(deleteDocumentosSQL)
+                    .setParameter(1, id)
+                    .executeUpdate();
+            System.out.println("🗑️ Documentos eliminados: " + documentosEliminados);
+
+            // Luego eliminar relaciones equipo-contrato
+            String deleteRelacionesSQL = "DELETE FROM Contrato_Equipo WHERE id_contrato = ?";
+            int relacionesEliminadas = em.createNativeQuery(deleteRelacionesSQL)
+                    .setParameter(1, id)
+                    .executeUpdate();
+            System.out.println("🗑️ Relaciones contrato-equipo eliminadas: " + relacionesEliminadas);
+
+            // Finalmente eliminar el contrato usando EntityManager (merge antes de remove)
+            ContratoModel managedContrato = em.merge(contrato);
+            em.remove(managedContrato);
+            em.flush();
+            System.out.println("✅ Contrato eliminado correctamente");
+
+            return Response.ok("{\"message\": \"Contrato y documentos asociados eliminados correctamente\", \"success\": true}").build();
+
+        } catch (Exception e) {
+            System.out.println("❌ Error al eliminar contrato: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al eliminar contrato: " + e.getMessage() + "\", \"success\": false}")
                     .build();
         }
     }

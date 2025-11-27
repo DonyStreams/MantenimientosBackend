@@ -21,12 +21,28 @@ public class EvidenciaModel implements Serializable {
     @Column(name = "archivo_url", length = 500)
     private String archivoUrl;
 
+    @Column(name = "nombre_archivo", length = 255)
+    private String nombreArchivo;
+
+    @Column(name = "nombre_original", length = 255)
+    private String nombreOriginal;
+
+    @Column(name = "tipo_archivo", length = 100)
+    private String tipoArchivo;
+
+    @Column(name = "tamanio")
+    private Long tamanio;
+
     @Column(name = "descripcion")
     private String descripcion;
 
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_creacion", referencedColumnName = "id")
+    private UsuarioMantenimientoModel usuarioCreacion;
 
     // Getters y setters
     public Integer getId() {
@@ -61,6 +77,38 @@ public class EvidenciaModel implements Serializable {
         this.archivoUrl = archivoUrl;
     }
 
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
+    }
+
+    public String getNombreOriginal() {
+        return nombreOriginal;
+    }
+
+    public void setNombreOriginal(String nombreOriginal) {
+        this.nombreOriginal = nombreOriginal;
+    }
+
+    public String getTipoArchivo() {
+        return tipoArchivo;
+    }
+
+    public void setTipoArchivo(String tipoArchivo) {
+        this.tipoArchivo = tipoArchivo;
+    }
+
+    public Long getTamanio() {
+        return tamanio;
+    }
+
+    public void setTamanio(Long tamanio) {
+        this.tamanio = tamanio;
+    }
+
     public String getDescripcion() {
         return descripcion;
     }
@@ -75,5 +123,13 @@ public class EvidenciaModel implements Serializable {
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public UsuarioMantenimientoModel getUsuarioCreacion() {
+        return usuarioCreacion;
+    }
+
+    public void setUsuarioCreacion(UsuarioMantenimientoModel usuarioCreacion) {
+        this.usuarioCreacion = usuarioCreacion;
     }
 }

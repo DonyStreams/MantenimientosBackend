@@ -52,12 +52,12 @@ public class CORSResponseFilter implements Filter {
 
                 // Configurar headers CORS para el frontend Angular
                 response.addHeader("Access-Control-Allow-Headers",
-                                "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Requested-With, Cache-Control");
+                                "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, X-Requested-With, Cache-Control");
                 response.addHeader("Access-Control-Expose-Headers",
-                                "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, Content-Disposition");
+                                "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, Content-Disposition");
                 response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
                 response.addHeader("Access-Control-Allow-Methods",
-                                "GET, OPTIONS, HEAD, PUT, POST, DELETE");
+                                "GET, OPTIONS, HEAD, PUT, POST, DELETE, PATCH");
                 response.addHeader("Access-Control-Allow-Credentials", "true");
                 response.addHeader("Access-Control-Max-Age", "1209600");
 
