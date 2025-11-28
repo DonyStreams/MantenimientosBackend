@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Path("/historial-equipos")
@@ -20,10 +21,10 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class HistorialEquipoController {
-    
+
     @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
-    
+
     @Inject
     private HistorialEquipoRepository historialEquipoRepository;
 
@@ -32,20 +33,20 @@ public class HistorialEquipoController {
         // Usar query con JOIN FETCH para cargar los equipos eagerly
         String jpql = "SELECT h FROM HistorialEquipoModel h LEFT JOIN FETCH h.equipo ORDER BY h.fechaRegistro DESC";
         List<HistorialEquipoModel> historial = em.createQuery(jpql, HistorialEquipoModel.class).getResultList();
-        
+
         return historial.stream()
-            .map(h -> new HistorialEquipoDTO(
-                h.getIdHistorial(),
-                h.getEquipo() != null ? h.getEquipo().getIdEquipo() : null,
-                h.getEquipo() != null ? h.getEquipo().getNombre() : "Equipo eliminado",
-                h.getEquipo() != null ? h.getEquipo().getNumeroSerie() : null,
-                h.getFechaRegistro(),
-                h.getDescripcion(),
-                h.getTipoCambio(),          // NUEVO
-                h.getUsuarioId(),           // NUEVO
-                h.getUsuarioNombre()        // NUEVO
-            ))
-            .collect(Collectors.toList());
+                .map(h -> new HistorialEquipoDTO(
+                        h.getIdHistorial(),
+                        h.getEquipo() != null ? h.getEquipo().getIdEquipo() : null,
+                        h.getEquipo() != null ? h.getEquipo().getNombre() : "Equipo eliminado",
+                        h.getEquipo() != null ? h.getEquipo().getNumeroSerie() : null,
+                        h.getFechaRegistro(),
+                        h.getDescripcion(),
+                        h.getTipoCambio(), // NUEVO
+                        h.getUsuarioId(), // NUEVO
+                        h.getUsuarioNombre() // NUEVO
+                ))
+                .collect(Collectors.toList());
     }
 
     @GET
@@ -79,17 +80,54 @@ public class HistorialEquipoController {
                         .entity("{\"error\": \"Registro no encontrado\"}")
                         .build();
             }
-            
+
             // Merge para gestionar la entidad y luego remover
             HistorialEquipoModel managedHistorial = em.merge(historial);
             em.remove(managedHistorial);
             em.flush();
-            
+
             return Response.noContent().build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar registro: " + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Path("/batch")
+    @Transactional
+    public Response deleteMultiple(Map<String, Object> requestBody) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<Integer> ids = (List<Integer>) requestBody.get("ids");
+
+            if (ids == null || ids.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\": \"Lista de IDs no puede estar vacía\"}")
+                        .build();
+            }
+
+            int deletedCount = 0;
+            for (Integer id : ids) {
+                HistorialEquipoModel historial = em.find(HistorialEquipoModel.class, id);
+                if (historial != null) {
+                    em.remove(historial);
+                    deletedCount++;
+                }
+            }
+
+            em.flush();
+
+            return Response.ok()
+                    .entity("{\"message\": \"Se eliminaron " + deletedCount + " registros correctamente\"}")
+                    .build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al eliminar registros: " + e.getMessage() + "\"}")
                     .build();
         }
     }

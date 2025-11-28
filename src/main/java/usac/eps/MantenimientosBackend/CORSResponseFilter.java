@@ -51,11 +51,24 @@ public class CORSResponseFilter implements Filter {
                 System.out.println("========================");
 
                 // Configurar headers CORS para el frontend Angular
+                // Obtener el origen de la petición
+                String origin = request.getHeader("Origin");
+                
+                // Lista de orígenes permitidos (configurable)
+                String allowedOrigins = "http://localhost:4200,https://tu-dominio-produccion.com";
+                
+                // Si el origen está en la lista, permitirlo
+                if (origin != null && allowedOrigins.contains(origin)) {
+                    response.addHeader("Access-Control-Allow-Origin", origin);
+                } else if (origin == null) {
+                    // Si no hay origen (peticiones directas), usar localhost por defecto
+                    response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+                }
+                
                 response.addHeader("Access-Control-Allow-Headers",
                                 "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, X-Requested-With, Cache-Control");
                 response.addHeader("Access-Control-Expose-Headers",
                                 "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, Content-Disposition");
-                response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
                 response.addHeader("Access-Control-Allow-Methods",
                                 "GET, OPTIONS, HEAD, PUT, POST, DELETE, PATCH");
                 response.addHeader("Access-Control-Allow-Credentials", "true");

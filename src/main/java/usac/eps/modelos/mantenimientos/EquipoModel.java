@@ -61,6 +61,14 @@ public class EquipoModel implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
 
+    @Column(name = "id_area")
+    private Integer idArea;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_area", insertable = false, updatable = false)
+    @JsonbTransient
+    private AreaModel area;
+
     // Getters y setters
     public Integer getIdEquipo() {
         return idEquipo;
@@ -188,5 +196,21 @@ public class EquipoModel implements Serializable {
 
     public void setFechaModificacion(Date fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
+    }
+
+    public Integer getIdArea() {
+        return idArea;
+    }
+
+    public void setIdArea(Integer idArea) {
+        this.idArea = idArea;
+    }
+
+    public AreaModel getArea() {
+        return area;
+    }
+
+    public void setArea(AreaModel area) {
+        this.area = area;
     }
 }
