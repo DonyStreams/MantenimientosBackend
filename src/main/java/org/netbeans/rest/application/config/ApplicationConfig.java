@@ -48,6 +48,7 @@ public class ApplicationConfig extends Application {
         resources.add(usac.eps.controladores.mantenimientos.UsuarioController.class);
         resources.add(usac.eps.controladores.mantenimientos.FtpController.class);
         resources.add(usac.eps.controladores.mantenimientos.ImagenController.class);
+        resources.add(usac.eps.controladores.mantenimientos.ReportesController.class);
         // // Temporalmente comentado por problemas de compilación
         resources.add(usac.eps.controladores.mantenimientos.ArchivoController.class);
 

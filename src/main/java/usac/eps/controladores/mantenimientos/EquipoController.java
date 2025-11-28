@@ -1,6 +1,7 @@
 package usac.eps.controladores.mantenimientos;
 
 import usac.eps.modelos.mantenimientos.EquipoModel;
+import usac.eps.modelos.mantenimientos.AreaModel;
 import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
@@ -72,7 +73,21 @@ public class EquipoController {
                 equipoMap.put("condicionesOperacion", equipo.getCondicionesOperacion());
                 equipoMap.put("descripcion", equipo.getDescripcion());
                 equipoMap.put("idArea", equipo.getIdArea());
-                equipoMap.put("areaNombre", equipo.getArea() != null ? equipo.getArea().getNombre() : null);
+
+                // Obtener nombre del área
+                String areaNombre = null;
+                if (equipo.getArea() != null) {
+                    areaNombre = equipo.getArea().getNombre();
+                } else if (equipo.getIdArea() != null) {
+                    // Si el área no se cargó con el FETCH, buscarla manualmente
+                    try {
+                        AreaModel area = entityManager.find(AreaModel.class, equipo.getIdArea());
+                        areaNombre = area != null ? area.getNombre() : null;
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.WARNING, "No se pudo cargar área con ID: " + equipo.getIdArea(), ex);
+                    }
+                }
+                equipoMap.put("areaNombre", areaNombre);
 
                 result.add(equipoMap);
             }
