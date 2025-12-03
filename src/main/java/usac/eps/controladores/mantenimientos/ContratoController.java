@@ -141,7 +141,7 @@ public class ContratoController {
             ContratoModel contrato = new ContratoModel();
             contrato.setDescripcion(contratoInput.getDescripcion());
             contrato.setFrecuencia(contratoInput.getFrecuencia());
-            contrato.setEstado(true); // Nuevo contrato siempre activo
+            contrato.setEstado(contratoInput.getEstado() != null ? contratoInput.getEstado() : true); // Respetar estado del frontend
             contrato.setIdEstado(1); // Estado inicial: PLANIFICADO
             contrato.setFechaInicio(contratoInput.getFechaInicio());
             contrato.setFechaFin(contratoInput.getFechaFin());

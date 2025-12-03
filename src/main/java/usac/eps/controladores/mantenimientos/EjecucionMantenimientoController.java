@@ -44,8 +44,10 @@ import java.util.stream.Collectors;
 @RequestScoped
 public class EjecucionMantenimientoController {
     private static final Set<String> ESTADOS_VALIDOS = Set.of("PROGRAMADO", "EN_PROCESO", "COMPLETADO", "CANCELADO");
-    private static final String EVIDENCIAS_DIR = System.getProperty("user.home") + File.separator + "inacif-evidencias" + File.separator + "ejecuciones";
-    private static final String[] ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".doc", ".docx", ".xls", ".xlsx"};
+    private static final String EVIDENCIAS_DIR = System.getProperty("user.home") + File.separator + "inacif-evidencias"
+            + File.separator + "ejecuciones";
+    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".doc",
+            ".docx", ".xls", ".xlsx" };
 
     @PersistenceContext
     private EntityManager em;
@@ -80,7 +82,7 @@ public class EjecucionMantenimientoController {
         }
 
         return ejecuciones.stream()
-            .map(EjecucionMantenimientoMapper::toDTO)
+                .map(EjecucionMantenimientoMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -103,7 +105,8 @@ public class EjecucionMantenimientoController {
             actualizarEntidadConRequest(ejecucion, request, true);
 
             ejecucionMantenimientoRepository.save(ejecucion);
-            return Response.status(Response.Status.CREATED).entity(EjecucionMantenimientoMapper.toDTO(ejecucion)).build();
+            return Response.status(Response.Status.CREATED).entity(EjecucionMantenimientoMapper.toDTO(ejecucion))
+                    .build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
@@ -154,17 +157,17 @@ public class EjecucionMantenimientoController {
             int evidenciasEliminadas = em.createNativeQuery(sqlDeleteEvidencias)
                     .setParameter(1, id)
                     .executeUpdate();
-            
+
             System.out.println("🗑️ Eliminadas " + evidenciasEliminadas + " evidencias de la ejecución " + id);
 
             // Hacer merge de la entidad para asegurar que esté managed, luego eliminar
             EjecucionMantenimientoModel managedEjecucion = em.merge(ejecucion);
             em.remove(managedEjecucion);
             em.flush();
-            
+
             System.out.println("✅ Ejecución " + id + " eliminada correctamente");
             return Response.noContent().build();
-            
+
         } catch (Exception e) {
             System.err.println("❌ Error al eliminar ejecución " + id + ": " + e.getMessage());
             e.printStackTrace();
@@ -191,6 +194,8 @@ public class EjecucionMantenimientoController {
         }
 
         try {
+            String estadoAnterior = ejecucion.getEstado();
+
             EjecucionMantenimientoRequest request = new EjecucionMantenimientoRequest();
             request.setEstado(estadoRequest.getEstado());
             request.setBitacora(estadoRequest.getBitacora());
@@ -208,6 +213,15 @@ public class EjecucionMantenimientoController {
             actualizarEntidadConRequest(ejecucion, request, false);
             ejecucionMantenimientoRepository.save(ejecucion);
 
+            // 🔥 NUEVO: Actualizar programación cuando se completa la ejecución
+            if ("COMPLETADO".equalsIgnoreCase(estadoRequest.getEstado()) &&
+                    !"COMPLETADO".equalsIgnoreCase(estadoAnterior) &&
+                    ejecucion.getProgramacion() != null) {
+
+                System.out.println("✅ Ejecución completada - Actualizando programación...");
+                actualizarProgramacionDespuesDeEjecucion(ejecucion);
+            }
+
             return Response.ok(EjecucionMantenimientoMapper.toDTO(ejecucion)).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -222,7 +236,7 @@ public class EjecucionMantenimientoController {
     @Path("/contrato/{idContrato}")
     public List<EjecucionMantenimientoDTO> getByContrato(@PathParam("idContrato") Integer idContrato) {
         return ejecucionMantenimientoRepository.findByContratoIdContrato(idContrato).stream()
-            .map(EjecucionMantenimientoMapper::toDTO)
+                .map(EjecucionMantenimientoMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -288,7 +302,7 @@ public class EjecucionMantenimientoController {
 
         if (request.getIdProgramacion() != null) {
             ProgramacionMantenimientoModel programacion = programacionRepository
-                .findByIdProgramacion(request.getIdProgramacion());
+                    .findByIdProgramacion(request.getIdProgramacion());
             if (programacion == null) {
                 throw new IllegalArgumentException("Programación no encontrada");
             }
@@ -454,14 +468,16 @@ public class EjecucionMantenimientoController {
             StringBuilder json = new StringBuilder("[");
             for (int i = 0; i < rows.size(); i++) {
                 Object[] row = rows.get(i);
-                if (i > 0) json.append(",");
+                if (i > 0)
+                    json.append(",");
                 json.append("{")
                         .append("\"id\": ").append(row[0]).append(",")
                         .append("\"nombreArchivo\": \"").append(row[1] != null ? row[1] : "").append("\",")
                         .append("\"nombreOriginal\": \"").append(row[2] != null ? row[2] : "").append("\",")
                         .append("\"tipoArchivo\": \"").append(row[3] != null ? row[3] : "").append("\",")
                         .append("\"tamanio\": ").append(row[4] != null ? row[4] : 0).append(",")
-                        .append("\"descripcion\": \"").append(row[5] != null ? escapeJson(row[5].toString()) : "").append("\",")
+                        .append("\"descripcion\": \"").append(row[5] != null ? escapeJson(row[5].toString()) : "")
+                        .append("\",")
                         .append("\"archivoUrl\": \"").append(row[6] != null ? row[6] : "").append("\",")
                         .append("\"fechaCreacion\": \"").append(row[7] != null ? row[7] : "").append("\"")
                         .append("}");
@@ -479,7 +495,7 @@ public class EjecucionMantenimientoController {
 
     @POST
     @Path("/{id}/evidencias/upload")
-    @Consumes({MediaType.APPLICATION_OCTET_STREAM, MediaType.MULTIPART_FORM_DATA, "image/*", "application/*"})
+    @Consumes({ MediaType.APPLICATION_OCTET_STREAM, MediaType.MULTIPART_FORM_DATA, "image/*", "application/*" })
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response uploadEvidencia(
@@ -527,7 +543,8 @@ public class EjecucionMantenimientoController {
             long fileSize = Files.size(filePath);
 
             String tipoMime = detectMimeType(fileName);
-            String archivoUrl = "/MantenimientosBackend/api/ejecuciones-mantenimiento/" + ejecucionId + "/evidencias/download/" + uniqueFileName;
+            String archivoUrl = "/MantenimientosBackend/api/ejecuciones-mantenimiento/" + ejecucionId
+                    + "/evidencias/download/" + uniqueFileName;
             String desc = descripcion != null ? java.net.URLDecoder.decode(descripcion, "UTF-8") : "";
 
             // Guardar en BD
@@ -563,8 +580,10 @@ public class EjecucionMantenimientoController {
                     .build();
         } finally {
             try {
-                if (inputStream != null) inputStream.close();
-            } catch (IOException ignored) {}
+                if (inputStream != null)
+                    inputStream.close();
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -649,7 +668,8 @@ public class EjecucionMantenimientoController {
     private boolean isValidEvidenciaFile(String fileName) {
         String lower = fileName.toLowerCase();
         for (String ext : ALLOWED_EXTENSIONS) {
-            if (lower.endsWith(ext)) return true;
+            if (lower.endsWith(ext))
+                return true;
         }
         return false;
     }
@@ -666,20 +686,81 @@ public class EjecucionMantenimientoController {
 
     private String detectMimeType(String fileName) {
         String lower = fileName.toLowerCase();
-        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
-        if (lower.endsWith(".png")) return "image/png";
-        if (lower.endsWith(".gif")) return "image/gif";
-        if (lower.endsWith(".webp")) return "image/webp";
-        if (lower.endsWith(".pdf")) return "application/pdf";
-        if (lower.endsWith(".doc")) return "application/msword";
-        if (lower.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-        if (lower.endsWith(".xls")) return "application/vnd.ms-excel";
-        if (lower.endsWith(".xlsx")) return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg"))
+            return "image/jpeg";
+        if (lower.endsWith(".png"))
+            return "image/png";
+        if (lower.endsWith(".gif"))
+            return "image/gif";
+        if (lower.endsWith(".webp"))
+            return "image/webp";
+        if (lower.endsWith(".pdf"))
+            return "application/pdf";
+        if (lower.endsWith(".doc"))
+            return "application/msword";
+        if (lower.endsWith(".docx"))
+            return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        if (lower.endsWith(".xls"))
+            return "application/vnd.ms-excel";
+        if (lower.endsWith(".xlsx"))
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         return "application/octet-stream";
     }
 
     private String escapeJson(String text) {
-        if (text == null) return "";
+        if (text == null)
+            return "";
         return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
+    }
+
+    /**
+     * Actualiza la programación después de completar una ejecución
+     * - Actualiza fechaUltimoMantenimiento con la fecha de la ejecución
+     * - Recalcula fechaProximoMantenimiento sumando la frecuencia
+     */
+    private void actualizarProgramacionDespuesDeEjecucion(EjecucionMantenimientoModel ejecucion) {
+        try {
+            ProgramacionMantenimientoModel programacion = ejecucion.getProgramacion();
+            if (programacion == null) {
+                System.out.println("⚠️ La ejecución no tiene programación asociada");
+                return;
+            }
+
+            // Usar la fecha de cierre si existe, si no la fecha de ejecución
+            Date fechaRealizada = ejecucion.getFechaCierre() != null
+                    ? ejecucion.getFechaCierre()
+                    : ejecucion.getFechaEjecucion();
+
+            if (fechaRealizada == null) {
+                System.out.println("⚠️ No hay fecha de ejecución para actualizar");
+                return;
+            }
+
+            System.out.println("📅 Actualizando programación ID: " + programacion.getIdProgramacion());
+            System.out.println("📅 Fecha último mantenimiento anterior: " + programacion.getFechaUltimoMantenimiento());
+            System.out.println("📅 Nueva fecha último mantenimiento: " + fechaRealizada);
+
+            // Actualizar fecha del último mantenimiento
+            programacion.setFechaUltimoMantenimiento(fechaRealizada);
+
+            // Recalcular próximo mantenimiento
+            programacion.calcularProximoMantenimiento();
+
+            System.out.println("📅 Nueva fecha próximo mantenimiento: " + programacion.getFechaProximoMantenimiento());
+
+            // Actualizar auditoría
+            programacion.setFechaModificacion(new Date());
+
+            // Persistir cambios
+            em.merge(programacion);
+            em.flush();
+
+            System.out.println("✅ Programación actualizada exitosamente");
+
+        } catch (Exception e) {
+            System.err.println("❌ Error actualizando programación: " + e.getMessage());
+            e.printStackTrace();
+            // No lanzamos excepción para no afectar el flujo principal
+        }
     }
 }

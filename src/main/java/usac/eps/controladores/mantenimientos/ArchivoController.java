@@ -162,20 +162,36 @@ public class ArchivoController {
 
     @DELETE
     @Path("/delete/{fileName}")
+    @Transactional
     public Response deleteFile(@PathParam("fileName") String fileName) {
         try {
             System.out.println("🗑️ Eliminando archivo: " + fileName);
 
+            // Primero eliminar de la base de datos
+            try {
+                String deleteSql = "DELETE FROM Documentos_Contrato WHERE ruta_archivo = ?";
+                int rowsAffected = em.createNativeQuery(deleteSql)
+                        .setParameter(1, fileName)
+                        .executeUpdate();
+
+                System.out.println("✅ Registros eliminados de BD: " + rowsAffected);
+            } catch (Exception dbEx) {
+                System.out.println("⚠️ Error al eliminar de BD: " + dbEx.getMessage());
+                // Continuar para eliminar el archivo físico
+            }
+
+            // Luego eliminar el archivo físico
             java.nio.file.Path filePath = Paths.get(BASE_DIR, fileName);
 
             if (!Files.exists(filePath)) {
+                System.out.println("⚠️ Archivo físico no encontrado: " + fileName);
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"error\": \"Archivo no encontrado: " + fileName + "\"}")
                         .build();
             }
 
             Files.delete(filePath);
-            System.out.println("✅ Archivo eliminado: " + fileName);
+            System.out.println("✅ Archivo físico eliminado: " + fileName);
 
             return Response.ok("{\"success\": true, \"message\": \"Archivo eliminado correctamente\"}")
                     .build();
