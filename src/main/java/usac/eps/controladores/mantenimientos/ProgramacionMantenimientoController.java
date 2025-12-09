@@ -69,19 +69,132 @@ public class ProgramacionMantenimientoController {
     private HttpServletRequest request;
 
     /**
-     * Obtiene todas las programaciones activas
+     * Obtiene todas las programaciones con datos relacionados
      */
     @GET
     public Response getAllProgramaciones() {
         try {
-            // Obtener TODAS las programaciones (no solo activas) para la gestión
+            // Obtener TODAS las programaciones para la gestión
             List<ProgramacionMantenimientoModel> programaciones = programacionRepository.findAll();
-            return Response.ok(programaciones).build();
+
+            // Construir respuesta JSON manualmente para incluir datos relacionados
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("[");
+
+            for (int i = 0; i < programaciones.size(); i++) {
+                ProgramacionMantenimientoModel p = programaciones.get(i);
+                if (i > 0)
+                    jsonBuilder.append(",");
+
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"idProgramacion\":").append(p.getIdProgramacion()).append(",");
+                jsonBuilder.append("\"frecuenciaDias\":").append(p.getFrecuenciaDias()).append(",");
+                jsonBuilder.append("\"diasAlertaPrevia\":")
+                        .append(p.getDiasAlertaPrevia() != null ? p.getDiasAlertaPrevia() : 7).append(",");
+                jsonBuilder.append("\"activa\":").append(p.getActiva()).append(",");
+                jsonBuilder.append("\"observaciones\":\"").append(escapeJson(p.getObservaciones())).append("\",");
+
+                // Fechas
+                jsonBuilder.append("\"fechaUltimoMantenimiento\":")
+                        .append(p.getFechaUltimoMantenimiento() != null
+                                ? "\"" + formatDate(p.getFechaUltimoMantenimiento()) + "\""
+                                : "null")
+                        .append(",");
+                jsonBuilder.append("\"fechaProximoMantenimiento\":")
+                        .append(p.getFechaProximoMantenimiento() != null
+                                ? "\"" + formatDate(p.getFechaProximoMantenimiento()) + "\""
+                                : "null")
+                        .append(",");
+
+                // Equipo
+                jsonBuilder.append("\"equipo\":");
+                if (p.getEquipo() != null) {
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"idEquipo\":").append(p.getEquipo().getIdEquipo()).append(",");
+                    jsonBuilder.append("\"nombre\":\"").append(escapeJson(p.getEquipo().getNombre())).append("\",");
+                    jsonBuilder.append("\"codigoInacif\":\"").append(escapeJson(p.getEquipo().getCodigoInacif()))
+                            .append("\",");
+                    jsonBuilder.append("\"ubicacion\":\"").append(escapeJson(p.getEquipo().getUbicacion()))
+                            .append("\"");
+                    jsonBuilder.append("}");
+                } else {
+                    jsonBuilder.append("null");
+                }
+                jsonBuilder.append(",");
+
+                // Tipo de Mantenimiento
+                jsonBuilder.append("\"tipoMantenimiento\":");
+                if (p.getTipoMantenimiento() != null) {
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"idTipo\":").append(p.getTipoMantenimiento().getIdTipo()).append(",");
+                    jsonBuilder.append("\"nombre\":\"").append(escapeJson(p.getTipoMantenimiento().getNombre()))
+                            .append("\"");
+                    jsonBuilder.append("}");
+                } else {
+                    jsonBuilder.append("null");
+                }
+                jsonBuilder.append(",");
+
+                // Contrato
+                jsonBuilder.append("\"contrato\":");
+                if (p.getContrato() != null) {
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"idContrato\":").append(p.getContrato().getIdContrato()).append(",");
+                    jsonBuilder.append("\"descripcion\":\"").append(escapeJson(p.getContrato().getDescripcion()))
+                            .append("\",");
+                    // Proveedor del contrato
+                    jsonBuilder.append("\"proveedor\":");
+                    if (p.getContrato().getProveedor() != null) {
+                        jsonBuilder.append("{");
+                        jsonBuilder.append("\"idProveedor\":").append(p.getContrato().getProveedor().getIdProveedor())
+                                .append(",");
+                        jsonBuilder.append("\"nombre\":\"")
+                                .append(escapeJson(p.getContrato().getProveedor().getNombre())).append("\"");
+                        jsonBuilder.append("}");
+                    } else {
+                        jsonBuilder.append("null");
+                    }
+                    jsonBuilder.append(",");
+                    jsonBuilder.append("\"fechaInicio\":")
+                            .append(p.getContrato().getFechaInicio() != null
+                                    ? "\"" + formatDate(p.getContrato().getFechaInicio()) + "\""
+                                    : "null")
+                            .append(",");
+                    jsonBuilder.append("\"fechaFin\":")
+                            .append(p.getContrato().getFechaFin() != null
+                                    ? "\"" + formatDate(p.getContrato().getFechaFin()) + "\""
+                                    : "null");
+                    jsonBuilder.append("}");
+                } else {
+                    jsonBuilder.append("null");
+                }
+
+                jsonBuilder.append("}");
+            }
+
+            jsonBuilder.append("]");
+
+            return Response.ok(jsonBuilder.toString()).build();
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error al obtener programaciones: " + e.getMessage())
+                    .entity("{\"error\":\"Error al obtener programaciones: " + e.getMessage() + "\"}")
                     .build();
         }
+    }
+
+    // Helpers para formateo
+    private String escapeJson(String text) {
+        if (text == null)
+            return "";
+        return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
+    }
+
+    private String formatDate(java.util.Date date) {
+        if (date == null)
+            return null;
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
     }
 
     /**
@@ -132,22 +245,110 @@ public class ProgramacionMantenimientoController {
     }
 
     /**
-     * Obtiene una programación por ID
+     * Obtiene una programación por ID con datos relacionados
      */
     @GET
     @Path("/{id}")
     public Response getProgramacion(@PathParam("id") Integer id) {
         try {
-            ProgramacionMantenimientoModel programacion = programacionRepository.findBy(id);
-            if (programacion == null) {
+            ProgramacionMantenimientoModel p = programacionRepository.findBy(id);
+            if (p == null) {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Programación no encontrada")
+                        .entity("{\"error\":\"Programación no encontrada\"}")
                         .build();
             }
-            return Response.ok(programacion).build();
+
+            // Construir respuesta JSON manualmente para incluir datos relacionados
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("{");
+            jsonBuilder.append("\"idProgramacion\":").append(p.getIdProgramacion()).append(",");
+            jsonBuilder.append("\"frecuenciaDias\":").append(p.getFrecuenciaDias()).append(",");
+            jsonBuilder.append("\"diasAlertaPrevia\":")
+                    .append(p.getDiasAlertaPrevia() != null ? p.getDiasAlertaPrevia() : 7).append(",");
+            jsonBuilder.append("\"activa\":").append(p.getActiva()).append(",");
+            jsonBuilder.append("\"observaciones\":\"").append(escapeJson(p.getObservaciones())).append("\",");
+
+            // Fechas
+            jsonBuilder.append("\"fechaUltimoMantenimiento\":")
+                    .append(p.getFechaUltimoMantenimiento() != null
+                            ? "\"" + formatDate(p.getFechaUltimoMantenimiento()) + "\""
+                            : "null")
+                    .append(",");
+            jsonBuilder.append("\"fechaProximoMantenimiento\":")
+                    .append(p.getFechaProximoMantenimiento() != null
+                            ? "\"" + formatDate(p.getFechaProximoMantenimiento()) + "\""
+                            : "null")
+                    .append(",");
+
+            // Equipo
+            jsonBuilder.append("\"equipo\":");
+            if (p.getEquipo() != null) {
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"idEquipo\":").append(p.getEquipo().getIdEquipo()).append(",");
+                jsonBuilder.append("\"nombre\":\"").append(escapeJson(p.getEquipo().getNombre())).append("\",");
+                jsonBuilder.append("\"codigoInacif\":\"").append(escapeJson(p.getEquipo().getCodigoInacif()))
+                        .append("\",");
+                jsonBuilder.append("\"ubicacion\":\"").append(escapeJson(p.getEquipo().getUbicacion())).append("\"");
+                jsonBuilder.append("}");
+            } else {
+                jsonBuilder.append("null");
+            }
+            jsonBuilder.append(",");
+
+            // Tipo de Mantenimiento
+            jsonBuilder.append("\"tipoMantenimiento\":");
+            if (p.getTipoMantenimiento() != null) {
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"idTipo\":").append(p.getTipoMantenimiento().getIdTipo()).append(",");
+                jsonBuilder.append("\"nombre\":\"").append(escapeJson(p.getTipoMantenimiento().getNombre()))
+                        .append("\"");
+                jsonBuilder.append("}");
+            } else {
+                jsonBuilder.append("null");
+            }
+            jsonBuilder.append(",");
+
+            // Contrato
+            jsonBuilder.append("\"contrato\":");
+            if (p.getContrato() != null) {
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"idContrato\":").append(p.getContrato().getIdContrato()).append(",");
+                jsonBuilder.append("\"descripcion\":\"").append(escapeJson(p.getContrato().getDescripcion()))
+                        .append("\",");
+                // Proveedor del contrato
+                jsonBuilder.append("\"proveedor\":");
+                if (p.getContrato().getProveedor() != null) {
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"idProveedor\":").append(p.getContrato().getProveedor().getIdProveedor())
+                            .append(",");
+                    jsonBuilder.append("\"nombre\":\"").append(escapeJson(p.getContrato().getProveedor().getNombre()))
+                            .append("\"");
+                    jsonBuilder.append("}");
+                } else {
+                    jsonBuilder.append("null");
+                }
+                jsonBuilder.append(",");
+                jsonBuilder.append("\"fechaInicio\":")
+                        .append(p.getContrato().getFechaInicio() != null
+                                ? "\"" + formatDate(p.getContrato().getFechaInicio()) + "\""
+                                : "null")
+                        .append(",");
+                jsonBuilder.append("\"fechaFin\":")
+                        .append(p.getContrato().getFechaFin() != null
+                                ? "\"" + formatDate(p.getContrato().getFechaFin()) + "\""
+                                : "null");
+                jsonBuilder.append("}");
+            } else {
+                jsonBuilder.append("null");
+            }
+
+            jsonBuilder.append("}");
+
+            return Response.ok(jsonBuilder.toString()).build();
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error al obtener programación: " + e.getMessage())
+                    .entity("{\"error\":\"Error al obtener programación: " + e.getMessage() + "\"}")
                     .build();
         }
     }
@@ -473,7 +674,7 @@ public class ProgramacionMantenimientoController {
             int ejecucionesEliminadas = em.createNativeQuery(sqlDeleteEjecuciones)
                     .setParameter(1, id)
                     .executeUpdate();
-            
+
             System.out.println("🗑️ Eliminadas " + ejecucionesEliminadas + " ejecuciones de la programación " + id);
 
             // Ahora eliminar la programación
@@ -515,9 +716,10 @@ public class ProgramacionMantenimientoController {
 
             String mensaje = programacion.getActiva() ? "activada" : "pausada";
             System.out.println("🔄 Programación " + id + " " + mensaje);
-            
+
             return Response.ok()
-                    .entity("{\"message\": \"Programación " + mensaje + " exitosamente\", \"activa\": " + programacion.getActiva() + "}")
+                    .entity("{\"message\": \"Programación " + mensaje + " exitosamente\", \"activa\": "
+                            + programacion.getActiva() + "}")
                     .build();
 
         } catch (Exception e) {

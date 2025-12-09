@@ -13,6 +13,15 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -32,6 +41,11 @@ public class TicketController {
     @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
 
+    private static final String EVIDENCIAS_DIR = System.getProperty("user.home") + File.separator + "inacif-evidencias"
+            + File.separator + "tickets";
+    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf",
+            ".doc", ".docx", ".xls", ".xlsx" };
+
     // ===============================
     // CRUD BÁSICO DE TICKETS
     // ===============================
@@ -44,7 +58,8 @@ public class TicketController {
             String sql = "SELECT t.id, t.descripcion, t.prioridad, t.estado, " +
                     "t.fecha_creacion, t.fecha_modificacion, t.fecha_cierre, " +
                     "e.id_equipo as equipo_id, e.nombre as equipo_nombre, e.codigo_inacif as equipo_codigo, " +
-                    "uc.nombre_completo as usuario_creador, ua.nombre_completo as usuario_asignado " +
+                    "uc.id as usuario_creador_id, uc.nombre_completo as usuario_creador, " +
+                    "ua.id as usuario_asignado_id, ua.nombre_completo as usuario_asignado " +
                     "FROM Tickets t " +
                     "INNER JOIN Equipos e ON t.equipo_id = e.id_equipo " +
                     "LEFT JOIN Usuarios uc ON t.usuario_creador_id = uc.id " +
@@ -75,8 +90,10 @@ public class TicketController {
                         .append("\"equipoId\": ").append(row[7] != null ? row[7] : "null").append(",")
                         .append("\"equipoNombre\": \"").append(row[8] != null ? row[8] : "").append("\",")
                         .append("\"equipoCodigo\": \"").append(row[9] != null ? row[9] : "").append("\",")
-                        .append("\"usuarioCreador\": \"").append(row[10] != null ? row[10] : "").append("\",")
-                        .append("\"usuarioAsignado\": \"").append(row[11] != null ? row[11] : "").append("\"")
+                        .append("\"usuarioCreadorId\": ").append(row[10] != null ? row[10] : "null").append(",")
+                        .append("\"usuarioCreador\": \"").append(row[11] != null ? row[11] : "").append("\",")
+                        .append("\"usuarioAsignadoId\": ").append(row[12] != null ? row[12] : "null").append(",")
+                        .append("\"usuarioAsignado\": \"").append(row[13] != null ? row[13] : "").append("\"")
                         .append("}");
             }
 
@@ -109,7 +126,8 @@ public class TicketController {
             String sql = "SELECT t.id, t.descripcion, t.prioridad, t.estado, " +
                     "t.fecha_creacion, t.fecha_modificacion, t.fecha_cierre, " +
                     "e.nombre as equipo_nombre, e.codigo_inacif as equipo_codigo, e.id_equipo, " +
-                    "uc.nombre_completo as usuario_creador, ua.nombre_completo as usuario_asignado " +
+                    "uc.id as usuario_creador_id, uc.nombre_completo as usuario_creador, " +
+                    "ua.id as usuario_asignado_id, ua.nombre_completo as usuario_asignado " +
                     "FROM Tickets t " +
                     "INNER JOIN Equipos e ON t.equipo_id = e.id_equipo " +
                     "LEFT JOIN Usuarios uc ON t.usuario_creador_id = uc.id " +
@@ -131,8 +149,10 @@ public class TicketController {
                     "\"equipoNombre\": \"" + (row[7] != null ? row[7] : "") + "\"," +
                     "\"equipoCodigo\": \"" + (row[8] != null ? row[8] : "") + "\"," +
                     "\"equipoId\": " + (row[9] != null ? row[9] : "null") + "," +
-                    "\"usuarioCreador\": \"" + (row[10] != null ? row[10] : "") + "\"," +
-                    "\"usuarioAsignado\": \"" + (row[11] != null ? row[11] : "") + "\"," +
+                    "\"usuarioCreadorId\": " + (row[10] != null ? row[10] : "null") + "," +
+                    "\"usuarioCreador\": \"" + (row[11] != null ? row[11] : "") + "\"," +
+                    "\"usuarioAsignadoId\": " + (row[12] != null ? row[12] : "null") + "," +
+                    "\"usuarioAsignado\": \"" + (row[13] != null ? row[13] : "") + "\"," +
                     "\"success\": true" +
                     "}";
 
@@ -222,11 +242,12 @@ public class TicketController {
                 // Obtener el ID del ticket recién creado
                 String getIdSQL = "SELECT IDENT_CURRENT('Tickets')";
                 Integer ticketId = ((Number) em.createNativeQuery(getIdSQL).getSingleResult()).intValue();
-                
+
                 // Registrar en bitácora
-                String descripcionCorta = descripcion.length() > 50 ? descripcion.substring(0, 47) + "..." : descripcion;
+                String descripcionCorta = descripcion.length() > 50 ? descripcion.substring(0, 47) + "..."
+                        : descripcion;
                 bitacoraService.registrarTicketCreado(equipoId, ticketId, descripcionCorta);
-                
+
                 System.out.println("✅ Ticket creado exitosamente");
                 return Response.status(Response.Status.CREATED)
                         .entity("{\"message\": \"Ticket creado exitosamente\", \"success\": true}")
@@ -707,10 +728,10 @@ public class TicketController {
                     Integer equipoId = (Integer) em.createNativeQuery(getEquipoSQL)
                             .setParameter(1, ticketId)
                             .getSingleResult();
-                    
+
                     if (equipoId != null) {
-                        String comentarioCorto = comentario != null && comentario.length() > 50 
-                                ? comentario.substring(0, 47) + "..." 
+                        String comentarioCorto = comentario != null && comentario.length() > 50
+                                ? comentario.substring(0, 47) + "..."
                                 : (comentario != null ? comentario : "Sin detalles");
                         bitacoraService.registrarTicketResuelto(equipoId, ticketId, comentarioCorto);
                     }
@@ -738,7 +759,8 @@ public class TicketController {
         try {
             System.out.println("📁 Obteniendo evidencias para ticket: " + ticketId);
 
-            String sql = "SELECT id, archivo_url, descripcion, fecha_creacion " +
+            String sql = "SELECT id, nombre_archivo, nombre_original, tipo_archivo, tamanio, " +
+                    "descripcion, archivo_url, fecha_creacion " +
                     "FROM Evidencias " +
                     "WHERE entidad_relacionada = 'ticket' AND entidad_id = ? " +
                     "ORDER BY fecha_creacion DESC";
@@ -758,10 +780,14 @@ public class TicketController {
 
                 jsonBuilder.append("{")
                         .append("\"id\": ").append(row[0]).append(",")
-                        .append("\"archivoUrl\": \"").append(row[1]).append("\",")
+                        .append("\"nombreArchivo\": \"").append(row[1] != null ? row[1] : "").append("\",")
+                        .append("\"nombreOriginal\": \"").append(row[2] != null ? row[2] : "").append("\",")
+                        .append("\"tipoArchivo\": \"").append(row[3] != null ? row[3] : "").append("\",")
+                        .append("\"tamanio\": ").append(row[4] != null ? row[4] : 0).append(",")
                         .append("\"descripcion\": \"")
-                        .append(row[2] != null ? row[2].toString().replace("\"", "\\\"") : "").append("\",")
-                        .append("\"fechaCreacion\": \"").append(row[3]).append("\"")
+                        .append(row[5] != null ? row[5].toString().replace("\"", "\\\"") : "").append("\",")
+                        .append("\"archivoUrl\": \"").append(row[6] != null ? row[6] : "").append("\",")
+                        .append("\"fechaCreacion\": \"").append(row[7] != null ? row[7] : "").append("\"")
                         .append("}");
             }
 
@@ -797,7 +823,8 @@ public class TicketController {
             }
 
             // Insertar evidencia
-            String insertSQL = "INSERT INTO Evidencias (entidad_relacionada, entidad_id, archivo_url, descripcion, fecha_creacion) " +
+            String insertSQL = "INSERT INTO Evidencias (entidad_relacionada, entidad_id, archivo_url, descripcion, fecha_creacion) "
+                    +
                     "VALUES ('ticket', ?, ?, ?, GETDATE())";
 
             em.createNativeQuery(insertSQL)
@@ -818,12 +845,123 @@ public class TicketController {
         }
     }
 
+    @POST
+    @Path("/{id}/evidencias/upload")
+    @Consumes({ MediaType.APPLICATION_OCTET_STREAM, MediaType.MULTIPART_FORM_DATA, "image/*", "application/*" })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response uploadEvidenciaArchivo(
+            @PathParam("id") Integer ticketId,
+            InputStream inputStream,
+            @HeaderParam("X-Filename") String fileName,
+            @HeaderParam("X-Descripcion") String descripcion) {
+
+        try {
+            if (ticketRepository.findById(ticketId) == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Ticket no encontrado\"}")
+                        .build();
+            }
+
+            if (fileName == null || fileName.trim().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\": \"Debe enviar el nombre del archivo en el encabezado X-Filename\"}")
+                        .build();
+            }
+
+            if (!isValidEvidenciaFile(fileName)) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\": \"Tipo de archivo no permitido\"}")
+                        .build();
+            }
+
+            java.nio.file.Path ticketDir = Paths.get(EVIDENCIAS_DIR, String.valueOf(ticketId));
+            if (!Files.exists(ticketDir)) {
+                Files.createDirectories(ticketDir);
+            }
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
+            String extension = getFileExtension(fileName);
+            String baseName = getFileNameWithoutExtension(fileName);
+            String uniqueFileName = baseName + "_" + timestamp + extension;
+
+            java.nio.file.Path filePath = ticketDir.resolve(uniqueFileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            long fileSize = Files.size(filePath);
+
+            String mimeType = detectMimeType(fileName);
+            String decodedDescripcion = descripcion != null ? URLDecoder.decode(descripcion, "UTF-8") : "";
+            String archivoUrl = "/MantenimientosBackend/api/tickets/" + ticketId + "/evidencias/download/"
+                    + uniqueFileName;
+
+            String insertSQL = "INSERT INTO Evidencias (entidad_relacionada, entidad_id, nombre_archivo, nombre_original, "
+                    +
+                    "tipo_archivo, tamanio, descripcion, archivo_url, fecha_creacion) " +
+                    "VALUES ('ticket', ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+
+            em.createNativeQuery(insertSQL)
+                    .setParameter(1, ticketId)
+                    .setParameter(2, uniqueFileName)
+                    .setParameter(3, fileName)
+                    .setParameter(4, mimeType)
+                    .setParameter(5, fileSize)
+                    .setParameter(6, decodedDescripcion)
+                    .setParameter(7, archivoUrl)
+                    .executeUpdate();
+
+            String jsonResponse = String.format(
+                    "{\"nombreArchivo\": \"%s\", \"nombreOriginal\": \"%s\", \"tipoArchivo\": \"%s\", " +
+                            "\"tamanio\": %d, \"descripcion\": \"%s\", \"archivoUrl\": \"%s\"}",
+                    uniqueFileName, fileName, mimeType, fileSize, escapeJson(decodedDescripcion), archivoUrl);
+
+            return Response.status(Response.Status.CREATED).entity(jsonResponse).build();
+
+        } catch (Exception e) {
+            System.out.println("❌ Error al subir evidencia de ticket: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al guardar archivo: " + e.getMessage() + "\"}")
+                    .build();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
     @DELETE
     @Path("/{ticketId}/evidencias/{evidenciaId}")
     @Transactional
-    public Response deleteEvidencia(@PathParam("ticketId") Integer ticketId, @PathParam("evidenciaId") Integer evidenciaId) {
+    public Response deleteEvidencia(@PathParam("ticketId") Integer ticketId,
+            @PathParam("evidenciaId") Integer evidenciaId) {
         try {
             System.out.println("🗑️ Eliminando evidencia " + evidenciaId + " del ticket " + ticketId);
+
+            String selectSQL = "SELECT nombre_archivo FROM Evidencias WHERE id = ? AND entidad_relacionada = 'ticket' AND entidad_id = ?";
+            @SuppressWarnings("unchecked")
+            List<Object> results = em.createNativeQuery(selectSQL)
+                    .setParameter(1, evidenciaId)
+                    .setParameter(2, ticketId)
+                    .getResultList();
+
+            if (results.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Evidencia no encontrada\", \"success\": false}")
+                        .build();
+            }
+
+            String nombreArchivo = (String) results.get(0);
+            if (nombreArchivo != null && !nombreArchivo.isEmpty()) {
+                java.nio.file.Path filePath = Paths.get(EVIDENCIAS_DIR, String.valueOf(ticketId), nombreArchivo);
+                try {
+                    Files.deleteIfExists(filePath);
+                } catch (IOException e) {
+                    System.out.println("⚠️ No se pudo eliminar archivo físico: " + e.getMessage());
+                }
+            }
 
             String deleteSQL = "DELETE FROM Evidencias WHERE id = ? AND entidad_relacionada = 'ticket' AND entidad_id = ?";
             int result = em.createNativeQuery(deleteSQL)
@@ -847,5 +985,83 @@ public class TicketController {
                     .entity("{\"error\": \"Error al eliminar evidencia: " + e.getMessage() + "\"}")
                     .build();
         }
+    }
+
+    @GET
+    @Path("/{id}/evidencias/download/{fileName}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadEvidencia(@PathParam("id") Integer ticketId, @PathParam("fileName") String fileName) {
+        try {
+            java.nio.file.Path filePath = Paths.get(EVIDENCIAS_DIR, String.valueOf(ticketId), fileName);
+            if (!Files.exists(filePath)) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Archivo no encontrado")
+                        .build();
+            }
+
+            byte[] data = Files.readAllBytes(filePath);
+            String mimeType = detectMimeType(fileName);
+
+            return Response.ok(data)
+                    .type(mimeType)
+                    .header("Content-Disposition", "inline; filename=\"" + fileName + "\"")
+                    .build();
+
+        } catch (IOException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error al descargar archivo")
+                    .build();
+        }
+    }
+
+    // ===== Helpers evidencia =====
+    private boolean isValidEvidenciaFile(String fileName) {
+        String lower = fileName.toLowerCase();
+        for (String ext : ALLOWED_EXTENSIONS) {
+            if (lower.endsWith(ext)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String getFileExtension(String fileName) {
+        int idx = fileName.lastIndexOf('.');
+        return idx >= 0 ? fileName.substring(idx) : "";
+    }
+
+    private String getFileNameWithoutExtension(String fileName) {
+        int idx = fileName.lastIndexOf('.');
+        return idx >= 0 ? fileName.substring(0, idx) : fileName;
+    }
+
+    private String detectMimeType(String fileName) {
+        String lower = fileName.toLowerCase();
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg"))
+            return "image/jpeg";
+        if (lower.endsWith(".png"))
+            return "image/png";
+        if (lower.endsWith(".gif"))
+            return "image/gif";
+        if (lower.endsWith(".webp"))
+            return "image/webp";
+        if (lower.endsWith(".pdf"))
+            return "application/pdf";
+        if (lower.endsWith(".doc"))
+            return "application/msword";
+        if (lower.endsWith(".docx"))
+            return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        if (lower.endsWith(".xls"))
+            return "application/vnd.ms-excel";
+        if (lower.endsWith(".xlsx"))
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        return "application/octet-stream";
+    }
+
+    private String escapeJson(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
     }
 }

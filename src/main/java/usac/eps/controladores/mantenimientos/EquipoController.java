@@ -51,7 +51,7 @@ public class EquipoController {
     public Response getAll() {
         try {
             // Consulta con JOIN para obtener el nombre del área
-            String jpql = "SELECT e FROM EquipoModel e LEFT JOIN FETCH e.area";
+            String jpql = "SELECT e FROM EquipoModel e LEFT JOIN FETCH e.area LEFT JOIN FETCH e.categoria";
             List<EquipoModel> equipos = entityManager.createQuery(jpql, EquipoModel.class).getResultList();
 
             // Crear lista de mapas con los datos del equipo + nombre del área
@@ -73,6 +73,7 @@ public class EquipoController {
                 equipoMap.put("condicionesOperacion", equipo.getCondicionesOperacion());
                 equipoMap.put("descripcion", equipo.getDescripcion());
                 equipoMap.put("idArea", equipo.getIdArea());
+                equipoMap.put("idCategoria", equipo.getIdCategoria());
 
                 // Obtener nombre del área
                 String areaNombre = null;
@@ -88,6 +89,22 @@ public class EquipoController {
                     }
                 }
                 equipoMap.put("areaNombre", areaNombre);
+
+                String categoriaNombre = null;
+                if (equipo.getCategoria() != null) {
+                    categoriaNombre = equipo.getCategoria().getNombre();
+                } else if (equipo.getIdCategoria() != null) {
+                    try {
+                        Object nombreCategoria = entityManager
+                                .createQuery("SELECT c.nombre FROM CategoriaEquipoModel c WHERE c.idCategoria = :id")
+                                .setParameter("id", equipo.getIdCategoria())
+                                .getSingleResult();
+                        categoriaNombre = nombreCategoria != null ? nombreCategoria.toString() : null;
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.WARNING, "No se pudo cargar categoría con ID: " + equipo.getIdCategoria(), ex);
+                    }
+                }
+                equipoMap.put("categoriaNombre", categoriaNombre);
 
                 result.add(equipoMap);
             }
@@ -301,9 +318,6 @@ public class EquipoController {
             String descripcion, Integer usuarioId,
             String usuarioNombre) {
         try {
-            // Obtener el equipo como entidad administrada
-            EquipoModel equipoRef = entityManager.find(EquipoModel.class, equipoId);
-
             // Crear el historial usando JPA
             String sql = "INSERT INTO Historial_Equipo (id_equipo, tipo_cambio, descripcion, usuario_id, usuario_nombre, fecha_registro) "
                     +

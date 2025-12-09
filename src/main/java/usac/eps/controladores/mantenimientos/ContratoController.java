@@ -141,7 +141,8 @@ public class ContratoController {
             ContratoModel contrato = new ContratoModel();
             contrato.setDescripcion(contratoInput.getDescripcion());
             contrato.setFrecuencia(contratoInput.getFrecuencia());
-            contrato.setEstado(contratoInput.getEstado() != null ? contratoInput.getEstado() : true); // Respetar estado del frontend
+            contrato.setEstado(contratoInput.getEstado() != null ? contratoInput.getEstado() : true); // Respetar estado
+                                                                                                      // del frontend
             contrato.setIdEstado(1); // Estado inicial: PLANIFICADO
             contrato.setFechaInicio(contratoInput.getFechaInicio());
             contrato.setFechaFin(contratoInput.getFechaFin());
@@ -413,7 +414,7 @@ public class ContratoController {
     public Response delete(@PathParam("id") Integer id) {
         try {
             System.out.println("🗑️ Intentando eliminar contrato ID: " + id);
-            
+
             ContratoModel contrato = contratoRepository.findByIdContrato(id);
             if (contrato == null) {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -441,7 +442,9 @@ public class ContratoController {
             em.flush();
             System.out.println("✅ Contrato eliminado correctamente");
 
-            return Response.ok("{\"message\": \"Contrato y documentos asociados eliminados correctamente\", \"success\": true}").build();
+            return Response.ok(
+                    "{\"message\": \"Contrato y documentos asociados eliminados correctamente\", \"success\": true}")
+                    .build();
 
         } catch (Exception e) {
             System.out.println("❌ Error al eliminar contrato: " + e.getMessage());

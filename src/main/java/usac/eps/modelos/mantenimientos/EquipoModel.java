@@ -69,6 +69,14 @@ public class EquipoModel implements Serializable {
     @JsonbTransient
     private AreaModel area;
 
+    @Column(name = "id_categoria")
+    private Integer idCategoria;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_categoria", insertable = false, updatable = false)
+    @JsonbTransient
+    private CategoriaEquipoModel categoria;
+
     // Getters y setters
     public Integer getIdEquipo() {
         return idEquipo;
@@ -212,5 +220,21 @@ public class EquipoModel implements Serializable {
 
     public void setArea(AreaModel area) {
         this.area = area;
+    }
+
+    public Integer getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(Integer idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    public CategoriaEquipoModel getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaEquipoModel categoria) {
+        this.categoria = categoria;
     }
 }
