@@ -1,0 +1,258 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}{\f1 Consolas;}}
+\paperw12240\paperh15840\margl1440\margr1440\margt1440\margb1440
+\fs24
+
+\pard\qc\b\fs44 INSTITUTO NACIONAL DE CIENCIAS FORENSES\par
+\pard\qc\b\fs36 (INACIF)\par
+\pard\qc\fs28\b Sistema de Programaci\u243?n y Registro de\par
+Mantenimientos Preventivos y Correctivos\par
+\pard\qc\fs24\b Informe T\u233?cnico del Proyecto\par
+\pard\qc\fs22\b Versi\u243?n: 1.0\par
+\pard\qc\fs22\b Fecha: ____________________\par
+\pard\qc\fs22\b Elaborado por: ____________________\par
+\pard\qc\fs22\b Unidad/Dependencia: ____________________\par
+\pard\qc\fs22\b Revisor/Asesor: ____________________\par
+\pard\qc\fs22\b\par
+\pard\qc\fs20 Documento para uso interno en la red institucional\par
+\pard\qc\fs20 (Confidencialidad seg\u250?n lineamientos de INACIF)\par
+\pard\qc\fs20\b\par
+\pard\qc\fs20\b\par
+
+\pard\qc\fs20\b\par
+\pard\qc\fs20\b\par
+\pard\qc\fs20\b\par
+\pard\qc\fs20\b\par
+
+\page
+
+\pard\qc\b\fs32 Tabla de contenido\par
+\pard\fs24\par
+\pard\fs24 1. Introducci\u243?n\par
+\pard\fs24 2. Antecedentes y planteamiento del problema\par
+\pard\fs24 3. Objetivos del proyecto\par
+\pard\fs24 4. Alcance, entregables y supuestos\par
+\pard\fs24 5. L\u243?gica de negocio (m\u243?dulos, reglas y flujos)\par
+\pard\fs24 6. Arquitectura de la soluci\u243?n\par
+\pard\fs24 7. Tecnolog\u237?as, herramientas y est\u225?ndares\par
+\pard\fs24 8. Seguridad (autenticaci\u243?n, autorizaci\u243?n y auditor\u237?a)\par
+\pard\fs24 9. Persistencia y modelo de datos (visi\u243?n general)\par
+\pard\fs24 10. Integraciones y gesti\u243?n de archivos\par
+\pard\fs24 11. Despliegue y operaci\u243?n\par
+\pard\fs24 12. Consideraciones no funcionales\par
+\pard\fs24 13. Conclusiones y recomendaciones\par
+\pard\fs24 14. Anexos\par
+
+\pard\fs22\par
+\pard\fs22 Nota: en Word puedes generar la tabla de contenido autom\u225?tica usando estilos de T\u237?tulo (Heading 1/2).\par
+
+\page
+
+\pard\b\fs32 1. Introducci\u243?n\par
+\pard\fs24\par
+\pard\fs24 El presente documento describe de forma detallada el proyecto \ldblquote Desarrollo de una herramienta de software para la programaci\u243?n y registro de mantenimientos preventivos y correctivos de equipos en INACIF\rdblquote .\par
+\pard\fs24\par
+\pard\fs24 La soluci\u243?n est\u225? orientada a centralizar la administraci\u243?n de activos, el control de mantenimientos y la generaci\u243?n de evidencia y trazabilidad hist\u243?rica, reduciendo la dependencia de registros manuales y hojas de c\u225?lculo.\par
+\pard\fs24\par
+\pard\fs24 El sistema se implementa como una aplicaci\u243?n web compuesta por un frontend tipo SPA (Single Page Application) y un backend API REST desplegado en un servidor de aplicaciones, con autenticaci\u243?n centralizada mediante Keycloak.\par
+
+\pard\b\fs32\par
+2. Antecedentes y planteamiento del problema\par
+\pard\fs24\par
+\pard\fs24 Actualmente, diversas dependencias (Laboratorios de Criminal\u237?stica, Unidad Administrativa y Unidad de Infraestructura) gestionan equipos y mantenimientos mediante controles semi-automatizados, principalmente hojas de c\u225?lculo y registros manuales.\par
+\pard\fs24\par
+\pard\fs24 Esta situaci\u243?n genera limitaciones en:\par
+\pard\fs24 \bullet\tab Trazabilidad: dificultad para reconstruir historial y evidencias de mantenimiento.\par
+\pard\fs24 \bullet\tab Seguimiento: ausencia de programaci\u243?n central y alertas por vencimiento.\par
+\pard\fs24 \bullet\tab Reportes: elaboraci\u243?n lenta y propensa a errores.\par
+\pard\fs24 \bullet\tab Cumplimiento: necesidad de reforzar control documental para equipos cr\u237?ticos vinculados a ISO/IEC 17025.\par
+\pard\fs24\par
+\pard\fs24 El proyecto se enmarca en el fortalecimiento institucional y la estrategia de Gobierno Electr\u243?nico, buscando mejorar eficiencia operativa, transparencia y productividad institucional.\par
+
+\pard\b\fs32\par
+3. Objetivos del proyecto\par
+\pard\fs24\par
+\pard\b\fs26 3.1 Objetivo general\par
+\pard\fs24 Implementar una herramienta de software basada en la web que facilite el control y registro de equipos, la programaci\u243?n de mantenimientos y el registro documental de la ejecuci\u243?n de dichas tareas para las diferentes dependencias del INACIF.\par
+\pard\fs24\par
+\pard\b\fs26 3.2 Objetivos espec\u237?ficos\par
+\pard\fs24 \bullet\tab Analizar y documentar la din\u225?mica actual de registro y programaci\u243?n de mantenimientos en los laboratorios de criminal\u237?stica.\par
+\pard\fs24 \bullet\tab Analizar la gesti\u243?n de mantenimiento de equipos en la Unidad Administrativa y de Infraestructura.\par
+\pard\fs24 \bullet\tab Dise\u241?ar e implementar un portal web para registro formal de mantenimientos preventivos y correctivos.\par
+\pard\fs24 \bullet\tab Definir el alcance de la soluci\u243?n y requerimientos funcionales del sistema.\par
+\pard\fs24 \bullet\tab Facilitar la consulta y evaluaci\u243?n del estado de equipos mediante reportes estructurados.\par
+
+\pard\b\fs32\par
+4. Alcance, entregables y supuestos\par
+\pard\fs24\par
+\pard\b\fs26 4.1 Alcance funcional\par
+\pard\fs24 El sistema contempla, como m\u237?nimo, los m\u243?dulos: seguridad por roles, gesti\u243?n de equipos, programaci\u243?n de mantenimientos, ejecuci\u243?n/registro de mantenimientos, alertas y notificaciones (automatizadas y manuales), tickets de falla, contratos/proveedores, evidencias y reportes.\par
+\pard\fs24\par
+\pard\b\fs26 4.2 Entregables\par
+\pard\fs24 \bullet\tab Aplicaci\u243?n web (frontend Angular + backend API REST).\par
+\pard\fs24 \bullet\tab Configuraci\u243?n de seguridad con Keycloak (realm, clientes y roles).\par
+\pard\fs24 \bullet\tab Scripts/gu\u237?as de despliegue con Docker.\par
+\pard\fs24 \bullet\tab Documentaci\u243?n t\u233?cnica y manuales de apoyo (este informe y gu\u237?as del repositorio).\par
+\pard\fs24\par
+\pard\b\fs26 4.3 Supuestos y restricciones\par
+\pard\fs24 \bullet\tab El sistema opera principalmente dentro de la red interna del INACIF.\par
+\pard\fs24 \bullet\tab La identidad y roles son administrados en Keycloak (la aplicaci\u243?n no reemplaza el IdP).\par
+\pard\fs24 \bullet\tab No se requiere soporte offline.\par
+\pard\fs24 \bullet\tab Se mantiene confidencialidad sobre informaci\u243?n institucional y evidencias.\par
+
+\pard\b\fs32\par
+5. L\u243?gica de negocio (m\u243?dulos, reglas y flujos)\par
+\pard\fs24\par
+\pard\b\fs26 5.1 Gesti\u243?n de usuarios (Keycloak + BD local)\par
+\pard\fs24 La autenticaci\u243?n y autorizaci\u243?n se centralizan en Keycloak. La aplicaci\u243?n mantiene una tabla local de usuarios con el objetivo de controlar el estado activo/inactivo, conservar trazabilidad y mantener integridad referencial con registros de mantenimientos y tickets.\par
+\pard\fs24\par
+\pard\fs24 Regla cr\u237?tica: si el usuario est\u225? desactivado en BD local, el acceso queda denegado aun si Keycloak autentica correctamente. Esto permite control operativo sin alterar la cuenta institucional.\par
+\pard\fs24\par
+\pard\b\fs26 5.2 Gesti\u243?n de equipos\par
+\pard\fs24 \bullet\tab Registro y actualizaci\u243?n de equipos con datos t\u233?cnicos y administrativos (c\u243?digo INACIF, marca/modelo/serie, ubicaci\u243?n, condiciones, etc.).\par
+\pard\fs24 \bullet\tab Regla de unicidad del c\u243?digo INACIF para evitar duplicidad.\par
+\pard\fs24 \bullet\tab Asociaci\u243?n del equipo a un \u225?rea/categor\u237?a para reportes y segmentaci\u243?n.\par
+\pard\fs24 \bullet\tab Evidencia visual mediante carga y visualizaci\u243?n de fotograf\u237?as (con validaci\u243?n de extensiones permitidas).\par
+\pard\fs24\par
+\pard\b\fs26 5.3 Mantenimientos (ejecuci\u243?n y trazabilidad)\par
+\pard\fs24 El sistema registra ejecuciones de mantenimiento preventivo/correctivo/calibraci\u243?n (seg\u250?n cat\u225?logos), vincul\u225?ndolas al equipo, tipo de mantenimiento y, cuando aplica, a un contrato. Se soporta el registro de evidencias (archivos) y el control de estado.\par
+\pard\fs24\par
+\pard\b\fs26 5.4 Programaci\u243?n y alertas\par
+\pard\fs24 Una programaci\u243?n define la frecuencia en d\u237?as, la fecha de \u250?ltimo mantenimiento y el c\u225?lculo de la fecha pr\u243?xima. Con base en estas fechas, el sistema clasifica alertas \ldblquote pr\u243?ximas\rdblquote (dentro de un umbral configurable) y \ldblquote vencidas\rdblquote (fecha pr\u243?xima anterior a la fecha actual).\par
+\pard\fs24\par
+\pard\fs24 El dashboard consolida conteos y listados para supervisi\u243?n; adicionalmente, existen endpoints para ejecutar revisiones de alertas y vencidos de forma manual (operaci\u243?n administrada).\par
+\pard\fs24\par
+\pard\b\fs26 5.5 Tickets de falla\par
+\pard\fs24 Permite crear tickets asociados a un equipo, registrando descripci\u243?n, prioridad, estado, fechas, usuario creador y usuario asignado. Se incluyen reglas de validaci\u243?n de datos obligatorios y soporte de evidencias con restricciones de extensiones.\par
+\pard\fs24\par
+\pard\b\fs26 5.6 Contratos y proveedores\par
+\pard\fs24 Permite administrar contratos de mantenimiento, su relaci\u243?n con proveedores y la vigencia (vigente/por vencer/vencido). Se soporta la carga de documentos del contrato (PDF/DOC/DOCX) que se almacenan en directorio de servidor y se registran en BD para consulta, descarga y control.\par
+
+\pard\b\fs32\par
+6. Arquitectura de la soluci\u243?n\par
+\pard\fs24\par
+\pard\b\fs26 6.1 Vista l\u243?gica (componentes)\par
+\pard\fs24 La arquitectura se organiza en:\par
+\pard\fs24 \bullet\tab Frontend SPA (Angular): UI, navegaci\u243?n, control visual por roles, consumo de API.\par
+\pard\fs24 \bullet\tab Backend API (JAX-RS): controladores REST, servicios de negocio, repositorios/persistencia.\par
+\pard\fs24 \bullet\tab Keycloak: autenticaci\u243?n, emisi\u243?n de tokens y roles.\par
+\pard\fs24 \bullet\tab Base de datos SQL Server: almacenamiento transaccional del sistema.\par
+\pard\fs24 \bullet\tab Almacenamiento de archivos: evidencias e im\u225?genes en directorios/vol\u250?menes.\par
+\pard\fs24\par
+\pard\b\fs26 6.2 Vista f\u237?sica (despliegue)\par
+\pard\fs24 El backend se despliega como WAR en Apache TomEE. El despliegue de desarrollo se realiza con Docker Compose, exponiendo el servicio en el puerto configurado (p. ej. 8081) y montando vol\u250?menes para persistencia de archivos.\par
+\pard\fs24\par
+\pard\b\fs26 6.3 Capa REST y registro de recursos\par
+\pard\fs24 La ruta base de la API es \b /api\b0. Los recursos se registran expl\u237?citamente en la configuraci\u243?n JAX-RS, junto con el filtro de autenticaci\u243?n JWT y el provider de multipart para carga de archivos.\par
+
+\pard\b\fs32\par
+7. Tecnolog\u237?as, herramientas y est\u225?ndares\par
+\pard\fs24\par
+\pard\b\fs26 7.1 Frontend\par
+\pard\fs24 \bullet\tab Angular (SPA).\par
+\pard\fs24 \bullet\tab PrimeNG/PrimeFlex/PrimeIcons (componentes UI).\par
+\pard\fs24 \bullet\tab FullCalendar (calendarios/agenda).\par
+\pard\fs24 \bullet\tab Chart.js (visualizaci\u243?n de datos).\par
+\pard\fs24 \bullet\tab ExcelJS y file-saver (exportaciones).\par
+\pard\fs24 \bullet\tab keycloak-js (integraci\u243?n con Keycloak).\par
+\pard\fs24\par
+\pard\b\fs26 7.2 Backend\par
+\pard\fs24 \bullet\tab Java EE/Jakarta EE: JAX-RS, CDI, JPA.\par
+\pard\fs24 \bullet\tab Apache TomEE (servidor de aplicaciones).\par
+\pard\fs24 \bullet\tab Apache CXF (runtime JAX-RS y multipart).\par
+\pard\fs24 \bullet\tab EclipseLink (proveedor JPA).\par
+\pard\fs24 \bullet\tab DeltaSpike (repositorios y utilidades).\par
+\pard\fs24 \bullet\tab JOSE4J (validaci\u243?n JWT/JWKS).\par
+\pard\fs24 \bullet\tab Maven (build y dependencias).\par
+\pard\fs24 \bullet\tab SQL Server JDBC driver (conectividad BD).\par
+\pard\fs24\par
+\pard\b\fs26 7.3 DevOps\par
+\pard\fs24 \bullet\tab Docker y Docker Compose para despliegue y ambientes.\par
+\pard\fs24\par
+
+\pard\b\fs32 8. Seguridad (autenticaci\u243?n, autorizaci\u243?n y auditor\u237?a)\par
+\pard\fs24\par
+\pard\b\fs26 8.1 Roles\par
+\pard\fs24 Roles definidos para el cliente del frontend: ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER.\par
+\pard\fs24\par
+\pard\b\fs26 8.2 Token y validaci\u243?n\par
+\pard\fs24 El frontend adjunta el token JWT en el header Authorization (Bearer). El backend valida firma y claims consultando los certificados JWKS del realm. Se extraen claims como preferred_username, email y sub (Keycloak ID), as\u237? como roles del cliente, y se colocan como atributos de la petici\u243?n para auditor\u237?a y l\u243?gica posterior.\par
+\pard\fs24\par
+\pard\b\fs26 8.3 Control adicional por estado activo\par
+\pard\fs24 Independientemente del login en Keycloak, el sistema valida si el usuario est\u225? activo en la BD local. Si est\u225? desactivado, se retorna respuesta 403 y el frontend redirige a acceso denegado.\par
+
+\pard\b\fs32\par
+9. Persistencia y modelo de datos (visi\u243?n general)\par
+\pard\fs24\par
+\pard\fs24 La persistencia se implementa mediante JPA (EclipseLink) y repositorios DeltaSpike; adicionalmente, se emplean consultas JPQL y SQL nativo para optimizar listados y reportes.\par
+\pard\fs24\par
+\pard\fs24 Entidades/\u225?reas principales (a nivel conceptual):\par
+\pard\fs24 \bullet\tab Usuarios (referencia Keycloak + estado activo).\par
+\pard\fs24 \bullet\tab \u193?reas y categor\u237?as.\par
+\pard\fs24 \bullet\tab Equipos e historial.\par
+\pard\fs24 \bullet\tab Tipos de mantenimiento.\par
+\pard\fs24 \bullet\tab Programaciones de mantenimiento.\par
+\pard\fs24 \bullet\tab Ejecuciones de mantenimiento y evidencias asociadas.\par
+\pard\fs24 \bullet\tab Proveedores y contratos, documentos de contrato.\par
+\pard\fs24 \bullet\tab Tickets de falla, comentarios y evidencias.\par
+
+\pard\b\fs32\par
+10. Integraciones y gesti\u243?n de archivos\par
+\pard\fs24\par
+\pard\fs24 El sistema incluye integraci\u243?n con Keycloak y un esquema de almacenamiento de archivos para evidencias e im\u225?genes. En despliegues con Docker, los directorios se soportan mediante vol\u250?menes para persistir entre reinicios.\par
+\pard\fs24\par
+\pard\fs24 Restricciones importantes:\par
+\pard\fs24 \bullet\tab Im\u225?genes: extensiones controladas (jpg/jpeg/png/gif/webp/bmp).\par
+\pard\fs24 \bullet\tab Contratos: PDF/DOC/DOCX.\par
+\pard\fs24 \bullet\tab Evidencias (tickets): conjunto controlado de extensiones (im\u225?genes y documentos).\par
+
+\pard\b\fs32\par
+11. Despliegue y operaci\u243?n\par
+\pard\fs24\par
+\pard\fs24 El despliegue se apoya en Docker Compose para levantar el contenedor del servidor TomEE y exponer el backend. Keycloak se mantiene como servicio de identidad (local o en infraestructura institucional), y el frontend se ejecuta en modo desarrollo (ng serve) o puede servirse desde un contenedor/Nginx seg\u250?n el escenario.\par
+\pard\fs24\par
+\pard\fs24 URLs t\u237?picas en desarrollo:\par
+\pard\fs24 \bullet\tab Frontend: http://localhost:4200\par
+\pard\fs24 \bullet\tab Backend: http://localhost:8081/MantenimientosBackend/\par
+\pard\fs24\par
+
+\pard\b\fs32\par
+12. Consideraciones no funcionales\par
+\pard\fs24\par
+\pard\fs24 \bullet\tab Rendimiento esperado: tiempo de respuesta objetivo menor a 1 segundo para operaciones CRUD (seg\u250?n lineamientos t\u233?cnicos definidos).\par
+\pard\fs24 \bullet\tab Seguridad: uso recomendado de HTTPS/TLS 1.2+, validaci\u243?n de input, tokens expirables, control por roles.\par
+\pard\fs24 \bullet\tab Compatibilidad: navegadores definidos por lineamientos institucionales.\par
+\pard\fs24 \bullet\tab Disponibilidad: operaci\u243?n en red interna; no se requiere soporte offline.\par
+
+\pard\b\fs32\par
+13. Conclusiones y recomendaciones\par
+\pard\fs24\par
+\pard\fs24 El sistema implementa una base s\u243?lida para la gesti\u243?n integral de mantenimientos en INACIF: autenticaci\u243?n centralizada, trazabilidad de equipos, registro de ejecuciones, programaci\u243?n y alertas, tickets y contratos con documentaci\u243?n asociada.\par
+\pard\fs24\par
+\pard\fs24 Recomendaciones t\u233?cnicas para evoluci\u243?n:\par
+\pard\fs24 \bullet\tab Implementar generaci\u243?n de PDF real (en lugar de TXT con descarga) y reportes estandarizados.\par
+\pard\fs24 \bullet\tab Agregar suite de pruebas (unitarias e integraci\u243?n) para asegurar calidad continua.\par
+\pard\fs24 \bullet\tab Estandarizar el manejo de JSON (evitar parseo manual por regex) para robustez y mantenibilidad.\par
+\pard\fs24 \bullet\tab Incorporar notificaciones (correo/internas) para alertas cr\u237?ticas.\par
+
+\pard\b\fs32\par
+14. Anexos\par
+\pard\fs24\par
+\pard\b\fs26 14.1 Roles\par
+\pard\fs24 ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER.\par
+\pard\fs24\par
+\pard\b\fs26 14.2 Endpoints principales (extracto)\par
+\pard\fs24 Ruta base: /MantenimientosBackend/api\par
+\pard\fs24 \bullet\tab /usuarios/me\par
+\pard\fs24 \bullet\tab /equipos\par
+\pard\fs24 \bullet\tab /programaciones\par
+\pard\fs24 \bullet\tab /alertas-mantenimiento/dashboard\par
+\pard\fs24 \bullet\tab /tickets\par
+\pard\fs24 \bullet\tab /contratos\par
+\pard\fs24 \bullet\tab /archivos/upload/{idContrato}\par
+\pard\fs24 \bullet\tab /imagenes/upload\par
+\pard\fs24 \bullet\tab /reportes/equipos/excel\par
+
+\par
+\pard\fs20 Fin del documento.\par
+}
