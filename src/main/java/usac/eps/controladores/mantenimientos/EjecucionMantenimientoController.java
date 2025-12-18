@@ -717,6 +717,7 @@ public class EjecucionMantenimientoController {
      * Actualiza la programación después de completar una ejecución
      * - Actualiza fechaUltimoMantenimiento con la fecha de la ejecución
      * - Recalcula fechaProximoMantenimiento sumando la frecuencia
+     * - Registra en historial como EJECUTADO
      */
     private void actualizarProgramacionDespuesDeEjecucion(EjecucionMantenimientoModel ejecucion) {
         try {
@@ -736,6 +737,9 @@ public class EjecucionMantenimientoController {
                 return;
             }
 
+            // Guardar fecha original antes de actualizar
+            Date fechaOriginalProgramada = programacion.getFechaProximoMantenimiento();
+
             System.out.println("📅 Actualizando programación ID: " + programacion.getIdProgramacion());
             System.out.println("📅 Fecha último mantenimiento anterior: " + programacion.getFechaUltimoMantenimiento());
             System.out.println("📅 Nueva fecha último mantenimiento: " + fechaRealizada);
@@ -751,8 +755,35 @@ public class EjecucionMantenimientoController {
             // Actualizar auditoría
             programacion.setFechaModificacion(new Date());
 
-            // Persistir cambios
+            // Persistir cambios de programación
             em.merge(programacion);
+
+            // 🆕 Registrar en Historial_Programacion como EJECUTADO
+            try {
+                Integer usuarioId = null;
+                if (ejecucion.getUsuarioResponsable() != null) {
+                    usuarioId = ejecucion.getUsuarioResponsable().getId();
+                } else if (ejecucion.getUsuarioModificacion() != null) {
+                    usuarioId = ejecucion.getUsuarioModificacion().getId();
+                }
+
+                String insertHistorial = "INSERT INTO Historial_Programacion " +
+                        "(id_programacion, tipo_evento, fecha_original, id_ejecucion, usuario_id, fecha_registro) " +
+                        "VALUES (?1, 'EJECUTADO', ?2, ?3, ?4, GETDATE())";
+
+                em.createNativeQuery(insertHistorial)
+                        .setParameter(1, programacion.getIdProgramacion())
+                        .setParameter(2, fechaOriginalProgramada)
+                        .setParameter(3, ejecucion.getIdEjecucion())
+                        .setParameter(4, usuarioId)
+                        .executeUpdate();
+
+                System.out.println("📝 Historial de ejecución registrado");
+            } catch (Exception historialEx) {
+                // Si la tabla no existe aún, solo logear
+                System.out.println("Nota: No se pudo registrar historial: " + historialEx.getMessage());
+            }
+
             em.flush();
 
             System.out.println("✅ Programación actualizada exitosamente");
