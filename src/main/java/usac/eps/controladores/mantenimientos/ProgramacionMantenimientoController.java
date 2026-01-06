@@ -928,6 +928,100 @@ public class ProgramacionMantenimientoController {
     }
 
     /**
+     * Reprograma un mantenimiento a una fecha específica elegida por el usuario.
+     * A diferencia de descartar (que avanza automáticamente), aquí el usuario elige
+     * la fecha.
+     */
+    @POST
+    @Path("/{id}/reprogramar")
+    public Response reprogramarProgramacion(@PathParam("id") Integer id, Map<String, Object> body) {
+        try {
+            ProgramacionMantenimientoModel programacion = programacionRepository.findByIdProgramacion(id);
+            if (programacion == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Programación no encontrada")
+                        .build();
+            }
+
+            // Obtener nueva fecha del body
+            String nuevaFechaStr = (String) body.get("nuevaFecha");
+            if (nuevaFechaStr == null || nuevaFechaStr.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("La nueva fecha es requerida")
+                        .build();
+            }
+
+            // Parsear la fecha (formato yyyy-MM-dd)
+            Date nuevaFecha;
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                nuevaFecha = sdf.parse(nuevaFechaStr.substring(0, 10));
+            } catch (Exception e) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Formato de fecha inválido. Use yyyy-MM-dd")
+                        .build();
+            }
+
+            Date fechaOriginal = programacion.getFechaProximoMantenimiento();
+            String motivo = body.get("motivo") != null ? body.get("motivo").toString() : "Reprogramado por usuario";
+
+            // Obtener usuario actual para auditoría
+            Integer usuarioId = null;
+            try {
+                String keycloakId = (String) request.getAttribute("keycloakId");
+                if (keycloakId != null) {
+                    UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
+                    if (usuario != null) {
+                        usuarioId = usuario.getId();
+                    }
+                }
+            } catch (Exception e) {
+                // Ignorar
+            }
+
+            // Insertar en historial como REPROGRAMADO
+            try {
+                String insertHistorial = "INSERT INTO Historial_Programacion " +
+                        "(id_programacion, tipo_evento, fecha_original, fecha_nueva, motivo, usuario_id, fecha_registro) "
+                        +
+                        "VALUES (?1, 'REPROGRAMADO', ?2, ?3, ?4, ?5, ?6)";
+
+                em.createNativeQuery(insertHistorial)
+                        .setParameter(1, id)
+                        .setParameter(2, fechaOriginal)
+                        .setParameter(3, nuevaFecha)
+                        .setParameter(4, motivo)
+                        .setParameter(5, usuarioId)
+                        .setParameter(6, new Date())
+                        .executeUpdate();
+            } catch (Exception e) {
+                System.out.println("Nota: No se pudo insertar en Historial_Programacion: " + e.getMessage());
+            }
+
+            // Actualizar programación
+            programacion.setFechaProximoMantenimiento(nuevaFecha);
+            programacion.setFechaModificacion(new Date());
+            asignarUsuarioAuditoria(programacion, false);
+            programacionRepository.save(programacion);
+
+            // Respuesta
+            Map<String, Object> response = new HashMap<>();
+            response.put("mensaje", "Programación reprogramada exitosamente");
+            response.put("fechaOriginal", formatDate(fechaOriginal));
+            response.put("nuevaFecha", formatDate(nuevaFecha));
+            response.put("motivo", motivo);
+            response.put("idProgramacion", id);
+
+            return Response.ok(response).build();
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error al reprogramar: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    /**
      * Obtiene el historial de eventos de una programación (ejecutados, saltados,
      * reprogramados)
      */
