@@ -1,2 +1,15 @@
+# ============================================
+# Dockerfile - Backend MantenimientosINACIF
+# Multi-stage: Compila + Ejecuta
+# ============================================
+
+# Etapa 1: Compilar con Maven
+FROM maven:3.9-eclipse-temurin-11 AS builder
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests -q
+
+# Etapa 2: Ejecutar en TomEE
 FROM tomee:11-jre-8.0.9-plume
-COPY target/MantenimientosBackend.war /usr/local/tomee/webapps/MantenimientosBackend.war
+COPY --from=builder /app/target/MantenimientosBackend.war /usr/local/tomee/webapps/MantenimientosBackend.war

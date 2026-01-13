@@ -8,12 +8,18 @@ services:
     container_name: tomee-server
     environment:
       - TZ=America/Guatemala
-      - KEYCLOAK_URL=http://172.16.1.192:8080
+      - KEYCLOAK_URL=${KEYCLOAK_URL:-http://172.16.1.192:8080}
     restart: unless-stopped
     volumes:
       # VOLUMEN PARA PERSISTIR IMÁGENES Y ARCHIVOS
       - inacif-files:/root/inacif-imagenes
       - inacif-contracts:/root/contratos-archivos
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/MantenimientosBackend/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 volumes:
   # Volúmenes para persistir datos entre reinicios del contenedor
@@ -21,3 +27,8 @@ volumes:
     driver: local
   inacif-contracts:
     driver: local
+
+networks:
+  default:
+    name: inacif-network
+    driver: bridge

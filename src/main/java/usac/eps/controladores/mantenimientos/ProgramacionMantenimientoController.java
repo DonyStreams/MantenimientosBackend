@@ -669,7 +669,16 @@ public class ProgramacionMantenimientoController {
                         .build();
             }
 
-            // Eliminar ejecuciones asociadas primero
+            // Eliminar historial de programación primero (FK_HistorialProg_Programacion)
+            String sqlDeleteHistorial = "DELETE FROM Historial_Programacion WHERE id_programacion = ?";
+            int historialEliminado = em.createNativeQuery(sqlDeleteHistorial)
+                    .setParameter(1, id)
+                    .executeUpdate();
+
+            System.out.println(
+                    "🗑️ Eliminados " + historialEliminado + " registros de historial de la programación " + id);
+
+            // Eliminar ejecuciones asociadas
             String sqlDeleteEjecuciones = "DELETE FROM Ejecuciones_Mantenimiento WHERE id_programacion = ?";
             int ejecucionesEliminadas = em.createNativeQuery(sqlDeleteEjecuciones)
                     .setParameter(1, id)

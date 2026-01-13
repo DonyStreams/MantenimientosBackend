@@ -1,0 +1,29 @@
+# Archivos de IDE
+.idea/
+.vscode/
+*.iml
+
+# Archivos de git
+.git/
+.gitignore
+
+# Documentación
+*.md
+!README.md
+
+# Scripts SQL (no necesarios en imagen)
+Scripts/
+
+# Configuraciones de desarrollo
+*.code-workspace
+Configuraciones/
+
+# Logs
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Target completo (se compila dentro del contenedor)
+target/
