@@ -111,6 +111,34 @@ public class ContratoController {
     }
 
     @GET
+    @Path("/activos")
+    public Response getActivos() {
+        try {
+            // Obtener solo contratos activos (estado = true) y vigentes
+            List<ContratoModel> contratos = contratoRepository.findByEstado(true);
+            List<Map<String, Object>> contratosDTO = new ArrayList<>();
+
+            Date hoy = new Date();
+            for (ContratoModel contrato : contratos) {
+                // Solo incluir contratos cuya fecha de vencimiento aún no ha pasado
+                if (contrato.getFechaFin() == null || contrato.getFechaFin().after(hoy)
+                        || contrato.getFechaFin().equals(hoy)) {
+                    contratosDTO.add(convertirADTO(contrato));
+                }
+            }
+
+            System.out.println("📋 Devolviendo " + contratosDTO.size() + " contratos activos y vigentes");
+            return Response.ok(contratosDTO).build();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener contratos activos: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al obtener contratos activos\"}")
+                    .build();
+        }
+    }
+
+    @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Integer id) {
         try {
