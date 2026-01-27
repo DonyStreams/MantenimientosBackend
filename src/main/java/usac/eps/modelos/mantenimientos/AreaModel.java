@@ -3,8 +3,6 @@ package usac.eps.modelos.mantenimientos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity

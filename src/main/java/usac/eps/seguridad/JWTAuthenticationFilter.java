@@ -12,10 +12,8 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwk.HttpsJwks;
-import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -127,11 +125,9 @@ public class JWTAuthenticationFilter implements ContainerRequestFilter {
                 "auth/health", // Health check público
                 "health", // Health check general si existe
                 "status", // Status general si existe
-                "ftp/test", // 🆕 Test de conexión FTP (sin autenticación)
-                "ftp/upload", // 🆕 Upload FTP para testing (sin autenticación)
-                "ftp", // 🆕 Todas las rutas FTP para testing
-                "imagenes/view", // 🆕 Ver imágenes sin autenticación
-                "imagenes/test" // 🆕 Test del sistema de imágenes
+                "imagenes/view", // Ver imágenes sin autenticación
+                "imagenes/test", // Test del sistema de imágenes
+                "imagenes/upload" // Subir imágenes
         };
 
         for (String publicPath : publicPaths) {

@@ -243,10 +243,25 @@ public class TicketController {
                 String getIdSQL = "SELECT IDENT_CURRENT('Tickets')";
                 Integer ticketId = ((Number) em.createNativeQuery(getIdSQL).getSingleResult()).intValue();
 
+                // Obtener el nombre del usuario creador para la bitácora
+                String usuarioCreadorNombre = "Sistema";
+                try {
+                    String getNombreSQL = "SELECT nombre_completo FROM Usuarios WHERE id = ?";
+                    Object nombreResult = em.createNativeQuery(getNombreSQL)
+                            .setParameter(1, usuarioCreadorId)
+                            .getSingleResult();
+                    if (nombreResult != null) {
+                        usuarioCreadorNombre = nombreResult.toString();
+                    }
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo obtener nombre del usuario creador");
+                }
+
                 // Registrar en bitácora
                 String descripcionCorta = descripcion.length() > 50 ? descripcion.substring(0, 47) + "..."
                         : descripcion;
-                bitacoraService.registrarTicketCreado(equipoId, ticketId, descripcionCorta);
+                bitacoraService.registrarTicketCreado(equipoId, ticketId, descripcionCorta, usuarioCreadorId,
+                        usuarioCreadorNombre);
 
                 System.out.println("✅ Ticket creado exitosamente");
                 return Response.status(Response.Status.CREATED)
@@ -302,18 +317,52 @@ public class TicketController {
             String estado = extractJsonValue(jsonData, "estado");
             String prioridad = extractJsonValue(jsonData, "prioridad");
             String equipoIdStr = extractJsonValue(jsonData, "equipoId");
+            String usuarioAsignadoIdStr = extractJsonValue(jsonData, "usuarioAsignadoId");
+            String usuarioModificadorIdStr = extractJsonValue(jsonData, "usuarioModificadorId");
+            String usuarioModificadorNombre = extractJsonValue(jsonData, "usuarioModificadorNombre");
 
-            // Verificar que el ticket existe
-            String existeSQL = "SELECT COUNT(*) FROM Tickets WHERE id = ?";
-            Integer existe = (Integer) em.createNativeQuery(existeSQL)
+            // Obtener el ID del usuario que modifica (por defecto 1 si no viene)
+            Integer usuarioModificadorId = 1;
+            if (usuarioModificadorIdStr != null && !usuarioModificadorIdStr.trim().isEmpty()) {
+                try {
+                    usuarioModificadorId = Integer.parseInt(usuarioModificadorIdStr);
+                } catch (NumberFormatException e) {
+                    System.out.println("⚠️ ID de usuario modificador inválido: " + usuarioModificadorIdStr);
+                }
+            }
+
+            // Si no viene el nombre, obtenerlo de la BD
+            if ((usuarioModificadorNombre == null || usuarioModificadorNombre.trim().isEmpty())
+                    && usuarioModificadorId != null) {
+                try {
+                    String getNombreModSQL = "SELECT nombre_completo FROM Usuarios WHERE id = ?";
+                    Object nombreResult = em.createNativeQuery(getNombreModSQL)
+                            .setParameter(1, usuarioModificadorId)
+                            .getSingleResult();
+                    usuarioModificadorNombre = nombreResult != null ? nombreResult.toString() : "Sistema";
+                } catch (Exception e) {
+                    usuarioModificadorNombre = "Sistema";
+                }
+            }
+
+            // Verificar que el ticket existe y obtener valores actuales para comparar
+            String selectActualSQL = "SELECT estado, prioridad, equipo_id, usuario_asignado_id FROM Tickets WHERE id = ?";
+            @SuppressWarnings("unchecked")
+            java.util.List<Object[]> resultadosActuales = em.createNativeQuery(selectActualSQL)
                     .setParameter(1, id)
-                    .getSingleResult();
+                    .getResultList();
 
-            if (existe == 0) {
+            if (resultadosActuales.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"error\": \"Ticket no encontrado\"}")
                         .build();
             }
+
+            Object[] datosActuales = resultadosActuales.get(0);
+            String estadoActual = datosActuales[0] != null ? datosActuales[0].toString() : null;
+            String prioridadActual = datosActuales[1] != null ? datosActuales[1].toString() : null;
+            Integer equipoIdActual = datosActuales[2] != null ? ((Number) datosActuales[2]).intValue() : null;
+            Integer usuarioAsignadoActual = datosActuales[3] != null ? ((Number) datosActuales[3]).intValue() : null;
 
             // Construir SQL de actualización dinámicamente
             StringBuilder updateSQL = new StringBuilder(
@@ -335,13 +384,26 @@ public class TicketController {
                 parametros.add(prioridad);
             }
 
+            Integer equipoIdNuevo = equipoIdActual;
             if (equipoIdStr != null && !equipoIdStr.trim().isEmpty()) {
                 try {
-                    Integer equipoId = Integer.parseInt(equipoIdStr);
+                    equipoIdNuevo = Integer.parseInt(equipoIdStr);
                     updateSQL.append(", equipo_id = ?");
-                    parametros.add(equipoId);
+                    parametros.add(equipoIdNuevo);
                 } catch (NumberFormatException e) {
                     System.out.println("⚠️ ID de equipo inválido: " + equipoIdStr);
+                }
+            }
+
+            Integer usuarioAsignadoNuevo = usuarioAsignadoActual;
+            if (usuarioAsignadoIdStr != null && !usuarioAsignadoIdStr.trim().isEmpty()
+                    && !usuarioAsignadoIdStr.equals("null")) {
+                try {
+                    usuarioAsignadoNuevo = Integer.parseInt(usuarioAsignadoIdStr);
+                    updateSQL.append(", usuario_asignado_id = ?");
+                    parametros.add(usuarioAsignadoNuevo);
+                } catch (NumberFormatException e) {
+                    System.out.println("⚠️ ID de usuario asignado inválido: " + usuarioAsignadoIdStr);
                 }
             }
 
@@ -358,6 +420,36 @@ public class TicketController {
 
             if (updatedRows > 0) {
                 System.out.println("✅ Ticket actualizado exitosamente");
+
+                // Registrar cambios en bitácora
+                Integer equipoParaBitacora = equipoIdNuevo != null ? equipoIdNuevo : equipoIdActual;
+                if (equipoParaBitacora != null) {
+                    // Registrar cambio de estado
+                    if (estado != null && !estado.trim().isEmpty() && !estado.equals(estadoActual)) {
+                        bitacoraService.registrarTicketCambioEstado(equipoParaBitacora, id, estadoActual, estado,
+                                usuarioModificadorId, usuarioModificadorNombre);
+                    }
+
+                    // Registrar cambio de prioridad
+                    if (prioridad != null && !prioridad.trim().isEmpty() && !prioridad.equals(prioridadActual)) {
+                        bitacoraService.registrarTicketCambioPrioridad(equipoParaBitacora, id, prioridadActual,
+                                prioridad, usuarioModificadorId, usuarioModificadorNombre);
+                    }
+
+                    // Registrar asignación de usuario
+                    if (usuarioAsignadoNuevo != null && !usuarioAsignadoNuevo.equals(usuarioAsignadoActual)) {
+                        // Obtener nombre del usuario asignado
+                        String getNombreSQL = "SELECT nombre_completo FROM Usuarios WHERE id = ?";
+                        @SuppressWarnings("unchecked")
+                        java.util.List<Object> nombresResult = em.createNativeQuery(getNombreSQL)
+                                .setParameter(1, usuarioAsignadoNuevo)
+                                .getResultList();
+                        String nombreUsuario = !nombresResult.isEmpty() ? nombresResult.get(0).toString()
+                                : "Usuario #" + usuarioAsignadoNuevo;
+                        bitacoraService.registrarTicketAsignado(equipoParaBitacora, id, nombreUsuario,
+                                usuarioModificadorId, usuarioModificadorNombre);
+                    }
+                }
 
                 // Obtener el ticket actualizado
                 String selectSQL = "SELECT t.id, t.descripcion, t.estado, t.prioridad, t.fecha_creacion, " +
@@ -411,9 +503,20 @@ public class TicketController {
         try {
             System.out.println("🗑️ Eliminando ticket ID: " + id);
 
-            // Primero eliminar comentarios asociados
+            // Primero eliminar el historial asociado al ticket
+            String deleteHistorialSQL = "DELETE FROM Historial_Equipo WHERE ticket_id = ?";
+            em.createNativeQuery(deleteHistorialSQL).setParameter(1, id).executeUpdate();
+            System.out.println("   ✓ Historial del ticket eliminado");
+
+            // Eliminar comentarios asociados
             String deleteComentariosSQL = "DELETE FROM Comentarios_Ticket WHERE ticket_id = ?";
             em.createNativeQuery(deleteComentariosSQL).setParameter(1, id).executeUpdate();
+            System.out.println("   ✓ Comentarios del ticket eliminados");
+
+            // Eliminar evidencias asociadas al ticket
+            String deleteEvidenciasSQL = "DELETE FROM Evidencias WHERE entidad_relacionada = 'ticket' AND entidad_id = ?";
+            em.createNativeQuery(deleteEvidenciasSQL).setParameter(1, id).executeUpdate();
+            System.out.println("   ✓ Evidencias del ticket eliminadas");
 
             // Finalmente eliminar el ticket
             String deleteTicketSQL = "DELETE FROM Tickets WHERE id = ?";
@@ -721,19 +824,38 @@ public class TicketController {
                         .setParameter(3, ticketId)
                         .executeUpdate();
 
-                // Si el ticket se cerró/resolvió, registrar en bitácora
-                if (nuevoEstado.equalsIgnoreCase("Cerrado") || nuevoEstado.equalsIgnoreCase("Resuelto")) {
-                    // Obtener equipo_id del ticket
-                    String getEquipoSQL = "SELECT equipo_id FROM Tickets WHERE id = ?";
-                    Integer equipoId = (Integer) em.createNativeQuery(getEquipoSQL)
-                            .setParameter(1, ticketId)
-                            .getSingleResult();
+                // Obtener equipo_id del ticket para registrar en bitácora
+                String getEquipoSQL = "SELECT equipo_id FROM Tickets WHERE id = ?";
+                Integer equipoId = (Integer) em.createNativeQuery(getEquipoSQL)
+                        .setParameter(1, ticketId)
+                        .getSingleResult();
 
-                    if (equipoId != null) {
+                if (equipoId != null) {
+                    // Obtener nombre del usuario para la bitácora
+                    String usuarioNombre = "Sistema";
+                    try {
+                        String getNombreSQL = "SELECT nombre_completo FROM Usuarios WHERE id = ?";
+                        Object nombreResult = em.createNativeQuery(getNombreSQL)
+                                .setParameter(1, usuarioId)
+                                .getSingleResult();
+                        if (nombreResult != null) {
+                            usuarioNombre = nombreResult.toString();
+                        }
+                    } catch (Exception e) {
+                        System.out.println("⚠️ No se pudo obtener nombre del usuario");
+                    }
+
+                    // Registrar el cambio de estado en la bitácora
+                    bitacoraService.registrarTicketCambioEstado(equipoId, ticketId, estadoActual, nuevoEstado,
+                            usuarioId, usuarioNombre);
+
+                    // Si el ticket se cerró/resolvió, registrar también como resuelto
+                    if (nuevoEstado.equalsIgnoreCase("Cerrado") || nuevoEstado.equalsIgnoreCase("Resuelto")) {
                         String comentarioCorto = comentario != null && comentario.length() > 50
                                 ? comentario.substring(0, 47) + "..."
                                 : (comentario != null ? comentario : "Sin detalles");
-                        bitacoraService.registrarTicketResuelto(equipoId, ticketId, comentarioCorto);
+                        bitacoraService.registrarTicketResuelto(equipoId, ticketId, comentarioCorto, usuarioId,
+                                usuarioNombre);
                     }
                 }
 
@@ -854,7 +976,9 @@ public class TicketController {
             @PathParam("id") Integer ticketId,
             InputStream inputStream,
             @HeaderParam("X-Filename") String fileName,
-            @HeaderParam("X-Descripcion") String descripcion) {
+            @HeaderParam("X-Descripcion") String descripcion,
+            @HeaderParam("X-Usuario-Id") String usuarioIdHeader,
+            @HeaderParam("X-Usuario-Nombre") String usuarioNombreHeader) {
 
         try {
             if (ticketRepository.findById(ticketId) == null) {
@@ -873,6 +997,37 @@ public class TicketController {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"Tipo de archivo no permitido\"}")
                         .build();
+            }
+
+            // Obtener datos del usuario que sube la evidencia
+            Integer usuarioId = 1;
+            String usuarioNombre = "Sistema";
+            if (usuarioIdHeader != null && !usuarioIdHeader.trim().isEmpty()) {
+                try {
+                    usuarioId = Integer.parseInt(usuarioIdHeader);
+                } catch (NumberFormatException e) {
+                    System.out.println("⚠️ ID de usuario inválido en header");
+                }
+            }
+            if (usuarioNombreHeader != null && !usuarioNombreHeader.trim().isEmpty()) {
+                try {
+                    usuarioNombre = URLDecoder.decode(usuarioNombreHeader, "UTF-8");
+                } catch (Exception e) {
+                    System.out.println("⚠️ Error decodificando nombre de usuario");
+                }
+            } else if (usuarioId != 1) {
+                // Obtener nombre de la BD si no viene en header
+                try {
+                    String getNombreSQL = "SELECT nombre_completo FROM Usuarios WHERE id = ?";
+                    Object nombreResult = em.createNativeQuery(getNombreSQL)
+                            .setParameter(1, usuarioId)
+                            .getSingleResult();
+                    if (nombreResult != null) {
+                        usuarioNombre = nombreResult.toString();
+                    }
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo obtener nombre del usuario");
+                }
             }
 
             java.nio.file.Path ticketDir = Paths.get(EVIDENCIAS_DIR, String.valueOf(ticketId));
@@ -908,6 +1063,19 @@ public class TicketController {
                     .setParameter(6, decodedDescripcion)
                     .setParameter(7, archivoUrl)
                     .executeUpdate();
+
+            // Registrar en bitácora la evidencia agregada
+            try {
+                String getEquipoSQL = "SELECT equipo_id FROM Tickets WHERE id = ?";
+                Integer equipoId = (Integer) em.createNativeQuery(getEquipoSQL)
+                        .setParameter(1, ticketId)
+                        .getSingleResult();
+                if (equipoId != null) {
+                    bitacoraService.registrarTicketEvidencia(equipoId, ticketId, fileName, usuarioId, usuarioNombre);
+                }
+            } catch (Exception ex) {
+                System.out.println("⚠️ No se pudo registrar evidencia en bitácora: " + ex.getMessage());
+            }
 
             String jsonResponse = String.format(
                     "{\"nombreArchivo\": \"%s\", \"nombreOriginal\": \"%s\", \"tipoArchivo\": \"%s\", " +

@@ -100,7 +100,12 @@ public class ProgramacionMantenimientoModel implements Serializable {
 
     // Métodos de negocio
     public void calcularProximoMantenimiento() {
-        if (fechaUltimoMantenimiento != null && frecuenciaDias != null) {
+        // Si es programación única (frecuencia = 0), no recalcular
+        if (frecuenciaDias == null || frecuenciaDias == 0) {
+            return;
+        }
+
+        if (fechaUltimoMantenimiento != null) {
             long proximoTiempo = fechaUltimoMantenimiento.getTime() + (frecuenciaDias * 24L * 60L * 60L * 1000L);
             this.fechaProximoMantenimiento = new Date(proximoTiempo);
         }

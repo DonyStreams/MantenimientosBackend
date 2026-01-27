@@ -2,7 +2,6 @@ package usac.eps.modelos.mantenimientos;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
@@ -76,6 +75,9 @@ public class EquipoModel implements Serializable {
     @JoinColumn(name = "id_categoria", insertable = false, updatable = false)
     @JsonbTransient
     private CategoriaEquipoModel categoria;
+
+    @Column(name = "estado", length = 20)
+    private String estado = "Activo";  // Valores: Activo, Inactivo, Critico
 
     // Getters y setters
     public Integer getIdEquipo() {
@@ -236,5 +238,13 @@ public class EquipoModel implements Serializable {
 
     public void setCategoria(CategoriaEquipoModel categoria) {
         this.categoria = categoria;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

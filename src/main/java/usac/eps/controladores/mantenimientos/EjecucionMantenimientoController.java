@@ -152,7 +152,14 @@ public class EjecucionMantenimientoController {
                         .build();
             }
 
-            // Primero eliminar evidencias asociadas usando SQL nativo
+            // Primero eliminar comentarios asociados
+            String sqlDeleteComentarios = "DELETE FROM Comentarios_Ejecucion WHERE id_ejecucion = ?";
+            int comentariosEliminados = em.createNativeQuery(sqlDeleteComentarios)
+                    .setParameter(1, id)
+                    .executeUpdate();
+            System.out.println("🗑️ Eliminados " + comentariosEliminados + " comentarios de la ejecución " + id);
+
+            // Luego eliminar evidencias asociadas usando SQL nativo
             String sqlDeleteEvidencias = "DELETE FROM Evidencias WHERE entidad_relacionada = 'ejecucion_mantenimiento' AND entidad_id = ?";
             int evidenciasEliminadas = em.createNativeQuery(sqlDeleteEvidencias)
                     .setParameter(1, id)
@@ -747,10 +754,23 @@ public class EjecucionMantenimientoController {
             // Actualizar fecha del último mantenimiento
             programacion.setFechaUltimoMantenimiento(fechaRealizada);
 
-            // Recalcular próximo mantenimiento
-            programacion.calcularProximoMantenimiento();
+            // Verificar si es programación única (frecuencia = 0)
+            boolean esProgramacionUnica = programacion.getFrecuenciaDias() != null
+                    && programacion.getFrecuenciaDias() == 0;
+
+            if (esProgramacionUnica) {
+                // Para programaciones únicas, desactivar automáticamente después de ejecutar
+                System.out.println("🔒 Programación única (frecuencia=0) - Desactivando automáticamente...");
+                programacion.setActiva(false);
+                // Mantener la fecha próxima como null ya que no habrá siguiente
+                programacion.setFechaProximoMantenimiento(null);
+            } else {
+                // Recalcular próximo mantenimiento solo para programaciones recurrentes
+                programacion.calcularProximoMantenimiento();
+            }
 
             System.out.println("📅 Nueva fecha próximo mantenimiento: " + programacion.getFechaProximoMantenimiento());
+            System.out.println("📅 Programación activa: " + programacion.getActiva());
 
             // Actualizar auditoría
             programacion.setFechaModificacion(new Date());

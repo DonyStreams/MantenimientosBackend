@@ -1,0 +1,78 @@
+# ============================================
+# Docker Compose - Producción INACIF
+# Frontend + Backend (sin BD ni Keycloak)
+# ============================================
+# Uso: docker-compose -f docker-compose.produccion.yml up -d --build
+# 
+# Requisitos previos:
+# - SQL Server ya debe estar corriendo (interno o externo)
+# - Keycloak ya debe estar corriendo (interno o externo)
+# ============================================
+
+services:
+  # ==========================================
+  # BACKEND - TomEE Java
+  # ==========================================
+  backend:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: inacif-backend
+    ports:
+      - "${BACKEND_PORT:-8081}:8080"
+    environment:
+      - TZ=America/Guatemala
+      # Configurar estas variables según tu entorno
+      - KEYCLOAK_URL=${KEYCLOAK_URL:-http://172.16.1.192:8080}
+      - DB_HOST=${DB_HOST:-172.16.1.192}
+      - DB_PORT=${DB_PORT:-1433}
+      - DB_NAME=${DB_NAME:-MantenimientosINACIF}
+      - DB_USER=${DB_USER:-sa}
+      - DB_PASSWORD=${DB_PASSWORD:-tu_password}
+    volumes:
+      - inacif-files:/root/inacif-imagenes
+      - inacif-contracts:/root/contratos-archivos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/MantenimientosBackend/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - inacif-network
+
+  # ==========================================
+  # FRONTEND - Angular + Nginx
+  # ==========================================
+  frontend:
+    build:
+      context: ../EPS-FRONTEND
+      dockerfile: Dockerfile.prod
+    container_name: inacif-frontend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    environment:
+      - TZ=America/Guatemala
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - inacif-network
+
+# ==========================================
+# VOLÚMENES PERSISTENTES
+# ==========================================
+volumes:
+  inacif-files:
+    driver: local
+  inacif-contracts:
+    driver: local
+
+# ==========================================
+# RED
+# ==========================================
+networks:
+  inacif-network:
+    driver: bridge

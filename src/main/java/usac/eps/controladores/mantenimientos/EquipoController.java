@@ -48,11 +48,35 @@ public class EquipoController {
     private static final Logger LOGGER = Logger.getLogger(EquipoController.class.getName());
 
     @GET
-    public Response getAll() {
+    public Response getAll(
+            @QueryParam("idCategoria") Integer idCategoria,
+            @QueryParam("estado") String estado) {
         try {
             // Consulta con JOIN para obtener el nombre del área
             String jpql = "SELECT e FROM EquipoModel e LEFT JOIN FETCH e.area LEFT JOIN FETCH e.categoria";
-            List<EquipoModel> equipos = entityManager.createQuery(jpql, EquipoModel.class).getResultList();
+            
+            // Construir cláusula WHERE dinámicamente
+            List<String> condiciones = new ArrayList<>();
+            if (idCategoria != null) {
+                condiciones.add("e.idCategoria = :idCategoria");
+            }
+            if (estado != null && !estado.trim().isEmpty()) {
+                condiciones.add("e.estado = :estado");
+            }
+            
+            if (!condiciones.isEmpty()) {
+                jpql += " WHERE " + String.join(" AND ", condiciones);
+            }
+            
+            javax.persistence.TypedQuery<EquipoModel> query = entityManager.createQuery(jpql, EquipoModel.class);
+            if (idCategoria != null) {
+                query.setParameter("idCategoria", idCategoria);
+            }
+            if (estado != null && !estado.trim().isEmpty()) {
+                query.setParameter("estado", estado);
+            }
+            
+            List<EquipoModel> equipos = query.getResultList();
 
             // Crear lista de mapas con los datos del equipo + nombre del área
             List<Map<String, Object>> result = new ArrayList<>();
@@ -74,6 +98,7 @@ public class EquipoController {
                 equipoMap.put("descripcion", equipo.getDescripcion());
                 equipoMap.put("idArea", equipo.getIdArea());
                 equipoMap.put("idCategoria", equipo.getIdCategoria());
+                equipoMap.put("estado", equipo.getEstado() != null ? equipo.getEstado() : "Activo");
 
                 // Obtener nombre del área
                 String areaNombre = null;

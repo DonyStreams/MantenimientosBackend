@@ -23,6 +23,7 @@ public class EjecucionMantenimientoDTO {
     private Integer idProgramacion;
     private Integer frecuenciaDias;
     private Date fechaProximoProgramado;
+    private String tipoMantenimiento;
 
     private Integer usuarioResponsableId;
     private String usuarioResponsableNombre;
@@ -161,6 +162,14 @@ public class EjecucionMantenimientoDTO {
 
     public void setFechaProximoProgramado(Date fechaProximoProgramado) {
         this.fechaProximoProgramado = fechaProximoProgramado;
+    }
+
+    public String getTipoMantenimiento() {
+        return tipoMantenimiento;
+    }
+
+    public void setTipoMantenimiento(String tipoMantenimiento) {
+        this.tipoMantenimiento = tipoMantenimiento;
     }
 
     public Integer getUsuarioResponsableId() {

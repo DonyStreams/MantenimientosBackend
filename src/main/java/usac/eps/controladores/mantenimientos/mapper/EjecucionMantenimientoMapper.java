@@ -4,7 +4,8 @@ import usac.eps.controladores.mantenimientos.dto.EjecucionMantenimientoDTO;
 import usac.eps.modelos.mantenimientos.EjecucionMantenimientoModel;
 
 /**
- * Utilidad para transformar entidades de ejecuciones de mantenimiento a DTOs ligeros
+ * Utilidad para transformar entidades de ejecuciones de mantenimiento a DTOs
+ * ligeros
  */
 public final class EjecucionMantenimientoMapper {
 
@@ -40,6 +41,9 @@ public final class EjecucionMantenimientoMapper {
             dto.setIdProgramacion(model.getProgramacion().getIdProgramacion());
             dto.setFrecuenciaDias(model.getProgramacion().getFrecuenciaDias());
             dto.setFechaProximoProgramado(model.getProgramacion().getFechaProximoMantenimiento());
+            if (model.getProgramacion().getTipoMantenimiento() != null) {
+                dto.setTipoMantenimiento(model.getProgramacion().getTipoMantenimiento().getNombre());
+            }
         }
 
         if (model.getUsuarioResponsable() != null) {

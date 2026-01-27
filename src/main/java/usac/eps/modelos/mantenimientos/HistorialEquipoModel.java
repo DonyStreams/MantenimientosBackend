@@ -32,6 +32,9 @@ public class HistorialEquipoModel implements Serializable {
     @Column(name = "usuario_nombre")
     private String usuarioNombre;
 
+    @Column(name = "ticket_id")
+    private Integer ticketId;
+
     // Getters y setters
     public Integer getIdHistorial() {
         return idHistorial;
@@ -87,5 +90,13 @@ public class HistorialEquipoModel implements Serializable {
 
     public void setUsuarioNombre(String usuarioNombre) {
         this.usuarioNombre = usuarioNombre;
+    }
+
+    public Integer getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(Integer ticketId) {
+        this.ticketId = ticketId;
     }
 }

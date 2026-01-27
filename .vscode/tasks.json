@@ -6,8 +6,9 @@
       "type": "shell",
       "command": "powershell.exe",
       "args": [
+        "-NoProfile",
         "-Command",
-        "Write-Host 'Compilando proyecto...' -ForegroundColor Green; mvn clean package -q; if ($LASTEXITCODE -eq 0) { Write-Host 'Iniciando TomEE...' -ForegroundColor Green; $env:TOMEE_PORT='8081'; docker-compose up --build -d; Start-Sleep 5; Write-Host 'Backend disponible en http://localhost:8081/MantenimientosBackend/' -ForegroundColor Green; docker logs tomee-server --tail 10 } else { Write-Host 'Error en compilación' -ForegroundColor Red }"
+        "mvn clean package -DskipTests -q; if ($LASTEXITCODE -eq 0) { docker exec tomee-server rm -rf /usr/local/tomee/webapps/MantenimientosBackend /usr/local/tomee/webapps/MantenimientosBackend.war; docker cp target/MantenimientosBackend.war tomee-server:/usr/local/tomee/webapps/; docker restart tomee-server; Start-Sleep 12; docker logs tomee-server --tail 20 } else { Write-Host 'Error compilacion' -ForegroundColor Red }"
       ],
       "problemMatcher": [],
       "group": {
@@ -20,8 +21,22 @@
         "focus": false,
         "panel": "shared",
         "showReuseMessage": true,
-        "clear": false
+        "clear": true
       },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Iniciar Backend (primera vez)",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-Command",
+        "Write-Host 'Compilando proyecto...' -ForegroundColor Green; mvn clean package -DskipTests -q; if ($LASTEXITCODE -eq 0) { Write-Host 'Iniciando TomEE...' -ForegroundColor Green; $env:TOMEE_PORT='8081'; docker-compose up --build -d; Start-Sleep 10; Write-Host 'Backend disponible en http://localhost:8081/MantenimientosBackend/' -ForegroundColor Green; docker logs tomee-server --tail 15 } else { Write-Host 'Error en compilación' -ForegroundColor Red }"
+      ],
+      "problemMatcher": [],
+      "group": "build",
       "options": {
         "cwd": "${workspaceFolder}"
       }

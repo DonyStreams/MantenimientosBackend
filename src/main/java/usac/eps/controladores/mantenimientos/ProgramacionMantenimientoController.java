@@ -25,12 +25,14 @@ import usac.eps.modelos.mantenimientos.EquipoModel;
 import usac.eps.modelos.mantenimientos.ProgramacionMantenimientoModel;
 import usac.eps.modelos.mantenimientos.TipoMantenimientoModel;
 import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
+import usac.eps.modelos.mantenimientos.ComentarioEjecucionModel;
 import usac.eps.repositorios.mantenimientos.ProgramacionMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.TipoMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.EjecucionMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.ContratoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
+import usac.eps.repositorios.mantenimientos.ComentarioEjecucionRepository;
 
 /**
  * Controlador REST para gestión de programaciones de mantenimiento
@@ -61,6 +63,9 @@ public class ProgramacionMantenimientoController {
 
     @Inject
     private UsuarioMantenimientoRepository usuarioRepository;
+
+    @Inject
+    private ComentarioEjecucionRepository comentarioEjecucionRepository;
 
     @Context
     private SecurityContext securityContext;
@@ -357,6 +362,7 @@ public class ProgramacionMantenimientoController {
      * Crea una nueva programación
      */
     @POST
+    @Transactional
     public Response createProgramacion(ProgramacionMantenimientoModel programacion) {
         try {
             // Validaciones básicas
@@ -366,9 +372,9 @@ public class ProgramacionMantenimientoController {
                         .build();
             }
 
-            if (programacion.getFrecuenciaDias() == null || programacion.getFrecuenciaDias() <= 0) {
+            if (programacion.getFrecuenciaDias() == null || programacion.getFrecuenciaDias() < 0) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Frecuencia en días debe ser mayor a 0")
+                        .entity("Frecuencia en días debe ser mayor o igual a 0 (0 = único)")
                         .build();
             }
 
@@ -473,10 +479,40 @@ public class ProgramacionMantenimientoController {
             programacion.setFechaCreacion(new Date());
             asignarUsuarioAuditoria(programacion, true);
 
-            ProgramacionMantenimientoModel saved = programacionRepository.save(programacion);
-            return Response.status(Response.Status.CREATED).entity(saved).build();
+            System.out.println("📦 Guardando programación con EntityManager directamente...");
+
+            // Usar EntityManager directamente para garantizar que el ID se genere
+            em.persist(programacion);
+            em.flush();
+
+            // Ahora el ID debe estar disponible
+            Integer idGenerado = programacion.getIdProgramacion();
+            System.out.println("✅ Programación guardada con ID: " + idGenerado);
+
+            // Registrar en historial como CREADO (fecha_original = fecha_nueva para
+            // creación)
+            if (idGenerado != null) {
+                try {
+                    Date fechaProximo = programacion.getFechaProximoMantenimiento();
+                    registrarHistorial(idGenerado, "CREADO", fechaProximo, fechaProximo,
+                            "Programación creada");
+                    System.out.println("✅ Historial CREADO registrado correctamente");
+                } catch (Exception historialError) {
+                    System.out.println("⚠️ Error registrando historial: " + historialError.getMessage());
+                    historialError.printStackTrace();
+                }
+            } else {
+                System.out.println("⚠️ No se pudo obtener ID de programación para registrar historial");
+            }
+
+            // Refrescar para obtener la entidad completa con relaciones
+            em.refresh(programacion);
+
+            return Response.status(Response.Status.CREATED).entity(programacion).build();
 
         } catch (Exception e) {
+            System.out.println("❌ Error en createProgramacion: " + e.getMessage());
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al crear programación: " + e.getMessage())
                     .build();
@@ -488,6 +524,7 @@ public class ProgramacionMantenimientoController {
      */
     @PUT
     @Path("/{id}")
+    @Transactional
     public Response updateProgramacion(@PathParam("id") Integer id, ProgramacionMantenimientoModel programacion) {
         try {
             ProgramacionMantenimientoModel existing = programacionRepository.findBy(id);
@@ -497,39 +534,76 @@ public class ProgramacionMantenimientoController {
                         .build();
             }
 
-            // Actualizar campos
-            if (programacion.getFrecuenciaDias() != null) {
-                existing.setFrecuenciaDias(programacion.getFrecuenciaDias());
+            // Guardar fecha original antes de cualquier cambio
+            Date fechaOriginal = existing.getFechaProximoMantenimiento();
+
+            // Actualizar equipo si viene en la petición
+            if (programacion.getEquipo() != null && programacion.getEquipo().getIdEquipo() != null) {
+                EquipoModel equipo = equipoRepository.findBy(programacion.getEquipo().getIdEquipo());
+                if (equipo != null) {
+                    existing.setEquipo(equipo);
+                }
             }
-            if (programacion.getFechaUltimoMantenimiento() != null) {
-                existing.setFechaUltimoMantenimiento(programacion.getFechaUltimoMantenimiento());
-            }
-            if (programacion.getDiasAlertaPrevia() != null) {
-                existing.setDiasAlertaPrevia(programacion.getDiasAlertaPrevia());
-            }
-            if (programacion.getActiva() != null) {
-                existing.setActiva(programacion.getActiva());
-            }
-            if (programacion.getObservaciones() != null) {
-                existing.setObservaciones(programacion.getObservaciones());
+
+            // Actualizar tipo de mantenimiento si viene en la petición
+            if (programacion.getTipoMantenimiento() != null
+                    && programacion.getTipoMantenimiento().getIdTipo() != null) {
+                TipoMantenimientoModel tipo = tipoMantenimientoRepository
+                        .findBy(programacion.getTipoMantenimiento().getIdTipo());
+                if (tipo != null) {
+                    existing.setTipoMantenimiento(tipo);
+                }
             }
 
             // Actualizar contrato si viene en la petición
-            if (programacion.getContrato() != null) {
+            if (programacion.getContrato() != null && programacion.getContrato().getIdContrato() != null) {
                 ContratoModel contrato = contratoRepository.findBy(programacion.getContrato().getIdContrato());
                 if (contrato != null) {
                     existing.setContrato(contrato);
                 }
             }
 
-            // Recalcular próximo mantenimiento
-            existing.calcularProximoMantenimiento();
+            // Actualizar frecuencia
+            if (programacion.getFrecuenciaDias() != null) {
+                existing.setFrecuenciaDias(programacion.getFrecuenciaDias());
+            }
+
+            // Actualizar fecha próximo mantenimiento directamente si viene
+            if (programacion.getFechaProximoMantenimiento() != null) {
+                existing.setFechaProximoMantenimiento(programacion.getFechaProximoMantenimiento());
+            }
+
+            // Actualizar fecha último mantenimiento si viene
+            if (programacion.getFechaUltimoMantenimiento() != null) {
+                existing.setFechaUltimoMantenimiento(programacion.getFechaUltimoMantenimiento());
+            }
+
+            // Actualizar días alerta
+            if (programacion.getDiasAlertaPrevia() != null) {
+                existing.setDiasAlertaPrevia(programacion.getDiasAlertaPrevia());
+            }
+
+            // Actualizar estado activa
+            if (programacion.getActiva() != null) {
+                existing.setActiva(programacion.getActiva());
+            }
+
+            // Actualizar observaciones
+            if (programacion.getObservaciones() != null) {
+                existing.setObservaciones(programacion.getObservaciones());
+            }
 
             // Auditoría
             existing.setFechaModificacion(new Date());
             asignarUsuarioAuditoria(existing, false);
 
             ProgramacionMantenimientoModel updated = programacionRepository.save(existing);
+
+            // Registrar en historial
+            Date fechaNueva = updated.getFechaProximoMantenimiento();
+            registrarHistorial(id, "EDITADO", fechaOriginal, fechaNueva,
+                    "Programación editada por usuario");
+
             return Response.ok(updated).build();
 
         } catch (Exception e) {
@@ -544,6 +618,7 @@ public class ProgramacionMantenimientoController {
      */
     @PATCH
     @Path("/{id}/toggle-activa")
+    @Transactional
     public Response toggleActiva(@PathParam("id") Integer id, Map<String, Boolean> body) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findBy(id);
@@ -555,10 +630,17 @@ public class ProgramacionMantenimientoController {
 
             Boolean activa = body.get("activa");
             if (activa != null) {
+                Boolean estadoAnterior = programacion.getActiva();
                 programacion.setActiva(activa);
                 programacion.setFechaModificacion(new Date());
                 asignarUsuarioAuditoria(programacion, false);
                 programacionRepository.save(programacion);
+
+                // Registrar en historial
+                String tipoEvento = activa ? "ACTIVADO" : "PAUSADO";
+                String motivo = activa ? "Programación activada por usuario" : "Programación pausada por usuario";
+                registrarHistorial(id, tipoEvento, programacion.getFechaProximoMantenimiento(),
+                        programacion.getFechaProximoMantenimiento(), motivo);
             }
 
             return Response.ok().build();
@@ -574,6 +656,7 @@ public class ProgramacionMantenimientoController {
      */
     @POST
     @Path("/{id}/crear-mantenimiento")
+    @Transactional
     public Response crearMantenimiento(@PathParam("id") Integer id) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findByIdProgramacion(id);
@@ -639,10 +722,38 @@ public class ProgramacionMantenimientoController {
 
             ejecucionRepository.save(ejecucion);
 
+            // Crear comentario inicial en la conversación
+            ComentarioEjecucionModel comentarioInicial = new ComentarioEjecucionModel();
+            comentarioInicial.setEjecucion(ejecucion);
+            comentarioInicial.setUsuario(ejecucion.getUsuarioCreacion());
+            comentarioInicial.setTipoComentario("SEGUIMIENTO");
+
+            String tipoMant = programacion.getTipoMantenimiento() != null
+                    ? programacion.getTipoMantenimiento().getNombre()
+                    : "N/A";
+            String equipoNombre = programacion.getEquipo() != null
+                    ? programacion.getEquipo().getNombre()
+                    : "N/A";
+
+            comentarioInicial.setComentario(String.format(
+                    "📋 Ejecución creada a partir de programación #%d.\n" +
+                            "• Equipo: %s\n" +
+                            "• Tipo: %s\n" +
+                            "• Estado inicial: PROGRAMADO",
+                    id, equipoNombre, tipoMant));
+            comentarioInicial.setEstadoNuevo("PROGRAMADO");
+            comentarioInicial.setFechaCreacion(new Date());
+            comentarioEjecucionRepository.save(comentarioInicial);
+
             // Actualizar programación: solo registrar modificación, no mover fechas hasta
             // completar
             programacion.setFechaModificacion(new Date());
             programacionRepository.save(programacion);
+
+            // Registrar en historial
+            registrarHistorial(id, "EJECUTADO", programacion.getFechaProximoMantenimiento(),
+                    programacion.getFechaProximoMantenimiento(),
+                    "Mantenimiento iniciado");
 
             EjecucionMantenimientoDTO dto = EjecucionMantenimientoMapper.toDTO(ejecucion);
             return Response.ok(dto).build();
@@ -719,12 +830,19 @@ public class ProgramacionMantenimientoController {
             }
 
             // Cambiar estado activa
-            programacion.setActiva(!programacion.getActiva());
+            Boolean nuevoEstado = !programacion.getActiva();
+            programacion.setActiva(nuevoEstado);
             programacion.setFechaModificacion(new Date());
             programacionRepository.save(programacion);
 
-            String mensaje = programacion.getActiva() ? "activada" : "pausada";
+            String mensaje = nuevoEstado ? "activada" : "pausada";
             System.out.println("🔄 Programación " + id + " " + mensaje);
+
+            // Registrar en historial
+            String tipoEvento = nuevoEstado ? "ACTIVADO" : "PAUSADO";
+            String motivo = nuevoEstado ? "Programación activada por usuario" : "Programación pausada por usuario";
+            Date fechaProximo = programacion.getFechaProximoMantenimiento();
+            registrarHistorial(id, tipoEvento, fechaProximo, fechaProximo, motivo);
 
             return Response.ok()
                     .entity("{\"message\": \"Programación " + mensaje + " exitosamente\", \"activa\": "
@@ -864,7 +982,7 @@ public class ProgramacionMantenimientoController {
             Integer frecuenciaDias = programacion.getFrecuenciaDias();
             if (frecuenciaDias == null || frecuenciaDias <= 0) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("La programación no tiene frecuencia válida")
+                        .entity("No se puede descartar una programación única (sin frecuencia). Use eliminar o editar.")
                         .build();
             }
 
@@ -879,39 +997,8 @@ public class ProgramacionMantenimientoController {
                 motivo = "Descartado por usuario";
             }
 
-            // Obtener usuario actual para auditoría
-            Integer usuarioId = null;
-            try {
-                String keycloakId = (String) request.getAttribute("keycloakId");
-                if (keycloakId != null) {
-                    UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
-                    if (usuario != null) {
-                        usuarioId = usuario.getId();
-                    }
-                }
-            } catch (Exception e) {
-                // Ignorar
-            }
-
-            // Insertar en historial (usando query nativa porque no tenemos la entidad aún)
-            try {
-                String insertHistorial = "INSERT INTO Historial_Programacion " +
-                        "(id_programacion, tipo_evento, fecha_original, fecha_nueva, motivo, usuario_id, fecha_registro) "
-                        +
-                        "VALUES (?1, 'SALTADO', ?2, ?3, ?4, ?5, ?6)";
-
-                em.createNativeQuery(insertHistorial)
-                        .setParameter(1, id)
-                        .setParameter(2, fechaOriginal)
-                        .setParameter(3, nuevaFecha)
-                        .setParameter(4, motivo)
-                        .setParameter(5, usuarioId)
-                        .setParameter(6, new Date())
-                        .executeUpdate();
-            } catch (Exception e) {
-                // Si la tabla no existe aún, solo logear y continuar
-                System.out.println("Nota: No se pudo insertar en Historial_Programacion: " + e.getMessage());
-            }
+            // Registrar en historial usando método auxiliar
+            registrarHistorial(id, "SALTADO", fechaOriginal, nuevaFecha, motivo);
 
             // Actualizar programación
             programacion.setFechaProximoMantenimiento(nuevaFecha);
@@ -943,6 +1030,7 @@ public class ProgramacionMantenimientoController {
      */
     @POST
     @Path("/{id}/reprogramar")
+    @Transactional
     public Response reprogramarProgramacion(@PathParam("id") Integer id, Map<String, Object> body) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findByIdProgramacion(id);
@@ -960,11 +1048,14 @@ public class ProgramacionMantenimientoController {
                         .build();
             }
 
-            // Parsear la fecha (formato yyyy-MM-dd)
+            // Parsear la fecha (formato yyyy-MM-dd) usando zona horaria local para evitar
+            // desfases
             Date nuevaFecha;
             try {
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                sdf.setTimeZone(java.util.TimeZone.getTimeZone("America/Guatemala"));
                 nuevaFecha = sdf.parse(nuevaFechaStr.substring(0, 10));
+                System.out.println("📅 Reprogramar: recibido=" + nuevaFechaStr + " parseado=" + nuevaFecha);
             } catch (Exception e) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Formato de fecha inválido. Use yyyy-MM-dd")
@@ -974,44 +1065,19 @@ public class ProgramacionMantenimientoController {
             Date fechaOriginal = programacion.getFechaProximoMantenimiento();
             String motivo = body.get("motivo") != null ? body.get("motivo").toString() : "Reprogramado por usuario";
 
-            // Obtener usuario actual para auditoría
-            Integer usuarioId = null;
-            try {
-                String keycloakId = (String) request.getAttribute("keycloakId");
-                if (keycloakId != null) {
-                    UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
-                    if (usuario != null) {
-                        usuarioId = usuario.getId();
-                    }
-                }
-            } catch (Exception e) {
-                // Ignorar
-            }
-
-            // Insertar en historial como REPROGRAMADO
-            try {
-                String insertHistorial = "INSERT INTO Historial_Programacion " +
-                        "(id_programacion, tipo_evento, fecha_original, fecha_nueva, motivo, usuario_id, fecha_registro) "
-                        +
-                        "VALUES (?1, 'REPROGRAMADO', ?2, ?3, ?4, ?5, ?6)";
-
-                em.createNativeQuery(insertHistorial)
-                        .setParameter(1, id)
-                        .setParameter(2, fechaOriginal)
-                        .setParameter(3, nuevaFecha)
-                        .setParameter(4, motivo)
-                        .setParameter(5, usuarioId)
-                        .setParameter(6, new Date())
-                        .executeUpdate();
-            } catch (Exception e) {
-                System.out.println("Nota: No se pudo insertar en Historial_Programacion: " + e.getMessage());
-            }
+            // Registrar en historial usando método auxiliar
+            registrarHistorial(id, "REPROGRAMADO", fechaOriginal, nuevaFecha, motivo);
 
             // Actualizar programación
             programacion.setFechaProximoMantenimiento(nuevaFecha);
             programacion.setFechaModificacion(new Date());
             asignarUsuarioAuditoria(programacion, false);
-            programacionRepository.save(programacion);
+
+            // Usar merge para asegurar que el EntityManager gestione la entidad
+            ProgramacionMantenimientoModel merged = em.merge(programacion);
+            em.flush(); // Forzar persistencia inmediata
+
+            System.out.println("✅ Programación " + id + " reprogramada: nueva fecha = " + nuevaFecha);
 
             // Respuesta
             Map<String, Object> response = new HashMap<>();
@@ -1198,6 +1264,53 @@ public class ProgramacionMantenimientoController {
         } catch (Exception e) {
             // Ignorar errores de auditoría para no bloquear la operación principal
             System.out.println("Error asignando auditoría: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Registra un evento en el historial de la programación
+     * Tipos de evento: CREADO, EDITADO, PAUSADO, ACTIVADO, REPROGRAMADO, SALTADO,
+     * EJECUTADO
+     */
+    private void registrarHistorial(Integer idProgramacion, String tipoEvento, Date fechaOriginal, Date fechaNueva,
+            String motivo) {
+        try {
+            // Obtener usuario actual
+            Integer usuarioId = null;
+            try {
+                String keycloakId = (String) request.getAttribute("keycloakId");
+                if (keycloakId != null) {
+                    UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
+                    if (usuario != null) {
+                        usuarioId = usuario.getId();
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("⚠️ No se pudo obtener usuario: " + e.getMessage());
+            }
+
+            System.out.println(
+                    "📝 Intentando registrar historial: " + tipoEvento + " para programación " + idProgramacion);
+
+            String insertHistorial = "INSERT INTO Historial_Programacion " +
+                    "(id_programacion, tipo_evento, fecha_original, fecha_nueva, motivo, usuario_id, fecha_registro) " +
+                    "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)";
+
+            int rows = em.createNativeQuery(insertHistorial)
+                    .setParameter(1, idProgramacion)
+                    .setParameter(2, tipoEvento)
+                    .setParameter(3, fechaOriginal)
+                    .setParameter(4, fechaNueva)
+                    .setParameter(5, motivo)
+                    .setParameter(6, usuarioId)
+                    .setParameter(7, new Date())
+                    .executeUpdate();
+
+            System.out.println("✅ Historial registrado: " + tipoEvento + " para programación " + idProgramacion
+                    + " (filas afectadas: " + rows + ")");
+        } catch (Exception e) {
+            System.out.println("❌ Error al insertar en Historial_Programacion: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -142,11 +142,8 @@
             <version>1.0.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>3.9.0</version>
-        </dependency>
+        <!-- commons-net ya no es necesario - Se eliminó FTP -->
+        
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>

@@ -31,7 +31,10 @@ public class HistorialEquipoController {
     @GET
     public List<HistorialEquipoDTO> getAll() {
         // Usar query con JOIN FETCH para cargar los equipos eagerly
-        String jpql = "SELECT h FROM HistorialEquipoModel h LEFT JOIN FETCH h.equipo ORDER BY h.fechaRegistro DESC";
+        // Excluir registros de tickets (TICKET_CREADO, TICKET_RESUELTO)
+        String jpql = "SELECT h FROM HistorialEquipoModel h LEFT JOIN FETCH h.equipo " +
+                "WHERE h.tipoCambio IS NULL OR (h.tipoCambio NOT LIKE 'TICKET_%') " +
+                "ORDER BY h.fechaRegistro DESC";
         List<HistorialEquipoModel> historial = em.createQuery(jpql, HistorialEquipoModel.class).getResultList();
 
         return historial.stream()
@@ -42,10 +45,34 @@ public class HistorialEquipoController {
                         h.getEquipo() != null ? h.getEquipo().getNumeroSerie() : null,
                         h.getFechaRegistro(),
                         h.getDescripcion(),
-                        h.getTipoCambio(), // NUEVO
-                        h.getUsuarioId(), // NUEVO
-                        h.getUsuarioNombre() // NUEVO
-                ))
+                        h.getTipoCambio(),
+                        h.getUsuarioId(),
+                        h.getUsuarioNombre()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtiene solo el historial relacionado con tickets
+     */
+    @GET
+    @Path("/tickets")
+    public List<HistorialEquipoDTO> getTicketsHistory() {
+        String jpql = "SELECT h FROM HistorialEquipoModel h LEFT JOIN FETCH h.equipo " +
+                "WHERE h.tipoCambio LIKE 'TICKET_%' " +
+                "ORDER BY h.fechaRegistro DESC";
+        List<HistorialEquipoModel> historial = em.createQuery(jpql, HistorialEquipoModel.class).getResultList();
+
+        return historial.stream()
+                .map(h -> new HistorialEquipoDTO(
+                        h.getIdHistorial(),
+                        h.getEquipo() != null ? h.getEquipo().getIdEquipo() : null,
+                        h.getEquipo() != null ? h.getEquipo().getNombre() : "Equipo eliminado",
+                        h.getEquipo() != null ? h.getEquipo().getNumeroSerie() : null,
+                        h.getFechaRegistro(),
+                        h.getDescripcion(),
+                        h.getTipoCambio(),
+                        h.getUsuarioId(),
+                        h.getUsuarioNombre()))
                 .collect(Collectors.toList());
     }
 

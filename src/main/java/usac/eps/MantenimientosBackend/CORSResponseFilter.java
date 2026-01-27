@@ -10,7 +10,6 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
-import org.jose4j.lang.JoseException;
 
 /**
  * CORS filter configurado para el Sistema de Mantenimientos INACIF.
@@ -53,18 +52,18 @@ public class CORSResponseFilter implements Filter {
                 // Configurar headers CORS para el frontend Angular
                 // Obtener el origen de la petición
                 String origin = request.getHeader("Origin");
-                
+
                 // Lista de orígenes permitidos (configurable)
                 String allowedOrigins = "http://localhost:4200,https://tu-dominio-produccion.com";
-                
+
                 // Si el origen está en la lista, permitirlo
                 if (origin != null && allowedOrigins.contains(origin)) {
-                    response.addHeader("Access-Control-Allow-Origin", origin);
+                        response.addHeader("Access-Control-Allow-Origin", origin);
                 } else if (origin == null) {
-                    // Si no hay origen (peticiones directas), usar localhost por defecto
-                    response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+                        // Si no hay origen (peticiones directas), usar localhost por defecto
+                        response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
                 }
-                
+
                 response.addHeader("Access-Control-Allow-Headers",
                                 "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, X-Requested-With, Cache-Control");
                 response.addHeader("Access-Control-Expose-Headers",
@@ -147,14 +146,14 @@ public class CORSResponseFilter implements Filter {
         private boolean isPublicPath(String uri) {
                 // Rutas públicas que NO requieren JWT
                 String[] publicPaths = {
-                                "/MantenimientosBackend/api/ftp/test",
-                                "/MantenimientosBackend/api/ftp/upload",
-                                "/MantenimientosBackend/api/ftp",
+                                "/MantenimientosBackend/",
+                                "/MantenimientosBackend/index.html",
                                 "/MantenimientosBackend/api/auth/health",
                                 "/MantenimientosBackend/api/health",
                                 "/MantenimientosBackend/api/status",
                                 "/MantenimientosBackend/api/imagenes/view",
-                                "/MantenimientosBackend/api/imagenes/test"
+                                "/MantenimientosBackend/api/imagenes/test",
+                                "/MantenimientosBackend/api/imagenes/upload"
                 };
 
                 for (String publicPath : publicPaths) {

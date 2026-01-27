@@ -1,6 +1,6 @@
 # ============================================
 # Dockerfile - Backend MantenimientosINACIF
-# Multi-stage: Compila + Ejecuta
+# Multi-stage: Compila + Ejecuta (Producción)
 # ============================================
 
 # Etapa 1: Compilar con Maven
