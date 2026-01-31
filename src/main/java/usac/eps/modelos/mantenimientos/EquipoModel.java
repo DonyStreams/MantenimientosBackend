@@ -77,7 +77,7 @@ public class EquipoModel implements Serializable {
     private CategoriaEquipoModel categoria;
 
     @Column(name = "estado", length = 20)
-    private String estado = "Activo";  // Valores: Activo, Inactivo, Critico
+    private String estado = "Activo"; // Valores: Activo, Inactivo, Critico
 
     // Getters y setters
     public Integer getIdEquipo() {

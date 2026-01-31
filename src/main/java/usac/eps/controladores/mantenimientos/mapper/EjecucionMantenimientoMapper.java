@@ -51,6 +51,8 @@ public final class EjecucionMantenimientoMapper {
             dto.setUsuarioResponsableNombre(model.getUsuarioResponsable().getNombreCompleto());
         }
 
+        dto.setFechaCreacion(model.getFechaCreacion());
+
         return dto;
     }
 }

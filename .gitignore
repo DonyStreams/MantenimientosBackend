@@ -7,3 +7,7 @@
 nbactions.xml
 nb-configuration.xml
 .idea
+
+# Archivos de configuración con credenciales sensibles
+# IMPORTANTE: No versionar credenciales de producción
+src/main/resources/email.properties

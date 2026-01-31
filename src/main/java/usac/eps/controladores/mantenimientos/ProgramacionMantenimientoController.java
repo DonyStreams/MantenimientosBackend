@@ -9,6 +9,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -720,40 +721,77 @@ public class ProgramacionMantenimientoController {
                         : programacion.getUsuarioCreacion());
             }
 
-            ejecucionRepository.save(ejecucion);
+            // Usar persist del EntityManager para que el objeto quede manejado
+            em.persist(ejecucion);
+            em.flush(); // Forzar flush para que se genere el ID
+            // Ahora ejecucion.getIdEjecucion() debería tener el ID generado
+
+            System.out.println("✅ Ejecución persistida con ID: " + ejecucion.getIdEjecucion());
 
             // Crear comentario inicial en la conversación
-            ComentarioEjecucionModel comentarioInicial = new ComentarioEjecucionModel();
-            comentarioInicial.setEjecucion(ejecucion);
-            comentarioInicial.setUsuario(ejecucion.getUsuarioCreacion());
-            comentarioInicial.setTipoComentario("SEGUIMIENTO");
+            try {
+                ComentarioEjecucionModel comentarioInicial = new ComentarioEjecucionModel();
+                comentarioInicial.setEjecucion(ejecucion);
+                comentarioInicial.setUsuario(ejecucion.getUsuarioCreacion());
+                comentarioInicial.setTipoComentario("SEGUIMIENTO");
 
-            String tipoMant = programacion.getTipoMantenimiento() != null
-                    ? programacion.getTipoMantenimiento().getNombre()
-                    : "N/A";
-            String equipoNombre = programacion.getEquipo() != null
-                    ? programacion.getEquipo().getNombre()
-                    : "N/A";
+                String tipoMant = programacion.getTipoMantenimiento() != null
+                        ? programacion.getTipoMantenimiento().getNombre()
+                        : "N/A";
+                String equipoNombre = programacion.getEquipo() != null
+                        ? programacion.getEquipo().getNombre()
+                        : "N/A";
 
-            comentarioInicial.setComentario(String.format(
-                    "📋 Ejecución creada a partir de programación #%d.\n" +
-                            "• Equipo: %s\n" +
-                            "• Tipo: %s\n" +
-                            "• Estado inicial: PROGRAMADO",
-                    id, equipoNombre, tipoMant));
-            comentarioInicial.setEstadoNuevo("PROGRAMADO");
-            comentarioInicial.setFechaCreacion(new Date());
-            comentarioEjecucionRepository.save(comentarioInicial);
+                comentarioInicial.setComentario(String.format(
+                        "📋 Ejecución creada a partir de programación #%d.\n" +
+                                "• Equipo: %s\n" +
+                                "• Tipo: %s\n" +
+                                "• Estado inicial: PROGRAMADO",
+                        id, equipoNombre, tipoMant));
+                comentarioInicial.setEstadoNuevo("PROGRAMADO");
+                comentarioInicial.setFechaCreacion(new Date());
+                comentarioEjecucionRepository.save(comentarioInicial);
+                System.out.println("✅ Comentario inicial creado");
+            } catch (Exception e) {
+                System.err.println("⚠️ Error al crear comentario inicial: " + e.getMessage());
+                // Continuar sin comentario
+            }
 
             // Actualizar programación: solo registrar modificación, no mover fechas hasta
             // completar
-            programacion.setFechaModificacion(new Date());
-            programacionRepository.save(programacion);
+            try {
+                programacion.setFechaModificacion(new Date());
+                programacionRepository.save(programacion);
+                System.out.println("✅ Programación actualizada");
+            } catch (Exception e) {
+                System.err.println("⚠️ Error al actualizar programación: " + e.getMessage());
+            }
 
-            // Registrar en historial
-            registrarHistorial(id, "EJECUTADO", programacion.getFechaProximoMantenimiento(),
-                    programacion.getFechaProximoMantenimiento(),
-                    "Mantenimiento iniciado");
+            // Registrar en historial solo si la ejecución se completa o cancela
+            // Si está en estado PROGRAMADO, no registrar aún porque no se ha ejecutado
+            try {
+                if ("COMPLETADO".equals(ejecucion.getEstado())) {
+                    registrarHistorial(id, "EJECUTADO",
+                            programacion.getFechaProximoMantenimiento(),
+                            programacion.getFechaProximoMantenimiento(),
+                            "Mantenimiento ejecutado y completado");
+                    System.out.println("✅ Historial registrado: EJECUTADO");
+                } else if ("CANCELADO".equals(ejecucion.getEstado())) {
+                    registrarHistorial(id, "SALTADO",
+                            programacion.getFechaProximoMantenimiento(),
+                            programacion.getFechaProximoMantenimiento(),
+                            "Mantenimiento cancelado");
+                    System.out.println("✅ Historial registrado: SALTADO");
+                } else {
+                    // Estado PROGRAMADO o EN_PROCESO: no registrar en historial aún
+                    // Se registrará cuando se complete o cancele la ejecución
+                    System.out.println("ℹ️ Ejecución creada en estado " + ejecucion.getEstado() +
+                            " - Historial se registrará al completar");
+                }
+            } catch (Exception e) {
+                System.err.println("⚠️ Error al registrar historial: " + e.getMessage());
+                e.printStackTrace();
+            }
 
             EjecucionMantenimientoDTO dto = EjecucionMantenimientoMapper.toDTO(ejecucion);
             return Response.ok(dto).build();
@@ -1245,6 +1283,56 @@ public class ProgramacionMantenimientoController {
             System.out.println("Error en historial: " + e.getMessage());
             e.printStackTrace();
             return Response.ok("[]").build();
+        }
+    }
+
+    /**
+     * Elimina múltiples registros del historial de programaciones
+     */
+    @DELETE
+    @Path("/historial/batch")
+    @Transactional
+    public Response deleteHistorialMultiple(Map<String, List<Integer>> payload) {
+        try {
+            List<Integer> ids = payload.get("ids");
+
+            if (ids == null || ids.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"mensaje\":\"No se proporcionaron IDs para eliminar\"}")
+                        .build();
+            }
+
+            System.out.println("🗑️ Eliminando " + ids.size() + " registros del historial de programaciones");
+
+            // Construir query con parámetros posicionales
+            StringBuilder queryBuilder = new StringBuilder(
+                    "DELETE FROM Historial_Programacion WHERE id_historial IN (");
+            for (int i = 0; i < ids.size(); i++) {
+                if (i > 0)
+                    queryBuilder.append(",");
+                queryBuilder.append("?").append(i + 1);
+            }
+            queryBuilder.append(")");
+
+            Query query = em.createNativeQuery(queryBuilder.toString());
+            for (int i = 0; i < ids.size(); i++) {
+                query.setParameter(i + 1, ids.get(i));
+            }
+
+            int deletedCount = query.executeUpdate();
+
+            System.out.println("✅ Se eliminaron " + deletedCount + " registros del historial");
+
+            return Response.ok()
+                    .entity("{\"mensaje\":\"" + deletedCount + " registro(s) eliminado(s) correctamente\"}")
+                    .build();
+
+        } catch (Exception e) {
+            System.err.println("❌ Error eliminando registros del historial: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"mensaje\":\"Error al eliminar registros: " + e.getMessage() + "\"}")
+                    .build();
         }
     }
 

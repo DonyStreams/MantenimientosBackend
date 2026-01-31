@@ -152,27 +152,48 @@ public class EjecucionMantenimientoController {
                         .build();
             }
 
-            // Primero eliminar comentarios asociados
+            // Verificar SOLO si tiene historial de programación asociado (esto sí bloquea
+            // la eliminación)
+            String queryHistorial = "SELECT COUNT(*) FROM Historial_Programacion WHERE id_ejecucion = ?";
+            Integer countHistorial = ((Number) em.createNativeQuery(queryHistorial)
+                    .setParameter(1, id)
+                    .getSingleResult()).intValue();
+
+            if (countHistorial > 0) {
+                String mensaje = "No se puede eliminar la ejecución porque tiene " + countHistorial +
+                        " registro(s) de historial de programación asociado(s). " +
+                        "Estos registros son parte del historial del equipo y no pueden eliminarse.";
+
+                System.out.println("⚠️ No se puede eliminar ejecución " + id + ": tiene historial de programación");
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .build();
+            }
+
+            // Si no tiene historial, eliminar en cascada: primero comentarios, luego
+            // evidencias, finalmente la ejecución
+
+            // Eliminar comentarios asociados
             String sqlDeleteComentarios = "DELETE FROM Comentarios_Ejecucion WHERE id_ejecucion = ?";
             int comentariosEliminados = em.createNativeQuery(sqlDeleteComentarios)
                     .setParameter(1, id)
                     .executeUpdate();
             System.out.println("🗑️ Eliminados " + comentariosEliminados + " comentarios de la ejecución " + id);
 
-            // Luego eliminar evidencias asociadas usando SQL nativo
+            // Eliminar evidencias asociadas
             String sqlDeleteEvidencias = "DELETE FROM Evidencias WHERE entidad_relacionada = 'ejecucion_mantenimiento' AND entidad_id = ?";
             int evidenciasEliminadas = em.createNativeQuery(sqlDeleteEvidencias)
                     .setParameter(1, id)
                     .executeUpdate();
-
             System.out.println("🗑️ Eliminadas " + evidenciasEliminadas + " evidencias de la ejecución " + id);
 
-            // Hacer merge de la entidad para asegurar que esté managed, luego eliminar
+            // Eliminar la ejecución
             EjecucionMantenimientoModel managedEjecucion = em.merge(ejecucion);
             em.remove(managedEjecucion);
             em.flush();
 
-            System.out.println("✅ Ejecución " + id + " eliminada correctamente");
+            System.out.println("✅ Ejecución " + id + " eliminada correctamente (con " + comentariosEliminados +
+                    " comentarios y " + evidenciasEliminadas + " evidencias)");
             return Response.noContent().build();
 
         } catch (Exception e) {
@@ -778,7 +799,8 @@ public class EjecucionMantenimientoController {
             // Persistir cambios de programación
             em.merge(programacion);
 
-            // 🆕 Registrar en Historial_Programacion como EJECUTADO
+            // 🆕 Registrar en Historial_Programacion
+            // El tipo de evento depende del estado inicial de la ejecución creada
             try {
                 Integer usuarioId = null;
                 if (ejecucion.getUsuarioResponsable() != null) {
@@ -787,15 +809,33 @@ public class EjecucionMantenimientoController {
                     usuarioId = ejecucion.getUsuarioModificacion().getId();
                 }
 
+                // Si la ejecución se crea en estado PROGRAMADO, registrar como
+                // EJECUTADO_PROGRAMADO
+                // Si se completa directamente, registrar como EJECUTADO
+                String tipoEvento = "EJECUTADO_PROGRAMADO";
+                String estadoActual = ejecucion.getEstado();
+
+                if ("COMPLETADO".equals(estadoActual)) {
+                    tipoEvento = "EJECUTADO";
+                } else if ("CANCELADO".equals(estadoActual)) {
+                    tipoEvento = "SALTADO";
+                } else if ("EN_PROCESO".equals(estadoActual)) {
+                    tipoEvento = "EJECUTADO_PROGRAMADO";
+                } else {
+                    // PROGRAMADO u otro estado
+                    tipoEvento = "EJECUTADO_PROGRAMADO";
+                }
+
                 String insertHistorial = "INSERT INTO Historial_Programacion " +
                         "(id_programacion, tipo_evento, fecha_original, id_ejecucion, usuario_id, fecha_registro) " +
-                        "VALUES (?1, 'EJECUTADO', ?2, ?3, ?4, GETDATE())";
+                        "VALUES (?1, ?2, ?3, ?4, ?5, GETDATE())";
 
                 em.createNativeQuery(insertHistorial)
                         .setParameter(1, programacion.getIdProgramacion())
-                        .setParameter(2, fechaOriginalProgramada)
-                        .setParameter(3, ejecucion.getIdEjecucion())
-                        .setParameter(4, usuarioId)
+                        .setParameter(2, tipoEvento)
+                        .setParameter(3, fechaOriginalProgramada)
+                        .setParameter(4, ejecucion.getIdEjecucion())
+                        .setParameter(5, usuarioId)
                         .executeUpdate();
 
                 System.out.println("📝 Historial de ejecución registrado");

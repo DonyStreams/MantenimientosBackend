@@ -6,6 +6,7 @@ import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 import usac.eps.servicios.mantenimientos.BitacoraService;
+import usac.eps.servicios.mantenimientos.EmailService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -37,6 +38,9 @@ public class EquipoController {
     private BitacoraService bitacoraService;
 
     @Inject
+    private EmailService emailService;
+
+    @Inject
     private UsuarioMantenimientoRepository usuarioRepository;
 
     @PersistenceContext
@@ -54,7 +58,7 @@ public class EquipoController {
         try {
             // Consulta con JOIN para obtener el nombre del área
             String jpql = "SELECT e FROM EquipoModel e LEFT JOIN FETCH e.area LEFT JOIN FETCH e.categoria";
-            
+
             // Construir cláusula WHERE dinámicamente
             List<String> condiciones = new ArrayList<>();
             if (idCategoria != null) {
@@ -63,11 +67,11 @@ public class EquipoController {
             if (estado != null && !estado.trim().isEmpty()) {
                 condiciones.add("e.estado = :estado");
             }
-            
+
             if (!condiciones.isEmpty()) {
                 jpql += " WHERE " + String.join(" AND ", condiciones);
             }
-            
+
             javax.persistence.TypedQuery<EquipoModel> query = entityManager.createQuery(jpql, EquipoModel.class);
             if (idCategoria != null) {
                 query.setParameter("idCategoria", idCategoria);
@@ -75,7 +79,7 @@ public class EquipoController {
             if (estado != null && !estado.trim().isEmpty()) {
                 query.setParameter("estado", estado);
             }
-            
+
             List<EquipoModel> equipos = query.getResultList();
 
             // Crear lista de mapas con los datos del equipo + nombre del área
@@ -302,6 +306,8 @@ public class EquipoController {
                     && !equipoAnterior.getFotografia().equals(equipo.getFotografia()));
             boolean cambioUbicacion = (equipoAnterior.getUbicacion() != null
                     && !equipoAnterior.getUbicacion().equals(equipo.getUbicacion()));
+            boolean cambioEstado = (equipoAnterior.getEstado() != null
+                    && !equipoAnterior.getEstado().equals(equipo.getEstado()));
 
             if (cambioImagen) {
                 // Cambio de imagen
@@ -316,6 +322,34 @@ public class EquipoController {
                                 + "'",
                         usuarioId, usuarioNombre);
                 System.out.println("📍 Ubicación actualizada");
+            } else if (cambioEstado) {
+                // Cambio de estado
+                registrarHistorialSimplificado(id, "CAMBIO_ESTADO",
+                        "Estado cambiado de '" + equipoAnterior.getEstado() + "' a '" + equipo.getEstado() + "'",
+                        usuarioId, usuarioNombre);
+                System.out.println("🔄 Estado actualizado");
+
+                // 🚨 ENVIAR NOTIFICACIÓN SI EL EQUIPO CAMBIA A ESTADO CRÍTICO
+                if (equipo.getEstado() != null && equipo.getEstado().equalsIgnoreCase("Critico")) {
+                    try {
+                        String motivoCambio = "Estado cambiado de '" + equipoAnterior.getEstado() + "' a 'Crítico' por "
+                                + usuarioNombre;
+
+                        emailService.notificarEquipoCritico(
+                                id,
+                                equipo.getNombre() != null ? equipo.getNombre() : "Sin nombre",
+                                equipo.getCodigoInacif() != null ? equipo.getCodigoInacif() : "N/A",
+                                equipo.getUbicacion() != null ? equipo.getUbicacion() : "No especificada",
+                                equipoAnterior.getEstado() != null ? equipoAnterior.getEstado() : "Desconocido",
+                                motivoCambio);
+
+                        System.out.println("📧 Notificación de equipo crítico enviada - Equipo #" + id);
+                    } catch (Exception emailEx) {
+                        System.out
+                                .println("⚠️ Error al enviar notificación de equipo crítico: " + emailEx.getMessage());
+                        // No interrumpir el flujo si falla el correo
+                    }
+                }
             } else {
                 // Edición general
                 registrarHistorialSimplificado(id, "EDICION_GENERAL",

@@ -3,6 +3,7 @@ package usac.eps.controladores.mantenimientos;
 import usac.eps.modelos.mantenimientos.TicketModel;
 import usac.eps.repositorios.mantenimientos.TicketRepository;
 import usac.eps.servicios.mantenimientos.BitacoraService;
+import usac.eps.servicios.mantenimientos.EmailService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -37,6 +38,9 @@ public class TicketController {
 
     @Inject
     private BitacoraService bitacoraService;
+
+    @Inject
+    private EmailService emailService;
 
     @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
@@ -434,6 +438,40 @@ public class TicketController {
                     if (prioridad != null && !prioridad.trim().isEmpty() && !prioridad.equals(prioridadActual)) {
                         bitacoraService.registrarTicketCambioPrioridad(equipoParaBitacora, id, prioridadActual,
                                 prioridad, usuarioModificadorId, usuarioModificadorNombre);
+
+                        // 🚨 ENVIAR NOTIFICACIÓN SI EL TICKET CAMBIA A PRIORIDAD CRÍTICA
+                        if (prioridad.equalsIgnoreCase("Crítica") || prioridad.equalsIgnoreCase("Criticaa")) {
+                            try {
+                                // Obtener información completa del ticket y equipo para el correo
+                                String infoSQL = "SELECT t.descripcion, e.nombre, e.codigo_inacif, e.ubicacion, " +
+                                        "ua.nombre_completo " +
+                                        "FROM Tickets t " +
+                                        "INNER JOIN Equipos e ON t.equipo_id = e.id_equipo " +
+                                        "LEFT JOIN Usuarios ua ON t.usuario_asignado_id = ua.id " +
+                                        "WHERE t.id = ?";
+
+                                Object[] infoTicket = (Object[]) em.createNativeQuery(infoSQL)
+                                        .setParameter(1, id)
+                                        .getSingleResult();
+
+                                String descripcionTicket = infoTicket[0] != null ? infoTicket[0].toString()
+                                        : "Sin descripción";
+                                String nombreEquipo = infoTicket[1] != null ? infoTicket[1].toString() : "Desconocido";
+                                String codigoInacif = infoTicket[2] != null ? infoTicket[2].toString() : "N/A";
+                                String ubicacionEquipo = infoTicket[3] != null ? infoTicket[3].toString()
+                                        : "No especificada";
+                                String usuarioAsig = infoTicket[4] != null ? infoTicket[4].toString() : "Sin asignar";
+
+                                emailService.notificarTicketCritico(id, descripcionTicket, nombreEquipo,
+                                        codigoInacif, usuarioAsig, ubicacionEquipo);
+
+                                System.out.println("📧 Notificación de ticket crítico enviada - Ticket #" + id);
+                            } catch (Exception emailEx) {
+                                System.out.println(
+                                        "⚠️ Error al enviar notificación de ticket crítico: " + emailEx.getMessage());
+                                // No interrumpir el flujo si falla el correo
+                            }
+                        }
                     }
 
                     // Registrar asignación de usuario
@@ -679,10 +717,12 @@ public class TicketController {
             // Parsear JSON
             String comentario = extractJsonValue(jsonData, "comentario");
             String tipoComentario = extractJsonValue(jsonData, "tipoComentario");
+            String estadoAnteriorRequest = extractJsonValue(jsonData, "estadoAnterior");
             String nuevoEstado = extractJsonValue(jsonData, "nuevoEstado");
 
             System.out.println("🔍 DEBUG - comentario: " + comentario);
             System.out.println("🔍 DEBUG - tipoComentario: " + tipoComentario);
+            System.out.println("🔍 DEBUG - estadoAnterior (request): " + estadoAnteriorRequest);
             System.out.println("🔍 DEBUG - nuevoEstado: " + nuevoEstado);
 
             // Validaciones
@@ -775,17 +815,28 @@ public class TicketController {
             // Insertar el comentario (con estado si hay cambio)
             String insertComentarioSQL;
 
+            // Usar estadoAnterior del request si viene, sino usar el estadoActual de BD
+            String estadoAnteriorFinal = (estadoAnteriorRequest != null && !estadoAnteriorRequest.trim().isEmpty())
+                    ? estadoAnteriorRequest
+                    : estadoActual;
+
             System.out.println("🔍 DEBUG - Evaluando cambio de estado:");
             System.out.println("   - nuevoEstado: '" + nuevoEstado + "'");
-            System.out.println("   - estadoActual: '" + estadoActual + "'");
+            System.out.println("   - estadoAnterior (request): '" + estadoAnteriorRequest + "'");
+            System.out.println("   - estadoActual (BD): '" + estadoActual + "'");
+            System.out.println("   - estadoAnteriorFinal: '" + estadoAnteriorFinal + "'");
             System.out.println("   - nuevoEstado != null: " + (nuevoEstado != null));
             System.out.println(
                     "   - !nuevoEstado.trim().isEmpty(): " + (nuevoEstado != null && !nuevoEstado.trim().isEmpty()));
-            System.out.println("   - !nuevoEstado.equals(estadoActual): "
-                    + (nuevoEstado != null && !nuevoEstado.equals(estadoActual)));
 
-            if (nuevoEstado != null && !nuevoEstado.trim().isEmpty() && !nuevoEstado.equals(estadoActual)) {
-                System.out.println("✅ HAY CAMBIO DE ESTADO - Insertando con columnas de estado");
+            // Hay cambio de estado si tenemos nuevoEstado y es diferente al
+            // estadoAnteriorFinal
+            boolean hayEstadosCambio = nuevoEstado != null && !nuevoEstado.trim().isEmpty()
+                    && estadoAnteriorFinal != null && !estadoAnteriorFinal.equals(nuevoEstado);
+
+            if (hayEstadosCambio) {
+                System.out.println("✅ HAY CAMBIO DE ESTADO - Insertando con columnas de estado: " + estadoAnteriorFinal
+                        + " → " + nuevoEstado);
                 // Si hay cambio de estado, incluir columnas de estado
                 insertComentarioSQL = "INSERT INTO Comentarios_Ticket (ticket_id, comentario, usuario_id, tipo_comentario_id, estado_anterior, estado_nuevo, fecha_creacion) "
                         + "VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
@@ -795,7 +846,7 @@ public class TicketController {
                         .setParameter(2, comentario)
                         .setParameter(3, usuarioId)
                         .setParameter(4, tipoComentarioId)
-                        .setParameter(5, estadoActual) // estado_anterior
+                        .setParameter(5, estadoAnteriorFinal) // estado_anterior
                         .setParameter(6, nuevoEstado) // estado_nuevo
                         .executeUpdate();
             } else {

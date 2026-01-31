@@ -144,6 +144,13 @@
 
         <!-- commons-net ya no es necesario - Se eliminó FTP -->
         
+        <!-- JavaMail para envío de correos -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>

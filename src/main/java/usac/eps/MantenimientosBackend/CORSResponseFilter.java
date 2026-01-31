@@ -65,7 +65,7 @@ public class CORSResponseFilter implements Filter {
                 }
 
                 response.addHeader("Access-Control-Allow-Headers",
-                                "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, X-Requested-With, Cache-Control");
+                                "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, X-Requested-With, Cache-Control, x-usuario-nombre, x-usuario-email, x-usuario-roles, x-usuario-id");
                 response.addHeader("Access-Control-Expose-Headers",
                                 "X-Count-Total, Content-Type, Accept, Origin, Authorization, X-Filename, X-Descripcion, Content-Disposition");
                 response.addHeader("Access-Control-Allow-Methods",

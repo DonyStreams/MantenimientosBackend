@@ -66,6 +66,12 @@ public class ComentarioEjecucionController {
             String estadoAnterior = (String) request.get("estadoAnterior");
             String estadoNuevo = (String) request.get("estadoNuevo");
 
+            System.out.println("📝 Creando comentario:");
+            System.out.println("   - idEjecucion: " + idEjecucion);
+            System.out.println("   - usuarioId recibido: " + usuarioId);
+            System.out.println("   - usuarioId en request: " + request.get("usuarioId"));
+            System.out.println("   - tipoComentario: " + tipoComentario);
+
             if (idEjecucion == null || comentarioTexto == null || comentarioTexto.trim().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Se requiere idEjecucion y comentario")
@@ -87,7 +93,14 @@ public class ComentarioEjecucionController {
 
             if (usuarioId != null) {
                 UsuarioMantenimientoModel usuario = usuarioRepository.findById(usuarioId);
-                comentario.setUsuario(usuario);
+                if (usuario != null) {
+                    comentario.setUsuario(usuario);
+                    System.out.println("   ✅ Usuario asignado: " + usuario.getNombreCompleto());
+                } else {
+                    System.out.println("   ⚠️ Usuario con ID " + usuarioId + " no encontrado");
+                }
+            } else {
+                System.out.println("   ⚠️ No se proporcionó usuarioId, el comentario quedará como 'Sistema'");
             }
 
             // Si hay cambio de estado, registrarlo

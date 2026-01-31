@@ -27,6 +27,7 @@ public class EjecucionMantenimientoDTO {
 
     private Integer usuarioResponsableId;
     private String usuarioResponsableNombre;
+    private Date fechaCreacion;
 
     public Integer getIdEjecucion() {
         return idEjecucion;
@@ -186,5 +187,13 @@ public class EjecucionMantenimientoDTO {
 
     public void setUsuarioResponsableNombre(String usuarioResponsableNombre) {
         this.usuarioResponsableNombre = usuarioResponsableNombre;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 }
