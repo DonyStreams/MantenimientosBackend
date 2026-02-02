@@ -5,6 +5,7 @@ import usac.eps.modelos.mantenimientos.AreaModel;
 import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
+import usac.eps.seguridad.RequiresRole;
 import usac.eps.servicios.mantenimientos.BitacoraService;
 import usac.eps.servicios.mantenimientos.EmailService;
 
@@ -153,8 +154,12 @@ public class EquipoController {
         return equipoRepository.findByIdEquipo(id);
     }
 
+    /**
+     * 🔒 Crear equipo: ADMIN, SUPERVISOR, TECNICO_EQUIPOS
+     */
     @POST
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO_EQUIPOS" })
     public Response create(EquipoModel equipo) {
         try {
             System.out.println("➕ Creando nuevo equipo: " + equipo.getNombre());
@@ -233,9 +238,13 @@ public class EquipoController {
         }
     }
 
+    /**
+     * 🔒 Actualizar equipo: ADMIN, SUPERVISOR, TECNICO_EQUIPOS
+     */
     @PUT
     @Path("/{id}")
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO_EQUIPOS" })
     public Response update(@PathParam("id") Integer id, EquipoModel equipo) {
         try {
             System.out.println("📝 Actualizando equipo ID: " + id);
@@ -401,9 +410,13 @@ public class EquipoController {
         }
     }
 
+    /**
+     * 🔒 Eliminar equipo: Solo ADMIN
+     */
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RequiresRole({ "ADMIN" })
     public Response delete(@PathParam("id") Integer id) {
         EquipoModel equipo = equipoRepository.findByIdEquipo(id);
         if (equipo == null) {

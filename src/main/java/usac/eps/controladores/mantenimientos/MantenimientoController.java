@@ -11,6 +11,7 @@ import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.ProveedorRepository;
 import usac.eps.repositorios.mantenimientos.TipoMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
+import usac.eps.seguridad.RequiresRole;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -159,6 +160,7 @@ public class MantenimientoController {
      */
     @DELETE
     @Path("/{id}")
+    @RequiresRole({ "ADMIN" })
     public Response delete(@PathParam("id") Integer id) {
         try {
             ContratoModel contrato = contratoRepository.findByIdContrato(id);

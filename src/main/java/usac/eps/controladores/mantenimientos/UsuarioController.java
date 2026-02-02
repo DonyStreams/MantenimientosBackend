@@ -2,6 +2,7 @@ package usac.eps.controladores.mantenimientos;
 
 import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
+import usac.eps.seguridad.RequiresRole;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -36,7 +37,11 @@ public class UsuarioController {
         return Response.ok("Usuario controller funcionando").build();
     }
 
+    /**
+     * 🔒 Solo ADMIN puede ver la lista completa de usuarios
+     */
     @GET
+    @RequiresRole({ "ADMIN" })
     public Response getAll() {
         try {
             List<UsuarioMantenimientoModel> usuarios = usuarioRepository.findAll();
@@ -51,14 +56,19 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * 🔒 Roles operativos pueden ver usuarios activos (para asignaciones)
+     */
     @GET
     @Path("/activos")
+    @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO", "TECNICO_EQUIPOS", "USER" })
     public List<UsuarioMantenimientoModel> getActivos() {
         return usuarioRepository.findByActivo(true);
     }
 
     @GET
     @Path("/{id}")
+    @RequiresRole({ "ADMIN" })
     public UsuarioMantenimientoModel getById(@PathParam("id") Integer id) {
         return usuarioRepository.findById(id);
     }
@@ -101,8 +111,12 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * 🔒 Solo ADMIN puede activar/desactivar usuarios
+     */
     @PUT
     @Path("/{id}/estado")
+    @RequiresRole({ "ADMIN" })
     public Response toggleEstado(@PathParam("id") Integer id) {
         try {
             UsuarioMantenimientoModel usuario = usuarioRepository.findById(id);
@@ -159,9 +173,11 @@ public class UsuarioController {
 
     /**
      * 🧹 ENDPOINT ADMIN: Invalidar cache manualmente
+     * 🔒 Solo ADMIN puede invalidar cache
      */
     @POST
     @Path("/cache/invalidate")
+    @RequiresRole({ "ADMIN" })
     public Response invalidateCache() {
         try {
             entityManager.flush();
@@ -183,9 +199,12 @@ public class UsuarioController {
         }
     }
 
-    // Endpoint para obtener estadísticas
+    /**
+     * 🔒 Solo ADMIN puede ver estadísticas de usuarios
+     */
     @GET
     @Path("/stats")
+    @RequiresRole({ "ADMIN" })
     public Response getStats() {
         try {
             List<UsuarioMantenimientoModel> todos = usuarioRepository.findAll();

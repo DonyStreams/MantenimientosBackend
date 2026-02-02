@@ -13,6 +13,7 @@ import usac.eps.repositorios.mantenimientos.EjecucionMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.EquipoRepository;
 import usac.eps.repositorios.mantenimientos.ProgramacionMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
+import usac.eps.seguridad.RequiresRole;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -99,6 +100,7 @@ public class EjecucionMantenimientoController {
     }
 
     @POST
+    @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO" })
     public Response create(EjecucionMantenimientoRequest request) {
         try {
             EjecucionMantenimientoModel ejecucion = new EjecucionMantenimientoModel();
@@ -118,6 +120,7 @@ public class EjecucionMantenimientoController {
 
     @PUT
     @Path("/{id}")
+    @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO" })
     public Response update(@PathParam("id") Integer id, EjecucionMantenimientoRequest request) {
         try {
             EjecucionMantenimientoModel existente = ejecucionMantenimientoRepository.findByIdEjecucion(id);
@@ -143,6 +146,7 @@ public class EjecucionMantenimientoController {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RequiresRole({ "ADMIN" })
     public Response delete(@PathParam("id") Integer id) {
         try {
             EjecucionMantenimientoModel ejecucion = ejecucionMantenimientoRepository.findByIdEjecucion(id);
@@ -650,6 +654,7 @@ public class EjecucionMantenimientoController {
     @Path("/{id}/evidencias/{evidenciaId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
+    @RequiresRole({ "ADMIN" })
     public Response deleteEvidencia(
             @PathParam("id") Integer ejecucionId,
             @PathParam("evidenciaId") Integer evidenciaId) {

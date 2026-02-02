@@ -6,6 +6,7 @@ import usac.eps.servicios.mantenimientos.NotificacionService;
 import usac.eps.servicios.mantenimientos.NotificacionScheduler;
 import usac.eps.repositorios.mantenimientos.NotificacionRepository;
 import usac.eps.repositorios.mantenimientos.ConfiguracionAlertaRepository;
+import usac.eps.seguridad.RequiresRole;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -178,6 +179,7 @@ public class NotificacionController {
      */
     @DELETE
     @Path("/{id}")
+    @RequiresRole({ "ADMIN" })
     public Response eliminar(@PathParam("id") Integer id) {
         try {
             notificacionRepository.delete(id);
@@ -195,6 +197,7 @@ public class NotificacionController {
      */
     @DELETE
     @Path("/todas")
+    @RequiresRole({ "ADMIN" })
     public Response eliminarTodas() {
         try {
             int eliminadas = notificacionRepository.eliminarTodas();
@@ -234,6 +237,7 @@ public class NotificacionController {
      */
     @POST
     @Path("/scheduler/ejecutar")
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response ejecutarVerificacionManual() {
         try {
             LOGGER.info("🔄 Ejecutando verificación manual solicitada via API...");
@@ -252,6 +256,7 @@ public class NotificacionController {
      */
     @PUT
     @Path("/scheduler/habilitar/{estado}")
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response habilitarScheduler(@PathParam("estado") boolean estado) {
         try {
             scheduler.setSchedulerHabilitado(estado);
@@ -271,6 +276,7 @@ public class NotificacionController {
      */
     @PUT
     @Path("/scheduler/horario")
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response actualizarHorario(Map<String, Integer> horario) {
         try {
             if (horario.containsKey("hora")) {
@@ -337,6 +343,7 @@ public class NotificacionController {
      */
     @PUT
     @Path("/configuracion/{id}")
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response actualizarConfiguracion(@PathParam("id") Integer id, ConfiguracionAlertaModel config) {
         try {
             ConfiguracionAlertaModel existente = configuracionRepository.findById(id);
@@ -367,6 +374,7 @@ public class NotificacionController {
      */
     @POST
     @Path("/configuracion")
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response crearConfiguracion(ConfiguracionAlertaModel config) {
         try {
             ConfiguracionAlertaModel nueva = configuracionRepository.save(config);

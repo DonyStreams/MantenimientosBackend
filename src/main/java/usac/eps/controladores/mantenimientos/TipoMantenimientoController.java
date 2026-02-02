@@ -4,6 +4,7 @@ import usac.eps.modelos.mantenimientos.TipoMantenimientoModel;
 import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.TipoMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
+import usac.eps.seguridad.RequiresRole;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -122,6 +123,7 @@ public class TipoMantenimientoController {
 
     @DELETE
     @Path("/{id}")
+    @RequiresRole({ "ADMIN" })
     public Response delete(@PathParam("id") Integer id) {
         TipoMantenimientoModel tipo = tipoMantenimientoRepository.findByIdTipo(id);
         if (tipo != null) {

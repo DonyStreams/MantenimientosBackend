@@ -34,6 +34,7 @@ import usac.eps.repositorios.mantenimientos.EjecucionMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.ContratoRepository;
 import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 import usac.eps.repositorios.mantenimientos.ComentarioEjecucionRepository;
+import usac.eps.seguridad.RequiresRole;
 
 /**
  * Controlador REST para gestión de programaciones de mantenimiento
@@ -364,6 +365,7 @@ public class ProgramacionMantenimientoController {
      */
     @POST
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response createProgramacion(ProgramacionMantenimientoModel programacion) {
         try {
             // Validaciones básicas
@@ -526,6 +528,7 @@ public class ProgramacionMantenimientoController {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response updateProgramacion(@PathParam("id") Integer id, ProgramacionMantenimientoModel programacion) {
         try {
             ProgramacionMantenimientoModel existing = programacionRepository.findBy(id);
@@ -620,6 +623,7 @@ public class ProgramacionMantenimientoController {
     @PATCH
     @Path("/{id}/toggle-activa")
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response toggleActiva(@PathParam("id") Integer id, Map<String, Boolean> body) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findBy(id);
@@ -658,6 +662,7 @@ public class ProgramacionMantenimientoController {
     @POST
     @Path("/{id}/crear-mantenimiento")
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO" })
     public Response crearMantenimiento(@PathParam("id") Integer id) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findByIdProgramacion(id);
@@ -809,6 +814,7 @@ public class ProgramacionMantenimientoController {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RequiresRole({ "ADMIN" })
     public Response deleteProgramacion(@PathParam("id") Integer id) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findBy(id);
@@ -1001,6 +1007,7 @@ public class ProgramacionMantenimientoController {
     @POST
     @Path("/{id}/descartar")
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response descartarProgramacion(@PathParam("id") Integer id, Map<String, String> body) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findByIdProgramacion(id);
@@ -1069,6 +1076,7 @@ public class ProgramacionMantenimientoController {
     @POST
     @Path("/{id}/reprogramar")
     @Transactional
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response reprogramarProgramacion(@PathParam("id") Integer id, Map<String, Object> body) {
         try {
             ProgramacionMantenimientoModel programacion = programacionRepository.findByIdProgramacion(id);
@@ -1292,6 +1300,7 @@ public class ProgramacionMantenimientoController {
     @DELETE
     @Path("/historial/batch")
     @Transactional
+    @RequiresRole({ "ADMIN" })
     public Response deleteHistorialMultiple(Map<String, List<Integer>> payload) {
         try {
             List<Integer> ids = payload.get("ids");

@@ -1,6 +1,7 @@
 package usac.eps.controladores.mantenimientos;
 
 import usac.eps.modelos.mantenimientos.*;
+import usac.eps.seguridad.RequiresRole;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
@@ -15,8 +16,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controlador de reportes
+ * 🔒 Solo ADMIN y SUPERVISOR pueden acceder a reportes
+ */
 @Path("/reportes")
 @RequestScoped
+@RequiresRole({ "ADMIN", "SUPERVISOR" }) // Proteger todo el controlador
 public class ReportesController {
 
     private static final Logger LOGGER = Logger.getLogger(ReportesController.class.getName());
