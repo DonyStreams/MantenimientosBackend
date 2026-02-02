@@ -135,6 +135,21 @@ if (-not (Test-Path "config\email.properties")) {
     exit 1
 }
 
+# Generar resources.xml con credenciales desde .env
+Write-Log "Generando resources.xml desde variables de entorno..."
+@"
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <Resource id="inacifDataSource" type="javax.sql.DataSource">
+        jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
+        jdbcUrl = jdbc:sqlserver://${env:DB_HOST}:${env:DB_PORT};databaseName=${env:DB_NAME};encrypt=true;trustServerCertificate=true;
+        jtaManaged = true
+        password = ${env:DB_PASSWORD}
+        userName = ${env:DB_USER}
+    </Resource>
+</resources>
+"@ | Set-Content -Path "src\main\resources\META-INF\resources.xml" -Encoding UTF8
+
 # ============================================
 # 5. Detener contenedores actuales
 # ============================================

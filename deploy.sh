@@ -119,6 +119,11 @@ if [ ! -f ".env" ]; then
 fi
 
 # Cargar variables de entorno
+set -o allexport
+source .env
+set +o allexport
+
+# Cargar variables de entorno
 source .env
 
 # Verificar configuración de email.properties
@@ -128,6 +133,21 @@ if [ ! -f "config/email.properties" ]; then
     cp src/main/resources/email.properties.template config/email.properties
     error "Configurar config/email.properties con credenciales reales antes de continuar"
 fi
+
+# Generar resources.xml con credenciales desde .env
+log "Generando resources.xml desde variables de entorno..."
+cat > src/main/resources/META-INF/resources.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <Resource id="inacifDataSource" type="javax.sql.DataSource">
+        jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
+        jdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=true;trustServerCertificate=true;
+        jtaManaged = true
+        password = ${DB_PASSWORD}
+        userName = ${DB_USER}
+    </Resource>
+</resources>
+EOF
 
 # ============================================
 # 5. Detener contenedores actuales
