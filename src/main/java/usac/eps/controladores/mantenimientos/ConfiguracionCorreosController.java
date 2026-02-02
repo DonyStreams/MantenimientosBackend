@@ -25,15 +25,17 @@ public class ConfiguracionCorreosController {
     private static final List<CorreoTipo> TIPOS = List.of(
             new CorreoTipo("equipo_critico", "Equipo crítico", "Correo cuando un equipo cambia a estado crítico"),
             new CorreoTipo("ticket_critico", "Ticket crítico", "Correo cuando un ticket cambia a prioridad crítica"),
-            new CorreoTipo("mantenimiento_proximo_30", "Mantenimiento próximo (30 días)", "Alertas de mantenimiento a 30 días"),
-            new CorreoTipo("mantenimiento_proximo_15", "Mantenimiento próximo (15 días)", "Alertas de mantenimiento a 15 días"),
-            new CorreoTipo("mantenimiento_proximo_7", "Mantenimiento próximo (7 días)", "Alertas de mantenimiento a 7 días"),
+            new CorreoTipo("mantenimiento_proximo_30", "Mantenimiento próximo (30 días)",
+                    "Alertas de mantenimiento a 30 días"),
+            new CorreoTipo("mantenimiento_proximo_15", "Mantenimiento próximo (15 días)",
+                    "Alertas de mantenimiento a 15 días"),
+            new CorreoTipo("mantenimiento_proximo_7", "Mantenimiento próximo (7 días)",
+                    "Alertas de mantenimiento a 7 días"),
             new CorreoTipo("mantenimiento_vencido", "Mantenimiento vencido", "Alertas de mantenimiento vencido"),
             new CorreoTipo("contrato_proximo_30", "Contrato próximo (30 días)", "Alertas de contrato a 30 días"),
             new CorreoTipo("contrato_proximo_15", "Contrato próximo (15 días)", "Alertas de contrato a 15 días"),
             new CorreoTipo("contrato_proximo_7", "Contrato próximo (7 días)", "Alertas de contrato a 7 días"),
-            new CorreoTipo("contrato_vencido", "Contrato vencido", "Alertas de contrato vencido")
-    );
+            new CorreoTipo("contrato_vencido", "Contrato vencido", "Alertas de contrato vencido"));
 
     @Inject
     private ConfiguracionAlertaRepository configuracionRepository;
@@ -71,7 +73,7 @@ public class ConfiguracionCorreosController {
     @Transactional
     @RequiresRole({ "ADMIN" })
     public Response actualizarConfiguracion(@PathParam("tipo") String tipo,
-                                            Map<String, String> payload) {
+            Map<String, String> payload) {
         CorreoTipo tipoDef = TIPOS.stream()
                 .filter(t -> t.tipo.equalsIgnoreCase(tipo))
                 .findFirst()
