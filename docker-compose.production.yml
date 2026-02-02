@@ -37,6 +37,7 @@ services:
       - ENVIRONMENT=${ENVIRONMENT:-production}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - JAVA_OPTS=-Xms512m -Xmx2048m -XX:+UseG1GC
+      - JAVA_TOOL_OPTIONS=-DDB_HOST=${DB_HOST} -DDB_PORT=${DB_PORT} -DDB_NAME=${DB_NAME} -DDB_USER=${DB_USER} -DDB_PASSWORD=${DB_PASSWORD}
     volumes:
       # Datos persistentes (evidencias, archivos)
       - inacif-data:/opt/inacif-data

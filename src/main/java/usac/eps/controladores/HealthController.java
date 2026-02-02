@@ -20,7 +20,7 @@ import java.io.InputStream;
 @Path("/health")
 public class HealthController {
 
-    @PersistenceContext(unitName = "MantenimientosPU")
+    @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
 
     @GET
