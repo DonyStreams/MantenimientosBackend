@@ -11,3 +11,6 @@ nb-configuration.xml
 # Archivos de configuración con credenciales sensibles
 # IMPORTANTE: No versionar credenciales de producción
 src/main/resources/email.properties
+.env
+config/email.properties
+config/*.properties

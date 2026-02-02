@@ -50,14 +50,17 @@ public class CORSResponseFilter implements Filter {
                 String origin = request.getHeader("Origin");
 
                 // Lista de orígenes permitidos (configurable)
-                String allowedOrigins = "http://localhost:4200,https://tu-dominio-produccion.com";
+                String allowedOrigins = getAllowedOrigins();
 
                 // Si el origen está en la lista, permitirlo
-                if (origin != null && allowedOrigins.contains(origin)) {
+                if (origin != null && isOriginAllowed(origin, allowedOrigins)) {
                         response.addHeader("Access-Control-Allow-Origin", origin);
                 } else if (origin == null) {
-                        // Si no hay origen (peticiones directas), usar localhost por defecto
-                        response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+                        // Si no hay origen (peticiones directas), usar el primer origen permitido
+                        String defaultOrigin = getDefaultOrigin(allowedOrigins);
+                        if (defaultOrigin != null) {
+                                response.addHeader("Access-Control-Allow-Origin", defaultOrigin);
+                        }
                 }
 
                 response.addHeader("Access-Control-Allow-Headers",
@@ -153,6 +156,35 @@ public class CORSResponseFilter implements Filter {
                         }
                 }
                 return false;
+        }
+
+        private String getAllowedOrigins() {
+                String envOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
+                if (envOrigins == null || envOrigins.trim().isEmpty()) {
+                        return "http://172.16.33.11,http://localhost:4200";
+                }
+                return envOrigins;
+        }
+
+        private boolean isOriginAllowed(String origin, String allowedOrigins) {
+                String[] origins = allowedOrigins.split(",");
+                for (String allowed : origins) {
+                        if (origin.equalsIgnoreCase(allowed.trim())) {
+                                return true;
+                        }
+                }
+                return false;
+        }
+
+        private String getDefaultOrigin(String allowedOrigins) {
+                String[] origins = allowedOrigins.split(",");
+                for (String allowed : origins) {
+                        String trimmed = allowed.trim();
+                        if (!trimmed.isEmpty()) {
+                                return trimmed;
+                        }
+                }
+                return null;
         }
 
 }

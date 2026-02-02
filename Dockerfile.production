@@ -1,0 +1,59 @@
+# ============================================
+# Dockerfile Multi-Stage para Producción
+# Backend - Sistema de Mantenimientos INACIF
+# ============================================
+
+# Etapa 1: Build con Maven
+FROM maven:3.8-openjdk-11-slim AS builder
+
+WORKDIR /build
+
+# Copiar archivos de configuración Maven
+COPY pom.xml .
+
+# Descargar dependencias (cacheable)
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente
+COPY src ./src
+
+# Compilar aplicación (saltar tests en producción)
+RUN mvn clean package -DskipTests -B
+
+# ============================================
+# Etapa 2: Runtime con TomEE
+FROM tomee:9.0.0-M7-plus
+
+# Metadata
+LABEL maintainer="INACIF <soporte@inacif.gob.gt>"
+LABEL description="Backend Sistema de Mantenimientos INACIF"
+LABEL version="2.0.0"
+
+# Variables de entorno
+ENV TOMEE_PORT=8080
+ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseG1GC"
+
+# Crear directorios para datos y logs
+RUN mkdir -p /opt/inacif-data/evidencias \
+    && mkdir -p /opt/inacif-logs \
+    && chown -R tomee:tomee /opt/inacif-data \
+    && chown -R tomee:tomee /opt/inacif-logs
+
+# Copiar WAR desde el builder
+COPY --from=builder /build/target/MantenimientosBackend.war /usr/local/tomee/webapps/
+
+# Copiar archivos de configuración (se sobrescribirán con volúmenes)
+COPY src/main/resources/*.properties /usr/local/tomee/conf/
+
+# Exponer puerto
+EXPOSE 8080
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/MantenimientosBackend/api/health || exit 1
+
+# Usuario no privilegiado
+USER tomee
+
+# Comando de inicio
+CMD ["catalina.sh", "run"]

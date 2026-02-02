@@ -58,6 +58,9 @@ public class ApplicationConfig extends Application {
         // Controller de autenticación
         resources.add(usac.eps.controladores.auth.AuthController.class);
 
+        // Health check (no requiere autenticación)
+        resources.add(usac.eps.controladores.HealthController.class);
+
         // Filtros de seguridad
         resources.add(usac.eps.seguridad.JWTAuthenticationFilter.class);
 

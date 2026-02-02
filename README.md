@@ -6,6 +6,22 @@ Sistema integral de gestión de mantenimientos preventivos, correctivos y calibr
 
 ---
 
+## 📚 Documentación
+
+### 🚀 Despliegue en Producción
+- **[INSTALACION-SERVIDOR.md](INSTALACION-SERVIDOR.md)** - Guía completa de instalación en servidor
+- **[CHECKLIST-DESPLIEGUE.md](CHECKLIST-DESPLIEGUE.md)** - Lista de verificación pre-despliegue
+- **[.env.example](.env.example)** - Plantilla de variables de entorno
+- **Scripts de despliegue:**
+  - `deploy.sh` - Script automatizado para Linux
+  - `deploy.ps1` - Script automatizado para Windows
+
+### 📖 Configuración
+- **[Configuraciones/](Configuraciones/)** - Configuración de Keycloak y roles
+- **[MantenimientosBackend.postman_collection.json](MantenimientosBackend.postman_collection.json)** - Colección de APIs
+
+---
+
 ## 🏗️ Arquitectura del Sistema
 
 ### Stack Tecnológico
