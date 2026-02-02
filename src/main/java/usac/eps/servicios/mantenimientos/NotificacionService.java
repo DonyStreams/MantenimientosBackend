@@ -239,7 +239,7 @@ public class NotificacionService {
                             "📧 Enviando correo de mantenimiento (" + tipoAlerta + ", días: " + diasRestantes + ")");
                     emailService.notificarMantenimientoProximo(
                             programacionId, equipoNombre, codigoInacif,
-                            tipoMantenimiento, fechaProxima, diasRestantes);
+                            tipoMantenimiento, fechaProxima, diasRestantes, tipoAlerta);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "No se pudo enviar correo de mantenimiento próximo", e);
                 }
@@ -383,7 +383,7 @@ public class NotificacionService {
                             ", tipo: " + tipoAlerta + ")");
                     emailService.notificarContratoProximo(
                             contratoId, identificador, descripcion,
-                            proveedorNombre, fechaFin, diasRestantes);
+                            proveedorNombre, fechaFin, diasRestantes, tipoAlerta);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "No se pudo enviar correo de contrato próximo", e);
                 }

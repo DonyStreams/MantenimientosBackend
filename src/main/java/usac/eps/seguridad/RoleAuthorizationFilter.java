@@ -57,18 +57,12 @@ public class RoleAuthorizationFilter implements ContainerRequestFilter {
         List<String> userRoles = (List<String>) httpRequest.getAttribute("roles");
 
         if (userRoles == null || userRoles.isEmpty()) {
-            System.out.println("[RoleAuth] ❌ Usuario sin roles, denegando acceso");
             abortWithForbidden(requestContext, roleAnnotation.message());
             return;
         }
 
         String[] requiredRoles = roleAnnotation.value();
         boolean requireAll = roleAnnotation.requireAll();
-
-        System.out.println("[RoleAuth] 🔍 Verificando roles:");
-        System.out.println("[RoleAuth] - Roles del usuario: " + userRoles);
-        System.out.println("[RoleAuth] - Roles requeridos: " + Arrays.toString(requiredRoles));
-        System.out.println("[RoleAuth] - Requiere todos: " + requireAll);
 
         boolean hasAccess;
 
@@ -83,14 +77,9 @@ public class RoleAuthorizationFilter implements ContainerRequestFilter {
         }
 
         if (!hasAccess) {
-            String username = (String) httpRequest.getAttribute("username");
-            System.out.println("[RoleAuth] ❌ Acceso denegado para usuario: " + username);
-            System.out.println("[RoleAuth] - Endpoint: " + method.getName());
             abortWithForbidden(requestContext, roleAnnotation.message());
             return;
         }
-
-        System.out.println("[RoleAuth] ✅ Acceso autorizado");
     }
 
     private void abortWithForbidden(ContainerRequestContext requestContext, String message) {

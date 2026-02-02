@@ -15,12 +15,15 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/historial-equipos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class HistorialEquipoController {
+    private static final Logger LOGGER = Logger.getLogger(HistorialEquipoController.class.getName());
 
     @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
@@ -115,7 +118,7 @@ public class HistorialEquipoController {
 
             return Response.noContent().build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar registro", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar registro: " + e.getMessage() + "\"}")
                     .build();
@@ -152,7 +155,7 @@ public class HistorialEquipoController {
                     .build();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar registros", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar registros: " + e.getMessage() + "\"}")
                     .build();

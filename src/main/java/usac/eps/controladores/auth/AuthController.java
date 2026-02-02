@@ -8,11 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthController {
+
+    private static final Logger LOGGER = Logger.getLogger(AuthController.class.getName());
 
     @Context
     private HttpServletRequest request;
@@ -38,6 +42,7 @@ public class AuthController {
 
             return Response.ok(userInfo).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener información del usuario", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener información del usuario: " + e.getMessage())
                     .build();
@@ -72,7 +77,7 @@ public class AuthController {
             }
 
         } catch (Exception e) {
-            System.err.println("[AuthController] Error extrayendo roles: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error extrayendo roles desde claims", e);
         }
 
         // Fallback por defecto

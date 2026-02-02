@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controlador para manejo de archivos de contratos (sin FTP)
@@ -23,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class ArchivoController {
+    private static final Logger LOGGER = Logger.getLogger(ArchivoController.class.getName());
 
     @PersistenceContext
     private EntityManager em;
@@ -40,8 +43,6 @@ public class ArchivoController {
             @PathParam("idContrato") int idContrato,
             @HeaderParam("X-Filename") String fileName) {
         try {
-            System.out.println("📤 Iniciando upload de archivo: " + fileName);
-
             if (fileName == null || fileName.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"Debe enviar el nombre del archivo en el header X-Filename\"}")
@@ -59,7 +60,6 @@ public class ArchivoController {
             java.nio.file.Path baseDir = Paths.get(BASE_DIR);
             if (!Files.exists(baseDir)) {
                 Files.createDirectories(baseDir);
-                System.out.println("📁 Directorio creado: " + BASE_DIR);
             }
 
             // Generar nombre único para evitar colisiones
@@ -74,7 +74,6 @@ public class ArchivoController {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 
             long fileSize = Files.size(filePath);
-            System.out.println("✅ Archivo guardado: " + uniqueFileName + " (" + fileSize + " bytes)");
 
             // 🆕 GUARDAR EN BASE DE DATOS
             try {
@@ -94,10 +93,8 @@ public class ArchivoController {
                         .setParameter(6, tipoMime)
                         .executeUpdate();
 
-                System.out.println("✅ Registro guardado en BD para contrato: " + idContrato);
-
             } catch (Exception dbEx) {
-                System.out.println("⚠️ Error al guardar en BD (archivo ya guardado): " + dbEx.getMessage());
+                LOGGER.log(Level.WARNING, "Error al guardar documento en BD", dbEx);
                 // El archivo físico ya se guardó, continuamos
             }
 
@@ -114,8 +111,7 @@ public class ArchivoController {
                     .build();
 
         } catch (IOException e) {
-            System.out.println("❌ Error al subir archivo: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al subir archivo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al guardar archivo: " + e.getMessage() + "\"}")
                     .build();
@@ -125,7 +121,7 @@ public class ArchivoController {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                System.out.println("⚠️ Error al cerrar InputStream: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al cerrar InputStream", e);
             }
         }
     }
@@ -135,8 +131,6 @@ public class ArchivoController {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFile(@PathParam("fileName") String fileName) {
         try {
-            System.out.println("📥 Descargando archivo: " + fileName);
-
             java.nio.file.Path filePath = Paths.get(BASE_DIR, fileName);
 
             if (!Files.exists(filePath)) {
@@ -153,7 +147,7 @@ public class ArchivoController {
                     .build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al descargar archivo: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al descargar archivo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al descargar archivo: " + e.getMessage() + "\"}")
                     .build();
@@ -165,18 +159,14 @@ public class ArchivoController {
     @Transactional
     public Response deleteFile(@PathParam("fileName") String fileName) {
         try {
-            System.out.println("🗑️ Eliminando archivo: " + fileName);
-
             // Primero eliminar de la base de datos
             try {
                 String deleteSql = "DELETE FROM Documentos_Contrato WHERE ruta_archivo = ?";
                 int rowsAffected = em.createNativeQuery(deleteSql)
                         .setParameter(1, fileName)
                         .executeUpdate();
-
-                System.out.println("✅ Registros eliminados de BD: " + rowsAffected);
             } catch (Exception dbEx) {
-                System.out.println("⚠️ Error al eliminar de BD: " + dbEx.getMessage());
+                LOGGER.log(Level.WARNING, "Error al eliminar documento en BD", dbEx);
                 // Continuar para eliminar el archivo físico
             }
 
@@ -184,20 +174,18 @@ public class ArchivoController {
             java.nio.file.Path filePath = Paths.get(BASE_DIR, fileName);
 
             if (!Files.exists(filePath)) {
-                System.out.println("⚠️ Archivo físico no encontrado: " + fileName);
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"error\": \"Archivo no encontrado: " + fileName + "\"}")
                         .build();
             }
 
             Files.delete(filePath);
-            System.out.println("✅ Archivo físico eliminado: " + fileName);
 
             return Response.ok("{\"success\": true, \"message\": \"Archivo eliminado correctamente\"}")
                     .build();
 
         } catch (IOException e) {
-            System.out.println("❌ Error al eliminar archivo: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al eliminar archivo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar archivo: " + e.getMessage() + "\"}")
                     .build();
@@ -209,8 +197,6 @@ public class ArchivoController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getArchivosPorContrato(@PathParam("idContrato") int idContrato) {
         try {
-            System.out.println("📊 Consultando archivos para contrato: " + idContrato);
-
             String sql = "SELECT COUNT(*) as total FROM Documentos_Contrato WHERE id_contrato = ?";
 
             Number result = (Number) em.createNativeQuery(sql)
@@ -226,7 +212,7 @@ public class ArchivoController {
             return Response.ok(jsonResponse).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al consultar archivos: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al consultar archivos por contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al consultar archivos: " + e.getMessage() + "\"}")
                     .build();
@@ -238,8 +224,6 @@ public class ArchivoController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListaArchivosPorContrato(@PathParam("idContrato") int idContrato) {
         try {
-            System.out.println("📋 Listando archivos para contrato: " + idContrato);
-
             String sql = "SELECT id_documento, nombre_archivo, ruta_archivo, tipo_documento, " +
                     "tamanio_archivo, tipo_mime, fecha_subida " +
                     "FROM Documentos_Contrato WHERE id_contrato = ? ORDER BY fecha_subida DESC";
@@ -279,7 +263,7 @@ public class ArchivoController {
             return Response.ok(jsonBuilder.toString()).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al listar archivos: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al listar archivos por contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al listar archivos: " + e.getMessage() + "\"}")
                     .build();
@@ -308,6 +292,7 @@ public class ArchivoController {
             return Response.ok(response).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error en sistema de archivos", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error en sistema de archivos: " + e.getMessage() + "\"}")
                     .build();

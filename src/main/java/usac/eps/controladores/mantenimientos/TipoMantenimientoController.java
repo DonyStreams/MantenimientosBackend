@@ -15,12 +15,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/tipos-mantenimiento")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class TipoMantenimientoController {
+    private static final Logger LOGGER = Logger.getLogger(TipoMantenimientoController.class.getName());
     @Inject
     private TipoMantenimientoRepository tipoMantenimientoRepository;
 
@@ -68,12 +71,13 @@ public class TipoMantenimientoController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo asignar usuario de creación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al asignar usuario de creación", e);
             }
 
             tipoMantenimientoRepository.save(tipo);
             return Response.status(Response.Status.CREATED).entity(tipo).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al crear tipo de mantenimiento", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .build();
@@ -109,12 +113,13 @@ public class TipoMantenimientoController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo asignar usuario de modificación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al asignar usuario modificador", e);
             }
 
             tipoMantenimientoRepository.save(tipo);
             return Response.ok(tipo).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar tipo de mantenimiento", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .build();
@@ -131,7 +136,7 @@ public class TipoMantenimientoController {
                 tipoMantenimientoRepository.deleteByIdTipo(id);
                 return Response.noContent().build();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Error al eliminar tipo de mantenimiento", e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         }

@@ -22,6 +22,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("/mantenimientos")
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class MantenimientoController {
+    private static final Logger LOGGER = Logger.getLogger(MantenimientoController.class.getName());
 
     @Inject
     private ContratoRepository contratoRepository;
@@ -112,6 +115,7 @@ public class MantenimientoController {
             return Response.status(Response.Status.CREATED).entity(contrato).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al crear mantenimiento", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al crear mantenimiento: " + e.getMessage()).build();
         }
@@ -150,6 +154,7 @@ public class MantenimientoController {
             return Response.ok(contrato).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar mantenimiento", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al actualizar mantenimiento: " + e.getMessage()).build();
         }
@@ -171,6 +176,7 @@ public class MantenimientoController {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Mantenimiento no encontrado").build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar mantenimiento", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al eliminar mantenimiento: " + e.getMessage()).build();
         }
@@ -244,8 +250,7 @@ public class MantenimientoController {
 
             return Response.ok(equipos).build();
         } catch (Exception e) {
-            System.err.println("Error al obtener equipos del contrato " + id + ": " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener equipos del contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener equipos del contrato").build();
         }
@@ -263,8 +268,6 @@ public class MantenimientoController {
             String email = (String) request.getAttribute("email");
 
             if (keycloakId == null || username == null) {
-                System.err.println("Información de usuario incompleta en JWT - keycloakId: " + keycloakId
-                        + ", username: " + username);
                 return null;
             }
 
@@ -272,7 +275,7 @@ public class MantenimientoController {
             return getOrCreateUsuario(keycloakId, username, email);
 
         } catch (Exception e) {
-            System.err.println("Error al obtener usuario actual: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error al obtener usuario actual", e);
             return null;
         }
     }
@@ -302,15 +305,12 @@ public class MantenimientoController {
 
                 if (needsUpdate) {
                     usuarioRepository.save(usuario);
-                    System.out.println("✅ Usuario actualizado automáticamente: " + username);
                 }
 
                 return usuario;
             }
 
             // 2. Usuario no existe - AUTO-SINCRONIZACIÓN
-            System.out.println("🔄 Auto-sincronizando nuevo usuario: " + username + " (" + keycloakId + ")");
-
             UsuarioMantenimientoModel nuevoUsuario = new UsuarioMantenimientoModel();
             nuevoUsuario.setKeycloakId(keycloakId);
             nuevoUsuario.setNombreCompleto(username);
@@ -318,14 +318,10 @@ public class MantenimientoController {
             nuevoUsuario.setActivo(true); // Por defecto activo
 
             usuarioRepository.save(nuevoUsuario);
-
-            System.out.println(
-                    "✅ Usuario auto-sincronizado exitosamente: " + username + " con ID: " + nuevoUsuario.getId());
             return nuevoUsuario;
 
         } catch (Exception e) {
-            System.err.println("❌ Error en auto-sincronización: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al obtener o crear usuario", e);
             return null;
         }
     }

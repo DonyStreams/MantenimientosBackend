@@ -14,12 +14,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/areas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class AreaController {
+    private static final Logger LOGGER = Logger.getLogger(AreaController.class.getName());
+
     @Inject
     private AreaRepository areaRepository;
 
@@ -59,7 +63,7 @@ public class AreaController {
             areaRepository.save(area);
             return Response.status(Response.Status.CREATED).entity(area).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear área", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al crear área: " + e.getMessage() + "\"}")
                     .build();
@@ -93,7 +97,7 @@ public class AreaController {
             areaRepository.save(area);
             return Response.ok(area).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al actualizar área", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al actualizar área: " + e.getMessage() + "\"}")
                     .build();
@@ -109,7 +113,7 @@ public class AreaController {
                 areaRepository.deleteByIdArea(id);
                 return Response.noContent().build();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Error al eliminar área", e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity("{\"error\": \"Error al eliminar área: " + e.getMessage() + "\"}")
                         .build();
@@ -127,26 +131,17 @@ public class AreaController {
             String username = (String) request.getAttribute("username");
 
             if (keycloakId != null) {
-                System.out.println("🔑 Usuario autenticado: " + username + " (Keycloak ID: " + keycloakId + ")");
-
                 // Buscar usuario en la base de datos
                 UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
                 if (usuario != null) {
-                    System.out.println(
-                            "👤 Usuario encontrado: " + usuario.getNombreCompleto() + " (ID: " + usuario.getId() + ")");
                     return usuario;
-                } else {
-                    System.out.println("⚠️ Usuario no encontrado en BD con Keycloak ID: " + keycloakId);
                 }
-            } else {
-                System.out.println("⚠️ No hay keycloakId en request attributes");
             }
         } catch (Exception e) {
-            System.err.println("❌ Error al obtener usuario: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error al obtener usuario actual", e);
         }
 
         // Si no se puede obtener el usuario, devolver null
-        System.out.println("⚠️ Devolviendo null - usuario no encontrado");
         return null;
     }
 }

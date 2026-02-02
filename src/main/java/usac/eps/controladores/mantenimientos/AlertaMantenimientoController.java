@@ -10,6 +10,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import usac.eps.modelos.mantenimientos.ProgramacionMantenimientoModel;
 import usac.eps.repositorios.mantenimientos.ProgramacionMantenimientoRepository;
@@ -23,6 +25,7 @@ import usac.eps.servicios.mantenimientos.AlertaMantenimientoService;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AlertaMantenimientoController {
+    private static final Logger LOGGER = Logger.getLogger(AlertaMantenimientoController.class.getName());
 
     @Inject
     private ProgramacionMantenimientoRepository programacionRepository;
@@ -40,24 +43,19 @@ public class AlertaMantenimientoController {
     @Path("/dashboard")
     public Response getDashboard() {
         try {
-            System.out.println("[DEBUG] Iniciando getDashboard()");
-
             // Programaciones activas
             List<ProgramacionMantenimientoModel> activas = programacionRepository
                     .findByActivaOrderByFechaProximoMantenimiento(true);
-            System.out.println("[DEBUG] Programaciones activas encontradas: " + activas.size());
 
             // Próximas alertas (7 días)
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DAY_OF_MONTH, 7);
             List<ProgramacionMantenimientoModel> proximas = programacionRepository
                     .findProgramacionesParaAlerta(cal.getTime());
-            System.out.println("[DEBUG] Alertas próximas encontradas: " + proximas.size());
 
             // Vencidas
             List<ProgramacionMantenimientoModel> vencidas = programacionRepository
                     .findProgramacionesVencidas(new Date());
-            System.out.println("[DEBUG] Programaciones vencidas encontradas: " + vencidas.size());
 
             // Crear respuesta
             DashboardResponse dashboard = new DashboardResponse();
@@ -66,13 +64,10 @@ public class AlertaMantenimientoController {
             dashboard.total_vencidas = vencidas.size();
             dashboard.alertas = proximas;
             dashboard.vencidas = vencidas;
-
-            System.out.println("[DEBUG] Dashboard creado exitosamente");
             return Response.ok(dashboard).build();
 
         } catch (Exception e) {
-            System.err.println("[ERROR] Error en getDashboard(): " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error en getDashboard", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener dashboard: " + e.getMessage())
                     .build();
@@ -96,6 +91,7 @@ public class AlertaMantenimientoController {
             return Response.ok(programaciones).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener alertas próximas", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener alertas próximas: " + e.getMessage())
                     .build();
@@ -116,6 +112,7 @@ public class AlertaMantenimientoController {
             return Response.ok(programaciones).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener mantenimientos vencidos", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener mantenimientos vencidos: " + e.getMessage())
                     .build();
@@ -148,10 +145,12 @@ public class AlertaMantenimientoController {
             return Response.ok(programaciones).build();
 
         } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Formato de fecha inválido en rango", e);
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Formato de fecha inválido. Use yyyy-MM-dd")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener alertas por rango", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener alertas por rango: " + e.getMessage())
                     .build();
@@ -170,6 +169,7 @@ public class AlertaMantenimientoController {
             return Response.ok(reporte).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de alertas", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al generar reporte: " + e.getMessage())
                     .build();
@@ -187,6 +187,7 @@ public class AlertaMantenimientoController {
             return Response.ok().entity("Revisión de alertas ejecutada exitosamente").build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al revisar alertas", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al revisar alertas: " + e.getMessage())
                     .build();
@@ -204,6 +205,7 @@ public class AlertaMantenimientoController {
             return Response.ok().entity("Revisión de vencidos ejecutada exitosamente").build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al revisar vencidos", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al revisar vencidos: " + e.getMessage())
                     .build();

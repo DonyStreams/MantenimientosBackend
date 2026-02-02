@@ -79,6 +79,7 @@ public class ReportesController {
                         contenido.append("Filtrado por área ID: ").append(idArea).append(" (No encontrada)\n");
                     }
                 } catch (Exception ex) {
+                    LOGGER.log(Level.WARNING, "Error al obtener área para reporte", ex);
                     contenido.append("Filtrado por área ID: ").append(idArea).append("\n");
                 }
             } else {
@@ -297,6 +298,7 @@ public class ReportesController {
                     Date inicio = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(fechaInicio.substring(0, 19));
                     query.setParameter("fechaInicio", inicio);
                 } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error al parsear fechaInicio", e);
                 }
             }
             if (fechaFin != null && !fechaFin.isEmpty()) {
@@ -304,6 +306,7 @@ public class ReportesController {
                     Date fin = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(fechaFin.substring(0, 19));
                     query.setParameter("fechaFin", fin);
                 } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error al parsear fechaFin", e);
                 }
             }
 
@@ -382,6 +385,7 @@ public class ReportesController {
                     .header("Content-Type", "text/plain")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de contratos PDF", e);
             return Response.serverError().build();
         }
     }
@@ -420,6 +424,7 @@ public class ReportesController {
                     .header("Content-Type", "text/csv")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de contratos Excel", e);
             return Response.serverError().build();
         }
     }
@@ -456,6 +461,7 @@ public class ReportesController {
                     .header("Content-Type", "text/plain")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de proveedores PDF", e);
             return Response.serverError().build();
         }
     }
@@ -482,6 +488,7 @@ public class ReportesController {
                     .header("Content-Type", "text/csv")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de proveedores Excel", e);
             return Response.serverError().build();
         }
     }
@@ -528,6 +535,7 @@ public class ReportesController {
                     .header("Content-Type", "text/plain")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de programaciones PDF", e);
             return Response.serverError().build();
         }
     }
@@ -568,6 +576,7 @@ public class ReportesController {
                     .header("Content-Type", "text/csv")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de programaciones Excel", e);
             return Response.serverError().build();
         }
     }
@@ -612,6 +621,7 @@ public class ReportesController {
                     .header("Content-Type", "text/plain")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de tickets PDF", e);
             return Response.serverError().build();
         }
     }
@@ -645,6 +655,7 @@ public class ReportesController {
                     .header("Content-Type", "text/csv")
                     .build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte de tickets Excel", e);
             return Response.serverError().build();
         }
     }

@@ -162,8 +162,6 @@ public class EquipoController {
     @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO_EQUIPOS" })
     public Response create(EquipoModel equipo) {
         try {
-            System.out.println("➕ Creando nuevo equipo: " + equipo.getNombre());
-
             // Validar que el código INACIF no exista
             if (equipo.getCodigoInacif() != null && !equipo.getCodigoInacif().trim().isEmpty()) {
                 Optional<EquipoModel> existente = equipoRepository
@@ -188,8 +186,6 @@ public class EquipoController {
             entityManager.persist(equipo);
             entityManager.flush();
 
-            System.out.println("✅ Equipo guardado con ID: " + equipo.getIdEquipo());
-
             // Obtener usuario desde el contexto de Keycloak
             String usuarioNombre = "Sistema";
             Integer usuarioId = null;
@@ -199,21 +195,17 @@ public class EquipoController {
                 String username = (String) request.getAttribute("username");
 
                 if (keycloakId != null) {
-                    System.out.println("🔑 Usuario autenticado: " + username + " (Keycloak ID: " + keycloakId + ")");
-
                     // Buscar usuario en la base de datos
                     UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
                     if (usuario != null) {
                         usuarioId = usuario.getId();
                         usuarioNombre = usuario.getNombreCompleto() != null ? usuario.getNombreCompleto() : username;
-                        System.out.println("👤 Usuario encontrado: " + usuarioNombre + " (ID: " + usuarioId + ")");
                     } else {
-                        System.out.println("⚠️ Usuario no encontrado en BD, usando username: " + username);
                         usuarioNombre = username;
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo obtener usuario de Keycloak: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al obtener usuario desde el contexto", e);
             }
 
             // Registrar creación en historial
@@ -222,16 +214,11 @@ public class EquipoController {
                         "Equipo '" + equipo.getNombre() + "' registrado en el sistema",
                         usuarioId, usuarioNombre);
                 entityManager.flush();
-            } else {
-                System.out.println("⚠️ No se pudo registrar historial: Equipo sin ID");
             }
-
-            System.out.println("✅ Equipo creado exitosamente con ID: " + equipo.getIdEquipo());
             return Response.status(Response.Status.CREATED).entity(equipo).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al crear equipo: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear equipo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al crear equipo: " + e.getMessage() + "\"}")
                     .build();
@@ -247,8 +234,6 @@ public class EquipoController {
     @RequiresRole({ "ADMIN", "SUPERVISOR", "TECNICO_EQUIPOS" })
     public Response update(@PathParam("id") Integer id, EquipoModel equipo) {
         try {
-            System.out.println("📝 Actualizando equipo ID: " + id);
-
             // Obtener equipo anterior
             EquipoModel equipoAnterior = equipoRepository.findByIdEquipo(id);
             if (equipoAnterior == null) {
@@ -302,7 +287,7 @@ public class EquipoController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo obtener usuario de Keycloak: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al obtener usuario desde el contexto", e);
             }
 
             // Actualizar datos del equipo
@@ -323,20 +308,17 @@ public class EquipoController {
                 registrarHistorialSimplificado(id, "CAMBIO_IMAGEN",
                         "Fotografía del equipo actualizada",
                         usuarioId, usuarioNombre);
-                System.out.println("📷 Imagen actualizada");
             } else if (cambioUbicacion) {
                 // Cambio de ubicación
                 registrarHistorialSimplificado(id, "CAMBIO_UBICACION",
                         "Ubicación cambiada de '" + equipoAnterior.getUbicacion() + "' a '" + equipo.getUbicacion()
                                 + "'",
                         usuarioId, usuarioNombre);
-                System.out.println("📍 Ubicación actualizada");
             } else if (cambioEstado) {
                 // Cambio de estado
                 registrarHistorialSimplificado(id, "CAMBIO_ESTADO",
                         "Estado cambiado de '" + equipoAnterior.getEstado() + "' a '" + equipo.getEstado() + "'",
                         usuarioId, usuarioNombre);
-                System.out.println("🔄 Estado actualizado");
 
                 // 🚨 ENVIAR NOTIFICACIÓN SI EL EQUIPO CAMBIA A ESTADO CRÍTICO
                 if (equipo.getEstado() != null && equipo.getEstado().equalsIgnoreCase("Critico")) {
@@ -351,12 +333,8 @@ public class EquipoController {
                                 equipo.getUbicacion() != null ? equipo.getUbicacion() : "No especificada",
                                 equipoAnterior.getEstado() != null ? equipoAnterior.getEstado() : "Desconocido",
                                 motivoCambio);
-
-                        System.out.println("📧 Notificación de equipo crítico enviada - Equipo #" + id);
                     } catch (Exception emailEx) {
-                        System.out
-                                .println("⚠️ Error al enviar notificación de equipo crítico: " + emailEx.getMessage());
-                        // No interrumpir el flujo si falla el correo
+                        LOGGER.log(Level.WARNING, "Error al enviar notificación de equipo crítico", emailEx);
                     }
                 }
             } else {
@@ -364,15 +342,11 @@ public class EquipoController {
                 registrarHistorialSimplificado(id, "EDICION_GENERAL",
                         "Información del equipo actualizada",
                         usuarioId, usuarioNombre);
-                System.out.println("✏️ Información general actualizada");
             }
-
-            System.out.println("✅ Equipo actualizado correctamente");
             return Response.ok(equipo).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al actualizar equipo: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al actualizar equipo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al actualizar equipo: " + e.getMessage() + "\"}")
                     .build();
@@ -401,12 +375,8 @@ public class EquipoController {
 
             // Flush inmediato para asegurar persistencia
             entityManager.flush();
-
-            System.out.println("📝 Historial registrado: " + tipoCambio + " para equipo ID: " + equipoId);
         } catch (Exception e) {
-            System.out.println("⚠️ Error al registrar historial: " + e.getMessage());
-            e.printStackTrace();
-            // No fallar la operación principal si falla el historial
+            LOGGER.log(Level.WARNING, "Error al registrar historial simplificado", e);
         }
     }
 
@@ -492,8 +462,7 @@ public class EquipoController {
             return Response.noContent().build();
 
         } catch (Exception e) {
-            LOGGER.severe("❌ Error al eliminar equipo: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar equipo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar el equipo: " + e.getMessage() + "\"}")
                     .build();

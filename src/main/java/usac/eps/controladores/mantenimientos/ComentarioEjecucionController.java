@@ -16,11 +16,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/comentarios-ejecucion")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ComentarioEjecucionController {
+    private static final Logger LOGGER = Logger.getLogger(ComentarioEjecucionController.class.getName());
 
     @Inject
     private ComentarioEjecucionRepository comentarioRepository;
@@ -66,12 +69,6 @@ public class ComentarioEjecucionController {
             String estadoAnterior = (String) request.get("estadoAnterior");
             String estadoNuevo = (String) request.get("estadoNuevo");
 
-            System.out.println("📝 Creando comentario:");
-            System.out.println("   - idEjecucion: " + idEjecucion);
-            System.out.println("   - usuarioId recibido: " + usuarioId);
-            System.out.println("   - usuarioId en request: " + request.get("usuarioId"));
-            System.out.println("   - tipoComentario: " + tipoComentario);
-
             if (idEjecucion == null || comentarioTexto == null || comentarioTexto.trim().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Se requiere idEjecucion y comentario")
@@ -95,12 +92,7 @@ public class ComentarioEjecucionController {
                 UsuarioMantenimientoModel usuario = usuarioRepository.findById(usuarioId);
                 if (usuario != null) {
                     comentario.setUsuario(usuario);
-                    System.out.println("   ✅ Usuario asignado: " + usuario.getNombreCompleto());
-                } else {
-                    System.out.println("   ⚠️ Usuario con ID " + usuarioId + " no encontrado");
                 }
-            } else {
-                System.out.println("   ⚠️ No se proporcionó usuarioId, el comentario quedará como 'Sistema'");
             }
 
             // Si hay cambio de estado, registrarlo
@@ -131,7 +123,7 @@ public class ComentarioEjecucionController {
                     .build();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear comentario", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al crear comentario: " + e.getMessage())
                     .build();
@@ -180,6 +172,7 @@ public class ComentarioEjecucionController {
             try {
                 return Integer.parseInt((String) value);
             } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "Valor inválido para entero", e);
                 return null;
             }
         }

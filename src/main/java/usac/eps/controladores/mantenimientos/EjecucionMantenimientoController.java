@@ -38,12 +38,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/ejecuciones-mantenimiento")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class EjecucionMantenimientoController {
+    private static final Logger LOGGER = Logger.getLogger(EjecucionMantenimientoController.class.getName());
     private static final Set<String> ESTADOS_VALIDOS = Set.of("PROGRAMADO", "EN_PROCESO", "COMPLETADO", "CANCELADO");
     private static final String EVIDENCIAS_DIR = System.getProperty("user.home") + File.separator + "inacif-evidencias"
             + File.separator + "ejecuciones";
@@ -110,8 +113,10 @@ public class EjecucionMantenimientoController {
             return Response.status(Response.Status.CREATED).entity(EjecucionMantenimientoMapper.toDTO(ejecucion))
                     .build();
         } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Solicitud inválida al crear ejecución", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al crear ejecución", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al crear ejecución: " + e.getMessage())
                     .build();
@@ -135,8 +140,10 @@ public class EjecucionMantenimientoController {
             ejecucionMantenimientoRepository.save(existente);
             return Response.ok(EjecucionMantenimientoMapper.toDTO(existente)).build();
         } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Solicitud inválida al actualizar ejecución", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar ejecución", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al actualizar ejecución: " + e.getMessage())
                     .build();
@@ -167,8 +174,6 @@ public class EjecucionMantenimientoController {
                 String mensaje = "No se puede eliminar la ejecución porque tiene " + countHistorial +
                         " registro(s) de historial de programación asociado(s). " +
                         "Estos registros son parte del historial del equipo y no pueden eliminarse.";
-
-                System.out.println("⚠️ No se puede eliminar ejecución " + id + ": tiene historial de programación");
                 return Response.status(Response.Status.CONFLICT)
                         .entity("{\"error\": \"" + mensaje + "\"}")
                         .build();
@@ -182,27 +187,21 @@ public class EjecucionMantenimientoController {
             int comentariosEliminados = em.createNativeQuery(sqlDeleteComentarios)
                     .setParameter(1, id)
                     .executeUpdate();
-            System.out.println("🗑️ Eliminados " + comentariosEliminados + " comentarios de la ejecución " + id);
 
             // Eliminar evidencias asociadas
             String sqlDeleteEvidencias = "DELETE FROM Evidencias WHERE entidad_relacionada = 'ejecucion_mantenimiento' AND entidad_id = ?";
             int evidenciasEliminadas = em.createNativeQuery(sqlDeleteEvidencias)
                     .setParameter(1, id)
                     .executeUpdate();
-            System.out.println("🗑️ Eliminadas " + evidenciasEliminadas + " evidencias de la ejecución " + id);
 
             // Eliminar la ejecución
             EjecucionMantenimientoModel managedEjecucion = em.merge(ejecucion);
             em.remove(managedEjecucion);
             em.flush();
-
-            System.out.println("✅ Ejecución " + id + " eliminada correctamente (con " + comentariosEliminados +
-                    " comentarios y " + evidenciasEliminadas + " evidencias)");
             return Response.noContent().build();
 
         } catch (Exception e) {
-            System.err.println("❌ Error al eliminar ejecución " + id + ": " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar ejecución", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .build();
@@ -249,15 +248,15 @@ public class EjecucionMantenimientoController {
             if ("COMPLETADO".equalsIgnoreCase(estadoRequest.getEstado()) &&
                     !"COMPLETADO".equalsIgnoreCase(estadoAnterior) &&
                     ejecucion.getProgramacion() != null) {
-
-                System.out.println("✅ Ejecución completada - Actualizando programación...");
                 actualizarProgramacionDespuesDeEjecucion(ejecucion);
             }
 
             return Response.ok(EjecucionMantenimientoMapper.toDTO(ejecucion)).build();
         } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Estado inválido para ejecución", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar estado de ejecución", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al actualizar estado: " + e.getMessage())
                     .build();
@@ -429,7 +428,8 @@ public class EjecucionMantenimientoController {
             if (keycloakId != null) {
                 return usuarioRepository.findByKeycloakId(keycloakId);
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error al obtener usuario del contexto", e);
         }
         return null;
     }
@@ -519,6 +519,7 @@ public class EjecucionMantenimientoController {
             return Response.ok(json.toString()).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener evidencias", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener evidencias: " + e.getMessage() + "\"}")
                     .build();
@@ -537,8 +538,6 @@ public class EjecucionMantenimientoController {
             @HeaderParam("X-Descripcion") String descripcion) {
 
         try {
-            System.out.println("📎 Subiendo evidencia para ejecución: " + ejecucionId);
-
             EjecucionMantenimientoModel ejecucion = ejecucionMantenimientoRepository.findByIdEjecucion(ejecucionId);
             if (ejecucion == null) {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -594,8 +593,6 @@ public class EjecucionMantenimientoController {
                     .setParameter(7, archivoUrl)
                     .executeUpdate();
 
-            System.out.println("✅ Evidencia guardada: " + uniqueFileName);
-
             String jsonResponse = String.format(
                     "{\"id\": 0, \"nombreArchivo\": \"%s\", \"nombreOriginal\": \"%s\", " +
                             "\"tipoArchivo\": \"%s\", \"tamanio\": %d, \"descripcion\": \"%s\", " +
@@ -605,8 +602,7 @@ public class EjecucionMantenimientoController {
             return Response.status(Response.Status.CREATED).entity(jsonResponse).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al subir evidencia: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al guardar archivo de evidencia", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al guardar archivo: " + e.getMessage() + "\"}")
                     .build();
@@ -614,7 +610,8 @@ public class EjecucionMantenimientoController {
             try {
                 if (inputStream != null)
                     inputStream.close();
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "Error al cerrar InputStream", e);
             }
         }
     }
@@ -644,6 +641,7 @@ public class EjecucionMantenimientoController {
                     .build();
 
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error al descargar archivo de evidencia", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al descargar archivo")
                     .build();
@@ -681,7 +679,7 @@ public class EjecucionMantenimientoController {
                 java.nio.file.Path filePath = Paths.get(EVIDENCIAS_DIR, String.valueOf(ejecucionId), nombreArchivo);
                 Files.deleteIfExists(filePath);
             } catch (IOException e) {
-                System.out.println("⚠️ No se pudo eliminar archivo físico: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al eliminar archivo de evidencia", e);
             }
 
             // Eliminar de BD
@@ -691,6 +689,7 @@ public class EjecucionMantenimientoController {
             return Response.ok("{\"message\": \"Evidencia eliminada\"}").build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar evidencia de ejecución", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar: " + e.getMessage() + "\"}")
                     .build();
@@ -756,7 +755,6 @@ public class EjecucionMantenimientoController {
         try {
             ProgramacionMantenimientoModel programacion = ejecucion.getProgramacion();
             if (programacion == null) {
-                System.out.println("⚠️ La ejecución no tiene programación asociada");
                 return;
             }
 
@@ -766,16 +764,11 @@ public class EjecucionMantenimientoController {
                     : ejecucion.getFechaEjecucion();
 
             if (fechaRealizada == null) {
-                System.out.println("⚠️ No hay fecha de ejecución para actualizar");
                 return;
             }
 
             // Guardar fecha original antes de actualizar
             Date fechaOriginalProgramada = programacion.getFechaProximoMantenimiento();
-
-            System.out.println("📅 Actualizando programación ID: " + programacion.getIdProgramacion());
-            System.out.println("📅 Fecha último mantenimiento anterior: " + programacion.getFechaUltimoMantenimiento());
-            System.out.println("📅 Nueva fecha último mantenimiento: " + fechaRealizada);
 
             // Actualizar fecha del último mantenimiento
             programacion.setFechaUltimoMantenimiento(fechaRealizada);
@@ -786,7 +779,6 @@ public class EjecucionMantenimientoController {
 
             if (esProgramacionUnica) {
                 // Para programaciones únicas, desactivar automáticamente después de ejecutar
-                System.out.println("🔒 Programación única (frecuencia=0) - Desactivando automáticamente...");
                 programacion.setActiva(false);
                 // Mantener la fecha próxima como null ya que no habrá siguiente
                 programacion.setFechaProximoMantenimiento(null);
@@ -794,9 +786,6 @@ public class EjecucionMantenimientoController {
                 // Recalcular próximo mantenimiento solo para programaciones recurrentes
                 programacion.calcularProximoMantenimiento();
             }
-
-            System.out.println("📅 Nueva fecha próximo mantenimiento: " + programacion.getFechaProximoMantenimiento());
-            System.out.println("📅 Programación activa: " + programacion.getActiva());
 
             // Actualizar auditoría
             programacion.setFechaModificacion(new Date());
@@ -842,21 +831,14 @@ public class EjecucionMantenimientoController {
                         .setParameter(4, ejecucion.getIdEjecucion())
                         .setParameter(5, usuarioId)
                         .executeUpdate();
-
-                System.out.println("📝 Historial de ejecución registrado");
             } catch (Exception historialEx) {
-                // Si la tabla no existe aún, solo logear
-                System.out.println("Nota: No se pudo registrar historial: " + historialEx.getMessage());
+                LOGGER.log(Level.WARNING, "Error al registrar historial de programación", historialEx);
             }
 
             em.flush();
 
-            System.out.println("✅ Programación actualizada exitosamente");
-
         } catch (Exception e) {
-            System.err.println("❌ Error actualizando programación: " + e.getMessage());
-            e.printStackTrace();
-            // No lanzamos excepción para no afectar el flujo principal
+            LOGGER.log(Level.WARNING, "Error al actualizar programación después de ejecución", e);
         }
     }
 }

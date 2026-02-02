@@ -9,9 +9,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/imagenes")
 public class ImagenController {
+    private static final Logger LOGGER = Logger.getLogger(ImagenController.class.getName());
 
     // Directorio base para guardar imágenes
     private static final String BASE_DIR = System.getProperty("user.home") + File.separator + "inacif-imagenes"
@@ -24,8 +27,6 @@ public class ImagenController {
     public Response uploadImage(InputStream inputStream,
             @HeaderParam("X-Filename") String fileName) {
         try {
-            System.out.println("📸 Iniciando upload de imagen: " + fileName);
-
             if (fileName == null || fileName.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"Debe enviar el nombre del archivo en el header X-Filename\"}")
@@ -43,7 +44,6 @@ public class ImagenController {
             java.nio.file.Path baseDir = Paths.get(BASE_DIR);
             if (!Files.exists(baseDir)) {
                 Files.createDirectories(baseDir);
-                System.out.println("📁 Directorio creado: " + BASE_DIR);
             }
 
             // Generar nombre único para evitar colisiones
@@ -58,7 +58,6 @@ public class ImagenController {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 
             long fileSize = Files.size(filePath);
-            System.out.println("✅ Imagen guardada: " + uniqueFileName + " (" + fileSize + " bytes)");
 
             // Respuesta JSON con información de la imagen
             String jsonResponse = String.format(
@@ -72,8 +71,7 @@ public class ImagenController {
                     .build();
 
         } catch (IOException e) {
-            System.out.println("❌ Error al subir imagen: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al subir imagen", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al guardar imagen: " + e.getMessage() + "\"}")
                     .build();
@@ -83,7 +81,7 @@ public class ImagenController {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                System.out.println("⚠️ Error al cerrar InputStream: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al cerrar InputStream", e);
             }
         }
     }
@@ -93,12 +91,9 @@ public class ImagenController {
     @Produces("image/*")
     public Response viewImage(@PathParam("fileName") String fileName) {
         try {
-            System.out.println("👁️ Sirviendo imagen: " + fileName);
-
             java.nio.file.Path filePath = Paths.get(BASE_DIR, fileName);
 
             if (!Files.exists(filePath)) {
-                System.out.println("❌ Imagen no encontrada: " + fileName);
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("Imagen no encontrada")
                         .build();
@@ -110,15 +105,13 @@ public class ImagenController {
             // Leer el archivo
             byte[] imageData = Files.readAllBytes(filePath);
 
-            System.out.println("✅ Imagen servida: " + fileName + " (" + imageData.length + " bytes)");
-
             return Response.ok(imageData)
                     .type(contentType)
                     .header("Cache-Control", "public, max-age=3600")
                     .build();
 
         } catch (IOException e) {
-            System.out.println("❌ Error al servir imagen: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al servir imagen", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al cargar imagen")
                     .build();
@@ -148,6 +141,7 @@ public class ImagenController {
             return Response.ok(response).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error en sistema de imágenes", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error en sistema de imágenes: " + e.getMessage() + "\"}")
                     .build();

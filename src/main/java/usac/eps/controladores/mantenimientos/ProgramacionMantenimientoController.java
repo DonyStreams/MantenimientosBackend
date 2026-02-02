@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -44,6 +46,8 @@ import usac.eps.seguridad.RequiresRole;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProgramacionMantenimientoController {
+
+    private static final Logger LOGGER = Logger.getLogger(ProgramacionMantenimientoController.class.getName());
 
     @PersistenceContext(unitName = "usac.eps_ControlSuministros")
     private EntityManager em;
@@ -183,7 +187,7 @@ public class ProgramacionMantenimientoController {
 
             return Response.ok(jsonBuilder.toString()).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener programaciones", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\":\"Error al obtener programaciones: " + e.getMessage() + "\"}")
                     .build();
@@ -245,6 +249,7 @@ public class ProgramacionMantenimientoController {
 
             return Response.ok(stats).build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener estadísticas de programaciones", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener estadísticas: " + e.getMessage())
                     .build();
@@ -353,7 +358,7 @@ public class ProgramacionMantenimientoController {
 
             return Response.ok(jsonBuilder.toString()).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\":\"Error al obtener programación: " + e.getMessage() + "\"}")
                     .build();
@@ -382,12 +387,11 @@ public class ProgramacionMantenimientoController {
             }
 
             // Verificar que el equipo existe
-            System.out.println("🔍 Buscando equipo con ID: " + programacion.getEquipo().getIdEquipo());
             EquipoModel equipo = null;
             try {
                 equipo = equipoRepository.findBy(programacion.getEquipo().getIdEquipo());
             } catch (Exception e) {
-                System.out.println("❌ Error buscando equipo: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al buscar equipo para programación", e);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Equipo con ID " + programacion.getEquipo().getIdEquipo() + " no encontrado")
                         .build();
@@ -397,16 +401,12 @@ public class ProgramacionMantenimientoController {
                         .entity("Equipo no encontrado")
                         .build();
             }
-            System.out.println("✅ Equipo encontrado: " + equipo.getNombre());
-
             // Verificar que el tipo de mantenimiento existe
-            System.out.println(
-                    "🔍 Buscando tipo de mantenimiento con ID: " + programacion.getTipoMantenimiento().getIdTipo());
             TipoMantenimientoModel tipo = null;
             try {
                 tipo = tipoMantenimientoRepository.findBy(programacion.getTipoMantenimiento().getIdTipo());
             } catch (Exception e) {
-                System.out.println("❌ Error buscando tipo de mantenimiento: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al buscar tipo de mantenimiento", e);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Tipo de mantenimiento con ID " + programacion.getTipoMantenimiento().getIdTipo()
                                 + " no encontrado")
@@ -417,20 +417,17 @@ public class ProgramacionMantenimientoController {
                         .entity("Tipo de mantenimiento no encontrado")
                         .build();
             }
-            System.out.println("✅ Tipo de mantenimiento encontrado: " + tipo.getNombre());
-
             // Verificar que el contrato existe
             if (programacion.getContrato() == null) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Contrato es requerido")
                         .build();
             }
-            System.out.println("🔍 Buscando contrato con ID: " + programacion.getContrato().getIdContrato());
             ContratoModel contrato = null;
             try {
                 contrato = contratoRepository.findBy(programacion.getContrato().getIdContrato());
             } catch (Exception e) {
-                System.out.println("❌ Error buscando contrato: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al buscar contrato", e);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Contrato con ID " + programacion.getContrato().getIdContrato() + " no encontrado")
                         .build();
@@ -440,20 +437,15 @@ public class ProgramacionMantenimientoController {
                         .entity("Contrato no encontrado")
                         .build();
             }
-            System.out.println("✅ Contrato encontrado: " + contrato.getDescripcion());
-
             // Verificar que no existe una programación activa para el mismo equipo y tipo
-            System.out.println("🔍 Verificando si ya existe programación activa para este equipo y tipo...");
             ProgramacionMantenimientoModel existente = null;
             try {
                 existente = programacionRepository
                         .findByEquipoAndTipoMantenimientoAndActiva(equipo, tipo, true);
             } catch (Exception e) {
-                // No existe programación previa, esto es normal
-                System.out.println("✅ No existe programación previa (esto es correcto)");
+                LOGGER.log(Level.FINE, "No se encontró programación previa", e);
             }
             if (existente != null) {
-                System.out.println("⚠️ Ya existe una programación activa");
                 return Response.status(Response.Status.CONFLICT)
                         .entity("Ya existe una programación activa para este equipo y tipo de mantenimiento")
                         .build();
@@ -482,16 +474,12 @@ public class ProgramacionMantenimientoController {
             programacion.setFechaCreacion(new Date());
             asignarUsuarioAuditoria(programacion, true);
 
-            System.out.println("📦 Guardando programación con EntityManager directamente...");
-
             // Usar EntityManager directamente para garantizar que el ID se genere
             em.persist(programacion);
             em.flush();
 
             // Ahora el ID debe estar disponible
             Integer idGenerado = programacion.getIdProgramacion();
-            System.out.println("✅ Programación guardada con ID: " + idGenerado);
-
             // Registrar en historial como CREADO (fecha_original = fecha_nueva para
             // creación)
             if (idGenerado != null) {
@@ -499,13 +487,9 @@ public class ProgramacionMantenimientoController {
                     Date fechaProximo = programacion.getFechaProximoMantenimiento();
                     registrarHistorial(idGenerado, "CREADO", fechaProximo, fechaProximo,
                             "Programación creada");
-                    System.out.println("✅ Historial CREADO registrado correctamente");
                 } catch (Exception historialError) {
-                    System.out.println("⚠️ Error registrando historial: " + historialError.getMessage());
-                    historialError.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Error al registrar historial de creación", historialError);
                 }
-            } else {
-                System.out.println("⚠️ No se pudo obtener ID de programación para registrar historial");
             }
 
             // Refrescar para obtener la entidad completa con relaciones
@@ -514,8 +498,7 @@ public class ProgramacionMantenimientoController {
             return Response.status(Response.Status.CREATED).entity(programacion).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error en createProgramacion: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al crear programación: " + e.getMessage())
                     .build();
@@ -611,6 +594,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(updated).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al actualizar programación: " + e.getMessage())
                     .build();
@@ -650,6 +634,7 @@ public class ProgramacionMantenimientoController {
 
             return Response.ok().build();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al cambiar estado de programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al cambiar estado: " + e.getMessage())
                     .build();
@@ -707,7 +692,7 @@ public class ProgramacionMantenimientoController {
                     }
                 }
             } catch (Exception e) {
-                // Ignorar error de usuario
+                LOGGER.log(Level.WARNING, "Error al asignar usuario responsable", e);
             }
 
             if (ejecucion.getUsuarioResponsable() == null && ejecucion.getUsuarioCreacion() != null) {
@@ -730,8 +715,6 @@ public class ProgramacionMantenimientoController {
             em.persist(ejecucion);
             em.flush(); // Forzar flush para que se genere el ID
             // Ahora ejecucion.getIdEjecucion() debería tener el ID generado
-
-            System.out.println("✅ Ejecución persistida con ID: " + ejecucion.getIdEjecucion());
 
             // Crear comentario inicial en la conversación
             try {
@@ -756,10 +739,8 @@ public class ProgramacionMantenimientoController {
                 comentarioInicial.setEstadoNuevo("PROGRAMADO");
                 comentarioInicial.setFechaCreacion(new Date());
                 comentarioEjecucionRepository.save(comentarioInicial);
-                System.out.println("✅ Comentario inicial creado");
             } catch (Exception e) {
-                System.err.println("⚠️ Error al crear comentario inicial: " + e.getMessage());
-                // Continuar sin comentario
+                LOGGER.log(Level.WARNING, "Error al crear comentario inicial", e);
             }
 
             // Actualizar programación: solo registrar modificación, no mover fechas hasta
@@ -767,9 +748,8 @@ public class ProgramacionMantenimientoController {
             try {
                 programacion.setFechaModificacion(new Date());
                 programacionRepository.save(programacion);
-                System.out.println("✅ Programación actualizada");
             } catch (Exception e) {
-                System.err.println("⚠️ Error al actualizar programación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al actualizar programación", e);
             }
 
             // Registrar en historial solo si la ejecución se completa o cancela
@@ -780,28 +760,24 @@ public class ProgramacionMantenimientoController {
                             programacion.getFechaProximoMantenimiento(),
                             programacion.getFechaProximoMantenimiento(),
                             "Mantenimiento ejecutado y completado");
-                    System.out.println("✅ Historial registrado: EJECUTADO");
                 } else if ("CANCELADO".equals(ejecucion.getEstado())) {
                     registrarHistorial(id, "SALTADO",
                             programacion.getFechaProximoMantenimiento(),
                             programacion.getFechaProximoMantenimiento(),
                             "Mantenimiento cancelado");
-                    System.out.println("✅ Historial registrado: SALTADO");
                 } else {
                     // Estado PROGRAMADO o EN_PROCESO: no registrar en historial aún
                     // Se registrará cuando se complete o cancele la ejecución
-                    System.out.println("ℹ️ Ejecución creada en estado " + ejecucion.getEstado() +
-                            " - Historial se registrará al completar");
                 }
             } catch (Exception e) {
-                System.err.println("⚠️ Error al registrar historial: " + e.getMessage());
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Error al registrar historial de ejecución", e);
             }
 
             EjecucionMantenimientoDTO dto = EjecucionMantenimientoMapper.toDTO(ejecucion);
             return Response.ok(dto).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al crear mantenimiento desde programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al crear mantenimiento: " + e.getMessage())
                     .build();
@@ -830,28 +806,20 @@ public class ProgramacionMantenimientoController {
                     .setParameter(1, id)
                     .executeUpdate();
 
-            System.out.println(
-                    "🗑️ Eliminados " + historialEliminado + " registros de historial de la programación " + id);
-
             // Eliminar ejecuciones asociadas
             String sqlDeleteEjecuciones = "DELETE FROM Ejecuciones_Mantenimiento WHERE id_programacion = ?";
             int ejecucionesEliminadas = em.createNativeQuery(sqlDeleteEjecuciones)
                     .setParameter(1, id)
                     .executeUpdate();
 
-            System.out.println("🗑️ Eliminadas " + ejecucionesEliminadas + " ejecuciones de la programación " + id);
-
             // Ahora eliminar la programación
             ProgramacionMantenimientoModel managedProgramacion = em.merge(programacion);
             em.remove(managedProgramacion);
             em.flush();
-
-            System.out.println("✅ Programación " + id + " eliminada correctamente");
             return Response.noContent().build();
 
         } catch (Exception e) {
-            System.err.println("❌ Error al eliminar programación " + id + ": " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .build();
@@ -880,7 +848,6 @@ public class ProgramacionMantenimientoController {
             programacionRepository.save(programacion);
 
             String mensaje = nuevoEstado ? "activada" : "pausada";
-            System.out.println("🔄 Programación " + id + " " + mensaje);
 
             // Registrar en historial
             String tipoEvento = nuevoEstado ? "ACTIVADO" : "PAUSADO";
@@ -894,7 +861,7 @@ public class ProgramacionMantenimientoController {
                     .build();
 
         } catch (Exception e) {
-            System.err.println("❌ Error al cambiar estado de programación " + id + ": " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al alternar programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .build();
@@ -920,6 +887,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(programaciones).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener programaciones por equipo", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener programaciones del equipo: " + e.getMessage())
                     .build();
@@ -942,6 +910,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(programaciones).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener programaciones con alerta", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener alertas: " + e.getMessage())
                     .build();
@@ -961,6 +930,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(programaciones).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener programaciones vencidas", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al obtener programaciones vencidas: " + e.getMessage())
                     .build();
@@ -990,6 +960,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(updated).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar último mantenimiento", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al actualizar último mantenimiento: " + e.getMessage())
                     .build();
@@ -1062,6 +1033,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(response).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al descartar programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al descartar programación: " + e.getMessage())
                     .build();
@@ -1101,8 +1073,8 @@ public class ProgramacionMantenimientoController {
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
                 sdf.setTimeZone(java.util.TimeZone.getTimeZone("America/Guatemala"));
                 nuevaFecha = sdf.parse(nuevaFechaStr.substring(0, 10));
-                System.out.println("📅 Reprogramar: recibido=" + nuevaFechaStr + " parseado=" + nuevaFecha);
             } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Formato de fecha inválido para reprogramación", e);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Formato de fecha inválido. Use yyyy-MM-dd")
                         .build();
@@ -1123,8 +1095,6 @@ public class ProgramacionMantenimientoController {
             ProgramacionMantenimientoModel merged = em.merge(programacion);
             em.flush(); // Forzar persistencia inmediata
 
-            System.out.println("✅ Programación " + id + " reprogramada: nueva fecha = " + nuevaFecha);
-
             // Respuesta
             Map<String, Object> response = new HashMap<>();
             response.put("mensaje", "Programación reprogramada exitosamente");
@@ -1136,6 +1106,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(response).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al reprogramar programación", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al reprogramar: " + e.getMessage())
                     .build();
@@ -1181,6 +1152,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(json.toString()).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error al obtener historial de programación", e);
             // Si la tabla no existe, devolver array vacío
             return Response.ok("[]").build();
         }
@@ -1219,6 +1191,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(metricas).build();
 
         } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error al obtener métricas de cumplimiento", e);
             // Si la tabla no existe, devolver métricas vacías
             Map<String, Object> metricas = new HashMap<>();
             metricas.put("total", 0);
@@ -1237,8 +1210,6 @@ public class ProgramacionMantenimientoController {
     @Path("/bitacora/todos")
     public Response getHistorialCompleto() {
         try {
-            System.out.println("=== Consultando historial completo ===");
-
             String query = "SELECT hp.id_historial, hp.id_programacion, hp.tipo_evento, " +
                     "hp.fecha_original, hp.fecha_nueva, hp.motivo, hp.usuario_id, " +
                     "hp.fecha_registro, hp.id_ejecucion, " +
@@ -1255,8 +1226,6 @@ public class ProgramacionMantenimientoController {
 
             @SuppressWarnings("unchecked")
             List<Object[]> resultados = em.createNativeQuery(query).getResultList();
-
-            System.out.println("Registros encontrados: " + resultados.size());
 
             StringBuilder json = new StringBuilder("[");
             for (int i = 0; i < resultados.size(); i++) {
@@ -1288,8 +1257,7 @@ public class ProgramacionMantenimientoController {
             return Response.ok(json.toString()).build();
 
         } catch (Exception e) {
-            System.out.println("Error en historial: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al obtener historial completo", e);
             return Response.ok("[]").build();
         }
     }
@@ -1311,8 +1279,6 @@ public class ProgramacionMantenimientoController {
                         .build();
             }
 
-            System.out.println("🗑️ Eliminando " + ids.size() + " registros del historial de programaciones");
-
             // Construir query con parámetros posicionales
             StringBuilder queryBuilder = new StringBuilder(
                     "DELETE FROM Historial_Programacion WHERE id_historial IN (");
@@ -1330,15 +1296,12 @@ public class ProgramacionMantenimientoController {
 
             int deletedCount = query.executeUpdate();
 
-            System.out.println("✅ Se eliminaron " + deletedCount + " registros del historial");
-
             return Response.ok()
                     .entity("{\"mensaje\":\"" + deletedCount + " registro(s) eliminado(s) correctamente\"}")
                     .build();
 
         } catch (Exception e) {
-            System.err.println("❌ Error eliminando registros del historial: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar registros de historial", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"mensaje\":\"Error al eliminar registros: " + e.getMessage() + "\"}")
                     .build();
@@ -1359,8 +1322,7 @@ public class ProgramacionMantenimientoController {
                 }
             }
         } catch (Exception e) {
-            // Ignorar errores de auditoría para no bloquear la operación principal
-            System.out.println("Error asignando auditoría: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error al asignar usuario de auditoría", e);
         }
     }
 
@@ -1383,11 +1345,8 @@ public class ProgramacionMantenimientoController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo obtener usuario: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al obtener usuario para historial", e);
             }
-
-            System.out.println(
-                    "📝 Intentando registrar historial: " + tipoEvento + " para programación " + idProgramacion);
 
             String insertHistorial = "INSERT INTO Historial_Programacion " +
                     "(id_programacion, tipo_evento, fecha_original, fecha_nueva, motivo, usuario_id, fecha_registro) " +
@@ -1402,12 +1361,8 @@ public class ProgramacionMantenimientoController {
                     .setParameter(6, usuarioId)
                     .setParameter(7, new Date())
                     .executeUpdate();
-
-            System.out.println("✅ Historial registrado: " + tipoEvento + " para programación " + idProgramacion
-                    + " (filas afectadas: " + rows + ")");
         } catch (Exception e) {
-            System.out.println("❌ Error al insertar en Historial_Programacion: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al registrar historial de programación", e);
         }
     }
 }

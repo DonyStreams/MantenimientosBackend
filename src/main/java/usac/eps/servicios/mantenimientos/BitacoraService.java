@@ -7,6 +7,7 @@ import usac.eps.repositorios.mantenimientos.HistorialEquipoRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -31,10 +32,8 @@ public class BitacoraService {
             historial.setFechaRegistro(new Date());
 
             historialRepository.save(historial);
-            LOGGER.info("📋 Bitácora registrada para equipo " + equipo.getIdEquipo() + ": " + descripcion);
         } catch (Exception e) {
-            LOGGER.severe("❌ Error al registrar en bitácora: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al registrar evento en bitácora", e);
         }
     }
 
@@ -54,10 +53,8 @@ public class BitacoraService {
             historial.setFechaRegistro(new Date());
 
             historialRepository.save(historial);
-            LOGGER.info("📋 Bitácora registrada para equipo " + idEquipo + ": " + descripcion);
         } catch (Exception e) {
-            LOGGER.severe("❌ Error al registrar en bitácora: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al registrar evento en bitácora por ID", e);
         }
     }
 
@@ -167,11 +164,8 @@ public class BitacoraService {
             historial.setUsuarioNombre(usuarioNombre);
 
             historialRepository.save(historial);
-            LOGGER.info("📋 Bitácora registrada para equipo " + idEquipo + " (" + tipoCambio + ") por " + usuarioNombre
-                    + ": " + descripcion);
         } catch (Exception e) {
-            LOGGER.severe("❌ Error al registrar en bitácora: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al registrar evento con tipo", e);
         }
     }
 

@@ -26,12 +26,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/tickets")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class TicketController {
+
+    private static final Logger LOGGER = Logger.getLogger(TicketController.class.getName());
 
     @Inject
     private TicketRepository ticketRepository;
@@ -57,8 +61,6 @@ public class TicketController {
     @GET
     public Response getAll() {
         try {
-            System.out.println("📋 Obteniendo todos los tickets");
-
             String sql = "SELECT t.id, t.descripcion, t.prioridad, t.estado, " +
                     "t.fecha_creacion, t.fecha_modificacion, t.fecha_cierre, " +
                     "e.id_equipo as equipo_id, e.nombre as equipo_nombre, e.codigo_inacif as equipo_codigo, " +
@@ -106,7 +108,8 @@ public class TicketController {
             return Response.ok(jsonBuilder.toString()).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener tickets: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al descargar evidencia", e);
+            LOGGER.log(Level.SEVERE, "Error al obtener tickets", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener tickets: " + e.getMessage() + "\"}")
                     .build();
@@ -117,8 +120,6 @@ public class TicketController {
     @Path("/{id}")
     public Response getById(@PathParam("id") Integer id) {
         try {
-            System.out.println("🔍 Obteniendo ticket por ID: " + id);
-
             TicketModel ticket = ticketRepository.findById(id);
             if (ticket == null) {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -163,7 +164,7 @@ public class TicketController {
             return Response.ok(jsonResponse).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener ticket: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al obtener ticket", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener ticket: " + e.getMessage() + "\"}")
                     .build();
@@ -174,8 +175,6 @@ public class TicketController {
     @Transactional
     public Response create(String jsonData) {
         try {
-            System.out.println("📝 Creando nuevo ticket: " + jsonData);
-
             // Parsear JSON manualmente usando regex
             String descripcion = extractJsonValue(jsonData, "descripcion");
             String prioridad = extractJsonValue(jsonData, "prioridad");
@@ -209,6 +208,7 @@ public class TicketController {
                     usuarioAsignadoId = Integer.parseInt(usuarioAsignadoIdStr);
                 }
             } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "IDs inválidos en creación de ticket", e);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"IDs deben ser números válidos\", \"success\": false}")
                         .build();
@@ -258,7 +258,7 @@ public class TicketController {
                         usuarioCreadorNombre = nombreResult.toString();
                     }
                 } catch (Exception e) {
-                    System.out.println("⚠️ No se pudo obtener nombre del usuario creador");
+                    LOGGER.log(Level.WARNING, "Error al obtener nombre de usuario creador", e);
                 }
 
                 // Registrar en bitácora
@@ -267,7 +267,6 @@ public class TicketController {
                 bitacoraService.registrarTicketCreado(equipoId, ticketId, descripcionCorta, usuarioCreadorId,
                         usuarioCreadorNombre);
 
-                System.out.println("✅ Ticket creado exitosamente");
                 return Response.status(Response.Status.CREATED)
                         .entity("{\"message\": \"Ticket creado exitosamente\", \"success\": true}")
                         .build();
@@ -278,7 +277,7 @@ public class TicketController {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error al crear ticket: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al crear ticket", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al crear ticket: " + e.getMessage() + "\", \"success\": false}")
                     .build();
@@ -298,7 +297,7 @@ public class TicketController {
             }
             return null;
         } catch (Exception e) {
-            System.out.println("❌ Error extrayendo valor JSON para " + key + ": " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error al extraer valor JSON", e);
             return null;
         }
     }
@@ -308,8 +307,6 @@ public class TicketController {
     @Transactional
     public Response update(@PathParam("id") Integer id, String jsonData) {
         try {
-            System.out.println("✏️ Actualizando ticket ID: " + id + " - Data: " + jsonData);
-
             if (jsonData == null || jsonData.trim().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"Datos de ticket requeridos\"}")
@@ -331,7 +328,7 @@ public class TicketController {
                 try {
                     usuarioModificadorId = Integer.parseInt(usuarioModificadorIdStr);
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠️ ID de usuario modificador inválido: " + usuarioModificadorIdStr);
+                    LOGGER.log(Level.WARNING, "ID de usuario modificador inválido", e);
                 }
             }
 
@@ -345,6 +342,7 @@ public class TicketController {
                             .getSingleResult();
                     usuarioModificadorNombre = nombreResult != null ? nombreResult.toString() : "Sistema";
                 } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error al obtener nombre de usuario modificador", e);
                     usuarioModificadorNombre = "Sistema";
                 }
             }
@@ -395,7 +393,7 @@ public class TicketController {
                     updateSQL.append(", equipo_id = ?");
                     parametros.add(equipoIdNuevo);
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠️ ID de equipo inválido: " + equipoIdStr);
+                    LOGGER.log(Level.WARNING, "ID de equipo inválido", e);
                 }
             }
 
@@ -407,7 +405,7 @@ public class TicketController {
                     updateSQL.append(", usuario_asignado_id = ?");
                     parametros.add(usuarioAsignadoNuevo);
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠️ ID de usuario asignado inválido: " + usuarioAsignadoIdStr);
+                    LOGGER.log(Level.WARNING, "ID de usuario asignado inválido", e);
                 }
             }
 
@@ -423,8 +421,6 @@ public class TicketController {
             int updatedRows = query.executeUpdate();
 
             if (updatedRows > 0) {
-                System.out.println("✅ Ticket actualizado exitosamente");
-
                 // Registrar cambios en bitácora
                 Integer equipoParaBitacora = equipoIdNuevo != null ? equipoIdNuevo : equipoIdActual;
                 if (equipoParaBitacora != null) {
@@ -464,12 +460,8 @@ public class TicketController {
 
                                 emailService.notificarTicketCritico(id, descripcionTicket, nombreEquipo,
                                         codigoInacif, usuarioAsig, ubicacionEquipo);
-
-                                System.out.println("📧 Notificación de ticket crítico enviada - Ticket #" + id);
                             } catch (Exception emailEx) {
-                                System.out.println(
-                                        "⚠️ Error al enviar notificación de ticket crítico: " + emailEx.getMessage());
-                                // No interrumpir el flujo si falla el correo
+                                LOGGER.log(Level.WARNING, "Error al enviar notificación de ticket crítico", emailEx);
                             }
                         }
                     }
@@ -526,8 +518,7 @@ public class TicketController {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error al actualizar ticket: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al actualizar ticket", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al actualizar ticket: " + e.getMessage() + "\"}")
                     .build();
@@ -539,22 +530,17 @@ public class TicketController {
     @Transactional
     public Response delete(@PathParam("id") Integer id) {
         try {
-            System.out.println("🗑️ Eliminando ticket ID: " + id);
-
             // Primero eliminar el historial asociado al ticket
             String deleteHistorialSQL = "DELETE FROM Historial_Equipo WHERE ticket_id = ?";
             em.createNativeQuery(deleteHistorialSQL).setParameter(1, id).executeUpdate();
-            System.out.println("   ✓ Historial del ticket eliminado");
 
             // Eliminar comentarios asociados
             String deleteComentariosSQL = "DELETE FROM Comentarios_Ticket WHERE ticket_id = ?";
             em.createNativeQuery(deleteComentariosSQL).setParameter(1, id).executeUpdate();
-            System.out.println("   ✓ Comentarios del ticket eliminados");
 
             // Eliminar evidencias asociadas al ticket
             String deleteEvidenciasSQL = "DELETE FROM Evidencias WHERE entidad_relacionada = 'ticket' AND entidad_id = ?";
             em.createNativeQuery(deleteEvidenciasSQL).setParameter(1, id).executeUpdate();
-            System.out.println("   ✓ Evidencias del ticket eliminadas");
 
             // Finalmente eliminar el ticket
             String deleteTicketSQL = "DELETE FROM Tickets WHERE id = ?";
@@ -564,7 +550,6 @@ public class TicketController {
             int result = deleteQuery.executeUpdate();
 
             if (result > 0) {
-                System.out.println("✅ Ticket eliminado correctamente");
                 return Response.ok("{\"message\": \"Ticket eliminado correctamente\", \"success\": true}")
                         .build();
             } else {
@@ -574,8 +559,7 @@ public class TicketController {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error al eliminar ticket: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar ticket", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar ticket: " + e.getMessage() + "\", \"success\": false}")
                     .build();
@@ -590,8 +574,6 @@ public class TicketController {
     @Path("/estadisticas")
     public Response getEstadisticas() {
         try {
-            System.out.println("📊 Obteniendo estadísticas de tickets");
-
             // Estadísticas por estado
             String sqlEstados = "SELECT estado, COUNT(*) as total FROM Tickets GROUP BY estado";
             @SuppressWarnings("unchecked")
@@ -638,7 +620,7 @@ public class TicketController {
             return Response.ok(jsonBuilder.toString()).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener estadísticas: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al obtener estadísticas de tickets", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener estadísticas: " + e.getMessage() + "\"}")
                     .build();
@@ -649,8 +631,6 @@ public class TicketController {
     @Path("/{id}/comentarios")
     public Response getComentarios(@PathParam("id") Integer ticketId) {
         try {
-            System.out.println("💬 Obteniendo comentarios para ticket: " + ticketId);
-
             String sql = "SELECT c.id, c.comentario, c.fecha_creacion, " +
                     "u.nombre_completo, tc.nombre as tipo_comentario, " +
                     "c.estado_anterior, c.estado_nuevo " +
@@ -693,7 +673,7 @@ public class TicketController {
             return Response.ok(jsonBuilder.toString()).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener comentarios: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al obtener comentarios de ticket", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener comentarios: " + e.getMessage() + "\"}")
                     .build();
@@ -705,9 +685,6 @@ public class TicketController {
     @Transactional
     public Response agregarComentario(@PathParam("id") Integer ticketId, String jsonData) {
         try {
-            System.out.println("💬 Agregando comentario al ticket: " + ticketId);
-            System.out.println("📄 Datos recibidos: " + jsonData);
-
             if (jsonData == null || jsonData.trim().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"Datos del comentario requeridos\"}")
@@ -719,11 +696,6 @@ public class TicketController {
             String tipoComentario = extractJsonValue(jsonData, "tipoComentario");
             String estadoAnteriorRequest = extractJsonValue(jsonData, "estadoAnterior");
             String nuevoEstado = extractJsonValue(jsonData, "nuevoEstado");
-
-            System.out.println("🔍 DEBUG - comentario: " + comentario);
-            System.out.println("🔍 DEBUG - tipoComentario: " + tipoComentario);
-            System.out.println("🔍 DEBUG - estadoAnterior (request): " + estadoAnteriorRequest);
-            System.out.println("🔍 DEBUG - nuevoEstado: " + nuevoEstado);
 
             // Validaciones
             if (comentario == null || comentario.trim().isEmpty()) {
@@ -776,13 +748,10 @@ public class TicketController {
                 tipoComentarioId = (Integer) em.createNativeQuery(tipoComentarioIdSQL)
                         .setParameter(1, tipoComentarioBD)
                         .getSingleResult();
-                System.out.println(
-                        "✅ Tipo de comentario encontrado: " + tipoComentarioBD + " (ID: " + tipoComentarioId + ")");
             } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Error al obtener tipo de comentario, usando valor por defecto", e);
                 // Si no existe el tipo, usar el ID 2 por defecto (seguimiento)
                 tipoComentarioId = 2; // 'seguimiento' debería tener ID 2
-                System.out.println("⚠️ Tipo de comentario no encontrado: " + tipoComentarioBD
-                        + ", usando ID por defecto: " + tipoComentarioId);
             }
 
             // Para simplificar, usar usuario ID 1 (después implementaremos JWT)
@@ -805,8 +774,6 @@ public class TicketController {
                     .getSingleResult();
 
             if (comentariosDuplicados > 0) {
-                System.out.println(
-                        "⚠️ Comentario duplicado detectado para usuario " + usuarioId + " en ticket " + ticketId);
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"No se puede agregar el mismo comentario dos veces en un período corto de tiempo\", \"success\": false}")
                         .build();
@@ -820,23 +787,12 @@ public class TicketController {
                     ? estadoAnteriorRequest
                     : estadoActual;
 
-            System.out.println("🔍 DEBUG - Evaluando cambio de estado:");
-            System.out.println("   - nuevoEstado: '" + nuevoEstado + "'");
-            System.out.println("   - estadoAnterior (request): '" + estadoAnteriorRequest + "'");
-            System.out.println("   - estadoActual (BD): '" + estadoActual + "'");
-            System.out.println("   - estadoAnteriorFinal: '" + estadoAnteriorFinal + "'");
-            System.out.println("   - nuevoEstado != null: " + (nuevoEstado != null));
-            System.out.println(
-                    "   - !nuevoEstado.trim().isEmpty(): " + (nuevoEstado != null && !nuevoEstado.trim().isEmpty()));
-
             // Hay cambio de estado si tenemos nuevoEstado y es diferente al
             // estadoAnteriorFinal
             boolean hayEstadosCambio = nuevoEstado != null && !nuevoEstado.trim().isEmpty()
                     && estadoAnteriorFinal != null && !estadoAnteriorFinal.equals(nuevoEstado);
 
             if (hayEstadosCambio) {
-                System.out.println("✅ HAY CAMBIO DE ESTADO - Insertando con columnas de estado: " + estadoAnteriorFinal
-                        + " → " + nuevoEstado);
                 // Si hay cambio de estado, incluir columnas de estado
                 insertComentarioSQL = "INSERT INTO Comentarios_Ticket (ticket_id, comentario, usuario_id, tipo_comentario_id, estado_anterior, estado_nuevo, fecha_creacion) "
                         + "VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
@@ -850,7 +806,6 @@ public class TicketController {
                         .setParameter(6, nuevoEstado) // estado_nuevo
                         .executeUpdate();
             } else {
-                System.out.println("❌ NO HAY CAMBIO DE ESTADO - Insertando sin columnas de estado");
                 // Si no hay cambio de estado, insertar sin columnas de estado
                 insertComentarioSQL = "INSERT INTO Comentarios_Ticket (ticket_id, comentario, usuario_id, tipo_comentario_id, fecha_creacion) "
                         + "VALUES (?, ?, ?, ?, GETDATE())";
@@ -865,8 +820,6 @@ public class TicketController {
 
             // Si hay cambio de estado, actualizar el ticket y registrar en historial
             if (nuevoEstado != null && !nuevoEstado.trim().isEmpty() && !nuevoEstado.equals(estadoActual)) {
-                System.out.println("🔄 Cambiando estado de '" + estadoActual + "' a '" + nuevoEstado + "'");
-
                 // Actualizar estado del ticket
                 String updateEstadoSQL = "UPDATE Tickets SET estado = ?, fecha_modificacion = GETDATE(), usuario_modificacion = ? WHERE id = ?";
                 em.createNativeQuery(updateEstadoSQL)
@@ -893,7 +846,7 @@ public class TicketController {
                             usuarioNombre = nombreResult.toString();
                         }
                     } catch (Exception e) {
-                        System.out.println("⚠️ No se pudo obtener nombre del usuario");
+                        LOGGER.log(Level.WARNING, "Error al obtener nombre de usuario para bitácora", e);
                     }
 
                     // Registrar el cambio de estado en la bitácora
@@ -909,17 +862,12 @@ public class TicketController {
                                 usuarioNombre);
                     }
                 }
-
-                System.out.println("✅ Estado del ticket actualizado de '" + estadoActual + "' a '" + nuevoEstado + "'");
             }
-
-            System.out.println("✅ Comentario agregado exitosamente");
 
             return Response.ok("{\"message\": \"Comentario agregado exitosamente\", \"success\": true}").build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al agregar comentario: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al agregar comentario", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al agregar comentario: " + e.getMessage() + "\"}")
                     .build();
@@ -930,8 +878,6 @@ public class TicketController {
     @Path("/{id}/evidencias")
     public Response getEvidencias(@PathParam("id") Integer ticketId) {
         try {
-            System.out.println("📁 Obteniendo evidencias para ticket: " + ticketId);
-
             String sql = "SELECT id, nombre_archivo, nombre_original, tipo_archivo, tamanio, " +
                     "descripcion, archivo_url, fecha_creacion " +
                     "FROM Evidencias " +
@@ -970,7 +916,7 @@ public class TicketController {
             return Response.ok(jsonBuilder.toString()).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener evidencias: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al obtener evidencias", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener evidencias: " + e.getMessage() + "\"}")
                     .build();
@@ -982,9 +928,6 @@ public class TicketController {
     @Transactional
     public Response addEvidencia(@PathParam("id") Integer ticketId, String jsonData) {
         try {
-            System.out.println("📎 Agregando evidencia al ticket: " + ticketId);
-            System.out.println("Datos recibidos: " + jsonData);
-
             // Extraer datos del JSON
             String archivoUrl = extractJsonValue(jsonData, "archivoUrl");
             String descripcion = extractJsonValue(jsonData, "descripcion");
@@ -1006,12 +949,10 @@ public class TicketController {
                     .setParameter(3, descripcion != null ? descripcion : "")
                     .executeUpdate();
 
-            System.out.println("✅ Evidencia agregada correctamente");
             return Response.ok("{\"message\": \"Evidencia agregada correctamente\", \"success\": true}").build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al agregar evidencia: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al agregar evidencia", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al agregar evidencia: " + e.getMessage() + "\"}")
                     .build();
@@ -1057,14 +998,14 @@ public class TicketController {
                 try {
                     usuarioId = Integer.parseInt(usuarioIdHeader);
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠️ ID de usuario inválido en header");
+                    LOGGER.log(Level.WARNING, "ID de usuario inválido en header", e);
                 }
             }
             if (usuarioNombreHeader != null && !usuarioNombreHeader.trim().isEmpty()) {
                 try {
                     usuarioNombre = URLDecoder.decode(usuarioNombreHeader, "UTF-8");
                 } catch (Exception e) {
-                    System.out.println("⚠️ Error decodificando nombre de usuario");
+                    LOGGER.log(Level.WARNING, "Error al decodificar nombre de usuario", e);
                 }
             } else if (usuarioId != 1) {
                 // Obtener nombre de la BD si no viene en header
@@ -1077,7 +1018,7 @@ public class TicketController {
                         usuarioNombre = nombreResult.toString();
                     }
                 } catch (Exception e) {
-                    System.out.println("⚠️ No se pudo obtener nombre del usuario");
+                    LOGGER.log(Level.WARNING, "Error al obtener nombre de usuario", e);
                 }
             }
 
@@ -1125,7 +1066,7 @@ public class TicketController {
                     bitacoraService.registrarTicketEvidencia(equipoId, ticketId, fileName, usuarioId, usuarioNombre);
                 }
             } catch (Exception ex) {
-                System.out.println("⚠️ No se pudo registrar evidencia en bitácora: " + ex.getMessage());
+                LOGGER.log(Level.WARNING, "Error al registrar evidencia en bitácora", ex);
             }
 
             String jsonResponse = String.format(
@@ -1136,8 +1077,7 @@ public class TicketController {
             return Response.status(Response.Status.CREATED).entity(jsonResponse).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al subir evidencia de ticket: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al guardar archivo de evidencia", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al guardar archivo: " + e.getMessage() + "\"}")
                     .build();
@@ -1145,7 +1085,8 @@ public class TicketController {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Error al cerrar InputStream", e);
                 }
             }
         }
@@ -1157,8 +1098,6 @@ public class TicketController {
     public Response deleteEvidencia(@PathParam("ticketId") Integer ticketId,
             @PathParam("evidenciaId") Integer evidenciaId) {
         try {
-            System.out.println("🗑️ Eliminando evidencia " + evidenciaId + " del ticket " + ticketId);
-
             String selectSQL = "SELECT nombre_archivo FROM Evidencias WHERE id = ? AND entidad_relacionada = 'ticket' AND entidad_id = ?";
             @SuppressWarnings("unchecked")
             List<Object> results = em.createNativeQuery(selectSQL)
@@ -1178,7 +1117,7 @@ public class TicketController {
                 try {
                     Files.deleteIfExists(filePath);
                 } catch (IOException e) {
-                    System.out.println("⚠️ No se pudo eliminar archivo físico: " + e.getMessage());
+                    LOGGER.log(Level.WARNING, "Error al eliminar archivo de evidencia", e);
                 }
             }
 
@@ -1189,7 +1128,6 @@ public class TicketController {
                     .executeUpdate();
 
             if (result > 0) {
-                System.out.println("✅ Evidencia eliminada correctamente");
                 return Response.ok("{\"message\": \"Evidencia eliminada correctamente\", \"success\": true}").build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -1198,8 +1136,7 @@ public class TicketController {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error al eliminar evidencia: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar evidencia", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar evidencia: " + e.getMessage() + "\"}")
                     .build();
@@ -1227,6 +1164,7 @@ public class TicketController {
                     .build();
 
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error al descargar evidencia", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error al descargar archivo")
                     .build();

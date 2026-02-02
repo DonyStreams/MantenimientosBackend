@@ -23,12 +23,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/contratos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class ContratoController {
+    private static final Logger LOGGER = Logger.getLogger(ContratoController.class.getName());
     @Inject
     private ContratoRepository contratoRepository;
 
@@ -57,12 +60,9 @@ public class ContratoController {
             for (ContratoModel contrato : contratos) {
                 contratosDTO.add(convertirADTO(contrato));
             }
-
-            System.out.println("📋 Devolviendo " + contratosDTO.size() + " contratos (activos e inactivos)");
             return Response.ok(contratosDTO).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener contratos: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener contratos", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener contratos\"}")
                     .build();
@@ -93,17 +93,9 @@ public class ContratoController {
             stats.put("vencidos", vencidos);
             stats.put("inactivos", inactivos);
 
-            System.out.println("📊 Estadísticas calculadas:");
-            System.out.println("  - Total: " + totalContratos);
-            System.out.println("  - Vigentes: " + vigentes);
-            System.out.println("  - Por vencer (30 días): " + porVencer);
-            System.out.println("  - Vencidos: " + vencidos);
-            System.out.println("  - Inactivos: " + inactivos);
-
             return Response.ok(stats).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener estadísticas: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener estadísticas de contratos", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener estadísticas\"}")
                     .build();
@@ -126,12 +118,9 @@ public class ContratoController {
                     contratosDTO.add(convertirADTO(contrato));
                 }
             }
-
-            System.out.println("📋 Devolviendo " + contratosDTO.size() + " contratos activos y vigentes");
             return Response.ok(contratosDTO).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener contratos activos: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener contratos activos", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener contratos activos\"}")
                     .build();
@@ -150,7 +139,7 @@ public class ContratoController {
             }
             return Response.ok(convertirADTO(contrato)).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener contrato: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error al obtener contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener contrato\"}")
                     .build();
@@ -160,12 +149,6 @@ public class ContratoController {
     @POST
     public Response create(ContratoModel contratoInput) {
         try {
-            System.out.println("📥 Recibiendo contrato para crear: " + contratoInput);
-            System.out.println("📋 Descripción: " + contratoInput.getDescripcion());
-            System.out.println("📋 Frecuencia: " + contratoInput.getFrecuencia());
-            System.out.println("📋 ID Proveedor: " + contratoInput.getIdProveedor());
-            System.out.println("📋 Estado: " + contratoInput.getEstado());
-
             ContratoModel contrato = new ContratoModel();
             contrato.setDescripcion(contratoInput.getDescripcion());
             contrato.setFrecuencia(contratoInput.getFrecuencia());
@@ -175,21 +158,12 @@ public class ContratoController {
             contrato.setFechaInicio(contratoInput.getFechaInicio());
             contrato.setFechaFin(contratoInput.getFechaFin());
 
-            System.out.println("🔧 Estado seteado antes de guardar: " + contrato.getEstado());
-            System.out.println("🔧 ID Estado seteado antes de guardar: " + contrato.getIdEstado());
-
             // Buscar proveedor por ID si se proporciona idProveedor
             if (contratoInput.getIdProveedor() != null) {
-                System.out.println("🔍 Buscando proveedor con ID: " + contratoInput.getIdProveedor());
                 ProveedorModel proveedor = proveedorRepository.findByIdProveedor(contratoInput.getIdProveedor());
                 if (proveedor != null) {
                     contrato.setProveedor(proveedor);
-                    System.out.println("✅ Proveedor asignado: " + proveedor.getNombre());
-                } else {
-                    System.out.println("⚠️ Proveedor no encontrado con ID: " + contratoInput.getIdProveedor());
                 }
-            } else {
-                System.out.println("⚠️ No se proporcionó ID de proveedor");
             }
 
             contrato.setFechaCreacion(new Date());
@@ -198,27 +172,21 @@ public class ContratoController {
             try {
                 String keycloakId = (String) request.getAttribute("keycloakId");
                 String username = (String) request.getAttribute("username");
-                System.out.println("🔍 Usuario actual - Keycloak ID: " + keycloakId + ", Username: " + username);
 
                 if (keycloakId != null) {
                     UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
                     if (usuario != null) {
                         contrato.setUsuarioCreacion(usuario);
-                        System.out.println("✅ Usuario creación asignado: " + usuario.getNombreCompleto());
-                    } else {
-                        System.out.println("⚠️ Usuario no encontrado en BD para Keycloak ID: " + keycloakId);
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ Error al asignar usuario creación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al asignar usuario creación", e);
             }
             contrato = contratoRepository.save(contrato);
-            System.out.println("✅ Contrato creado con ID: " + contrato.getIdContrato());
 
             return Response.status(Response.Status.CREATED).entity(convertirADTO(contrato)).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al crear contrato: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al crear contrato: " + e.getMessage() + "\"}")
                     .build();
@@ -231,9 +199,6 @@ public class ContratoController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, ContratoModel contratoInput) {
         try {
-            System.out.println("📝 Actualizando contrato ID: " + id);
-            System.out.println("📥 Datos recibidos: " + contratoInput);
-
             // Buscar contrato existente
             ContratoModel contratoExistente = contratoRepository.findByIdContrato(id);
             if (contratoExistente == null) {
@@ -241,11 +206,6 @@ public class ContratoController {
                         .entity("{\"error\": \"Contrato no encontrado\"}")
                         .build();
             }
-
-            System.out.println("📋 Estado actual en BD: " + contratoExistente.getEstado());
-            System.out.println("📥 Estado recibido del frontend: " + contratoInput.getEstado());
-            System.out.println("📥 Tipo de estado recibido: "
-                    + (contratoInput.getEstado() != null ? contratoInput.getEstado().getClass() : "null"));
 
             // Actualizar campos
             contratoExistente.setDescripcion(contratoInput.getDescripcion());
@@ -256,26 +216,18 @@ public class ContratoController {
             // Manejar estado - usar el del input o mantener el actual si no se envía
             if (contratoInput.getEstado() != null) {
                 contratoExistente.setEstado(contratoInput.getEstado());
-                System.out.println("🔧 Estado actualizado a: " + contratoInput.getEstado());
-            } else {
-                System.out.println("⚠️ Estado no proporcionado, manteniendo: " + contratoExistente.getEstado());
             }
 
             // Manejar ID estado - usar el del input o mantener el actual si no se envía
             if (contratoInput.getIdEstado() != null) {
                 contratoExistente.setIdEstado(contratoInput.getIdEstado());
-                System.out.println("🔧 ID Estado actualizado a: " + contratoInput.getIdEstado());
             }
 
             // Buscar proveedor por ID si se proporciona idProveedor
             if (contratoInput.getIdProveedor() != null) {
-                System.out.println("🔍 Buscando proveedor con ID: " + contratoInput.getIdProveedor());
                 ProveedorModel proveedor = proveedorRepository.findByIdProveedor(contratoInput.getIdProveedor());
                 if (proveedor != null) {
                     contratoExistente.setProveedor(proveedor);
-                    System.out.println("✅ Proveedor actualizado: " + proveedor.getNombre());
-                } else {
-                    System.out.println("⚠️ Proveedor no encontrado con ID: " + contratoInput.getIdProveedor());
                 }
             }
 
@@ -286,28 +238,22 @@ public class ContratoController {
             try {
                 String keycloakId = (String) request.getAttribute("keycloakId");
                 String username = (String) request.getAttribute("username");
-                System.out.println("🔍 Usuario modificador - Keycloak ID: " + keycloakId + ", Username: " + username);
 
                 if (keycloakId != null) {
                     UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
                     if (usuario != null) {
                         contratoExistente.setUsuarioModificacion(usuario);
-                        System.out.println("✅ Usuario modificación asignado: " + usuario.getNombreCompleto());
-                    } else {
-                        System.out.println("⚠️ Usuario no encontrado en BD para Keycloak ID: " + keycloakId);
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ Error al asignar usuario modificación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al asignar usuario modificación", e);
             }
 
             contratoExistente = contratoRepository.save(contratoExistente);
-            System.out.println("✅ Contrato actualizado con ID: " + contratoExistente.getIdContrato());
 
             return Response.ok(convertirADTO(contratoExistente)).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al actualizar contrato: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al actualizar contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al actualizar contrato: " + e.getMessage() + "\"}")
                     .build();
@@ -336,6 +282,7 @@ public class ContratoController {
                 dto.put("idProveedor", null);
             }
         } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error al cargar proveedor del contrato", e);
             dto.put("proveedor", "Error al cargar proveedor");
             dto.put("idProveedor", null);
         }
@@ -348,6 +295,7 @@ public class ContratoController {
                 dto.put("usuarioCreacion", "Sistema");
             }
         } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error al cargar usuario de creación", e);
             dto.put("usuarioCreacion", "Sistema");
         }
 
@@ -364,8 +312,7 @@ public class ContratoController {
                     .getSingleResult();
             dto.put("totalArchivos", totalArchivos.intValue());
         } catch (Exception e) {
-            System.out.println(
-                    "⚠️ Error al contar archivos para contrato " + contrato.getIdContrato() + ": " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error al contar archivos de contrato", e);
             dto.put("totalArchivos", 0);
         }
 
@@ -382,8 +329,6 @@ public class ContratoController {
             @QueryParam("equipoId") Integer equipoId,
             @QueryParam("tipoMantenimientoId") Integer tipoMantenimientoId) {
         try {
-            System.out.println("🔍 Buscando contratos vigentes (sin filtrar por equipo/tipo)");
-
             // 🚨 SIMPLIFICADO: Solo contratos vigentes por fechas
             String sql = "SELECT DISTINCT c.id_contrato, c.descripcion, c.fecha_inicio, c.fecha_fin, " +
                     "c.frecuencia, c.estado, " +
@@ -423,13 +368,10 @@ public class ContratoController {
 
                 contratosDTO.add(dto);
             }
-
-            System.out.println("✅ Encontrados " + contratosDTO.size() + " contratos vigentes");
             return Response.ok(contratosDTO).build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener contratos vigentes: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener contratos vigentes", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener contratos vigentes\"}")
                     .build();
@@ -441,8 +383,6 @@ public class ContratoController {
     @Transactional
     public Response delete(@PathParam("id") Integer id) {
         try {
-            System.out.println("🗑️ Intentando eliminar contrato ID: " + id);
-
             ContratoModel contrato = contratoRepository.findByIdContrato(id);
             if (contrato == null) {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -455,28 +395,24 @@ public class ContratoController {
             int documentosEliminados = em.createNativeQuery(deleteDocumentosSQL)
                     .setParameter(1, id)
                     .executeUpdate();
-            System.out.println("🗑️ Documentos eliminados: " + documentosEliminados);
 
             // Luego eliminar relaciones equipo-contrato
             String deleteRelacionesSQL = "DELETE FROM Contrato_Equipo WHERE id_contrato = ?";
             int relacionesEliminadas = em.createNativeQuery(deleteRelacionesSQL)
                     .setParameter(1, id)
                     .executeUpdate();
-            System.out.println("🗑️ Relaciones contrato-equipo eliminadas: " + relacionesEliminadas);
 
             // Finalmente eliminar el contrato usando EntityManager (merge antes de remove)
             ContratoModel managedContrato = em.merge(contrato);
             em.remove(managedContrato);
             em.flush();
-            System.out.println("✅ Contrato eliminado correctamente");
 
             return Response.ok(
                     "{\"message\": \"Contrato y documentos asociados eliminados correctamente\", \"success\": true}")
                     .build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error al eliminar contrato: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar contrato", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al eliminar contrato: " + e.getMessage() + "\", \"success\": false}")
                     .build();

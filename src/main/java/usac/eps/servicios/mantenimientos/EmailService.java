@@ -1,12 +1,22 @@
 package usac.eps.servicios.mantenimientos;
 
+import usac.eps.modelos.mantenimientos.ConfiguracionAlertaModel;
+import usac.eps.repositorios.mantenimientos.ConfiguracionAlertaRepository;
+
 import javax.enterprise.context.ApplicationScoped;
-import javax.mail.*;
+import javax.inject.Inject;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +29,9 @@ public class EmailService {
     private static final Logger LOGGER = Logger.getLogger(EmailService.class.getName());
 
     private Properties emailProperties;
+
+    @Inject
+    private ConfiguracionAlertaRepository configuracionRepository;
 
     public EmailService() {
         loadEmailProperties();
@@ -43,16 +56,20 @@ public class EmailService {
         }
     }
 
-    /**
-     * Establece valores por defecto de configuración
-     */
     private void setDefaultProperties() {
-        emailProperties.setProperty("mail.smtp.host", "smtp.ejemplo.com");
+        emailProperties.setProperty("mail.smtp.host", "smtp.example.com");
         emailProperties.setProperty("mail.smtp.port", "587");
         emailProperties.setProperty("mail.smtp.auth", "true");
         emailProperties.setProperty("mail.smtp.starttls.enable", "true");
+        emailProperties.setProperty("mail.smtp.connectiontimeout", "5000");
+        emailProperties.setProperty("mail.debug", "false");
+
+        emailProperties.setProperty("mail.smtp.user", "");
+        emailProperties.setProperty("mail.smtp.password", "");
         emailProperties.setProperty("mail.from.address", "notificaciones@inacif.gob.gt");
         emailProperties.setProperty("mail.from.name", "Sistema de Mantenimientos INACIF");
+        emailProperties.setProperty("mail.admin.address", "admin@inacif.gob.gt");
+        emailProperties.setProperty("mail.jefatura.address", "jefatura@inacif.gob.gt");
     }
 
     /**
@@ -67,22 +84,9 @@ public class EmailService {
             String contenido = generarHtmlTicketCritico(ticketId, descripcion, equipoNombre,
                     codigoInacif, usuarioAsignado, ubicacion);
 
-            // Enviar a administrador y jefatura
-            String adminEmail = emailProperties.getProperty("mail.admin.address", "admin@inacif.gob.gt");
-            String jefaturaEmail = emailProperties.getProperty("mail.jefatura.address", "jefatura@inacif.gob.gt");
-
-            // Enviar al administrador
-            enviarCorreo(adminEmail, asunto, contenido);
-
-            // Solo enviar a jefatura si es diferente al admin (evitar duplicados)
-            if (!adminEmail.equalsIgnoreCase(jefaturaEmail)) {
-                enviarCorreo(jefaturaEmail, asunto, contenido);
-                LOGGER.info("📧 Correo enviado a 2 destinatarios (admin y jefatura)");
-            } else {
-                LOGGER.info("📧 Correo enviado a 1 destinatario (admin = jefatura, evitando duplicado)");
-            }
-
-            LOGGER.info("✅ Notificación de ticket crítico enviada - Ticket #" + ticketId);
+            String destinatarios = resolverDestinatarios("ticket_critico");
+            enviarCorreo(destinatarios, asunto, contenido);
+            LOGGER.info("📧 Correo enviado a: " + destinatarios);
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de ticket crítico #" + ticketId, e);
@@ -101,21 +105,9 @@ public class EmailService {
             String contenido = generarHtmlEquipoCritico(equipoId, equipoNombre, codigoInacif,
                     ubicacion, estadoAnterior, motivoCambio);
 
-            // Enviar a administrador y jefatura
-            String adminEmail = emailProperties.getProperty("mail.admin.address", "admin@inacif.gob.gt");
-            String jefaturaEmail = emailProperties.getProperty("mail.jefatura.address", "jefatura@inacif.gob.gt");
-
-            // Enviar al administrador
-            enviarCorreo(adminEmail, asunto, contenido);
-
-            // Solo enviar a jefatura si es diferente al admin (evitar duplicados)
-            if (!adminEmail.equalsIgnoreCase(jefaturaEmail)) {
-                enviarCorreo(jefaturaEmail, asunto, contenido);
-                LOGGER.info("📧 Correo enviado a 2 destinatarios (admin y jefatura)");
-            } else {
-                LOGGER.info("📧 Correo enviado a 1 destinatario (admin = jefatura, evitando duplicado)");
-            }
-
+            String destinatarios = resolverDestinatarios("equipo_critico");
+            enviarCorreo(destinatarios, asunto, contenido);
+            LOGGER.info("📧 Correo enviado a: " + destinatarios);
             LOGGER.info("✅ Notificación de equipo crítico enviada - Equipo #" + equipoId);
 
         } catch (Exception e) {
@@ -124,17 +116,141 @@ public class EmailService {
     }
 
     /**
+     * Envía notificación cuando un mantenimiento está próximo a vencer
+     */
+    public void notificarMantenimientoProximo(Integer programacionId, String equipoNombre,
+            String codigoInacif, String tipoMantenimiento,
+            java.util.Date fechaProxima, int diasRestantes, String tipoAlerta) {
+        try {
+            String urgencia = diasRestantes == 0 ? "⚠️ HOY"
+                    : diasRestantes == 1 ? "⚠️ MAÑANA" : "en " + diasRestantes + " días";
+
+            String asunto = "🔧 MANTENIMIENTO PRÓXIMO: " + equipoNombre + " - " + urgencia;
+
+            String contenido = generarHtmlMantenimientoProximo(programacionId, equipoNombre,
+                    codigoInacif, tipoMantenimiento, fechaProxima, diasRestantes);
+
+            String destinatarios = resolverDestinatarios(tipoAlerta);
+            enviarCorreo(destinatarios, asunto, contenido);
+            LOGGER.info("📧 Correo enviado a: " + destinatarios);
+
+            LOGGER.info("✅ Notificación de mantenimiento próximo enviada - Programación #" + programacionId);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de mantenimiento próximo", e);
+        }
+    }
+
+    /**
+     * Envía notificación cuando un contrato está próximo a vencer
+     */
+    public void notificarContratoProximo(Integer contratoId, String numeroContrato,
+            String descripcion, String proveedorNombre,
+            java.util.Date fechaFin, int diasRestantes, String tipoAlerta) {
+        try {
+            String urgencia = diasRestantes <= 7 ? "⚠️ URGENTE" : "📄 PRÓXIMO A VENCER";
+
+            String asunto = urgencia + " - Contrato " + numeroContrato + " vence en " + diasRestantes + " días";
+
+            String contenido = generarHtmlContratoProximo(contratoId, numeroContrato,
+                    descripcion, proveedorNombre, fechaFin, diasRestantes);
+
+            String destinatarios = resolverDestinatarios(tipoAlerta);
+            enviarCorreo(destinatarios, asunto, contenido);
+            LOGGER.info("📧 Correo enviado a: " + destinatarios);
+
+            LOGGER.info("✅ Notificación de contrato próximo enviada - Contrato #" + contratoId);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de contrato próximo", e);
+        }
+    }
+
+    /**
+     * Resuelve los destinatarios desde la configuración de alertas
+     */
+    private String resolverDestinatarios(String tipoAlerta) {
+        if (emailProperties == null) {
+            loadEmailProperties();
+        }
+
+        try {
+            if (configuracionRepository == null || tipoAlerta == null) {
+                return getDefaultDestinatarios();
+            }
+
+            ConfiguracionAlertaModel config = configuracionRepository.findByTipo(tipoAlerta);
+            String correos = config != null ? config.getUsuariosNotificar() : null;
+            String normalizados = normalizarCorreos(correos);
+            if (normalizados.isEmpty()) {
+                return getDefaultDestinatarios();
+            }
+            return normalizados;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "⚠️ No se pudieron resolver destinatarios para " + tipoAlerta, e);
+            return getDefaultDestinatarios();
+        }
+    }
+
+    public String getDefaultDestinatarios() {
+        String adminEmail = emailProperties.getProperty("mail.admin.address", "admin@inacif.gob.gt");
+        String jefaturaEmail = emailProperties.getProperty("mail.jefatura.address", "jefatura@inacif.gob.gt");
+
+        Set<String> destinatarios = new LinkedHashSet<>();
+        String admin = normalizarCorreos(adminEmail);
+        String jefatura = normalizarCorreos(jefaturaEmail);
+
+        if (!admin.isEmpty()) {
+            for (String correo : admin.split(",")) {
+                if (!correo.trim().isEmpty()) {
+                    destinatarios.add(correo.trim());
+                }
+            }
+        }
+
+        if (!jefatura.isEmpty()) {
+            for (String correo : jefatura.split(",")) {
+                if (!correo.trim().isEmpty()) {
+                    destinatarios.add(correo.trim());
+                }
+            }
+        }
+
+        return String.join(", ", destinatarios);
+    }
+
+    private String normalizarCorreos(String correos) {
+        if (correos == null) {
+            return "";
+        }
+
+        String normalized = correos.replace(";", ",");
+        String[] parts = normalized.split(",");
+        Set<String> unique = new LinkedHashSet<>();
+        for (String part : parts) {
+            String correo = part != null ? part.trim() : "";
+            if (!correo.isEmpty()) {
+                unique.add(correo);
+            }
+        }
+        return String.join(", ", unique);
+    }
+
+    /**
      * Método genérico para enviar correo electrónico
      */
     private void enviarCorreo(String destinatario, String asunto, String contenidoHtml) {
+        if (destinatario == null || destinatario.trim().isEmpty()) {
+            LOGGER.warning("⚠️ No hay destinatarios configurados para el correo: " + asunto);
+            return;
+        }
+
         try {
-            // Configurar propiedades del servidor SMTP
             Properties props = new Properties();
             props.put("mail.smtp.auth", emailProperties.getProperty("mail.smtp.auth", "true"));
             props.put("mail.smtp.starttls.enable", emailProperties.getProperty("mail.smtp.starttls.enable", "true"));
             props.put("mail.smtp.host", emailProperties.getProperty("mail.smtp.host"));
             props.put("mail.smtp.port", emailProperties.getProperty("mail.smtp.port", "587"));
-            props.put("mail.smtp.timeout", emailProperties.getProperty("mail.smtp.timeout", "5000"));
             props.put("mail.smtp.connectiontimeout",
                     emailProperties.getProperty("mail.smtp.connectiontimeout", "5000"));
             props.put("mail.debug", emailProperties.getProperty("mail.debug", "false"));
@@ -303,38 +419,6 @@ public class EmailService {
     }
 
     /**
-     * Envía notificación cuando un mantenimiento está próximo a vencer
-     */
-    public void notificarMantenimientoProximo(Integer programacionId, String equipoNombre,
-            String codigoInacif, String tipoMantenimiento,
-            java.util.Date fechaProxima, int diasRestantes) {
-        try {
-            String urgencia = diasRestantes == 0 ? "⚠️ HOY"
-                    : diasRestantes == 1 ? "⚠️ MAÑANA" : "en " + diasRestantes + " días";
-
-            String asunto = "🔧 MANTENIMIENTO PRÓXIMO: " + equipoNombre + " - " + urgencia;
-
-            String contenido = generarHtmlMantenimientoProximo(programacionId, equipoNombre,
-                    codigoInacif, tipoMantenimiento, fechaProxima, diasRestantes);
-
-            // Enviar a administrador y jefatura
-            String adminEmail = emailProperties.getProperty("mail.admin.address", "admin@inacif.gob.gt");
-            String jefaturaEmail = emailProperties.getProperty("mail.jefatura.address", "jefatura@inacif.gob.gt");
-
-            enviarCorreo(adminEmail, asunto, contenido);
-
-            if (!adminEmail.equalsIgnoreCase(jefaturaEmail)) {
-                enviarCorreo(jefaturaEmail, asunto, contenido);
-            }
-
-            LOGGER.info("✅ Notificación de mantenimiento próximo enviada - Programación #" + programacionId);
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de mantenimiento próximo", e);
-        }
-    }
-
-    /**
      * Genera HTML para notificación de mantenimiento próximo
      */
     private String generarHtmlMantenimientoProximo(Integer programacionId, String equipoNombre,
@@ -409,37 +493,6 @@ public class EmailService {
                 "    </div>" +
                 "</body>" +
                 "</html>";
-    }
-
-    /**
-     * Envía notificación cuando un contrato está próximo a vencer
-     */
-    public void notificarContratoProximo(Integer contratoId, String numeroContrato,
-            String descripcion, String proveedorNombre,
-            java.util.Date fechaFin, int diasRestantes) {
-        try {
-            String urgencia = diasRestantes <= 7 ? "⚠️ URGENTE" : "📄 PRÓXIMO A VENCER";
-
-            String asunto = urgencia + " - Contrato " + numeroContrato + " vence en " + diasRestantes + " días";
-
-            String contenido = generarHtmlContratoProximo(contratoId, numeroContrato,
-                    descripcion, proveedorNombre, fechaFin, diasRestantes);
-
-            // Enviar a administrador y jefatura
-            String adminEmail = emailProperties.getProperty("mail.admin.address", "admin@inacif.gob.gt");
-            String jefaturaEmail = emailProperties.getProperty("mail.jefatura.address", "jefatura@inacif.gob.gt");
-
-            enviarCorreo(adminEmail, asunto, contenido);
-
-            if (!adminEmail.equalsIgnoreCase(jefaturaEmail)) {
-                enviarCorreo(jefaturaEmail, asunto, contenido);
-            }
-
-            LOGGER.info("✅ Notificación de contrato próximo enviada - Contrato #" + contratoId);
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de contrato próximo", e);
-        }
     }
 
     /**

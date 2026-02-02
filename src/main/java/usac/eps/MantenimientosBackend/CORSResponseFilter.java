@@ -10,6 +10,8 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * CORS filter configurado para el Sistema de Mantenimientos INACIF.
@@ -21,6 +23,8 @@ import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
  */
 @WebFilter(urlPatterns = { "/*" })
 public class CORSResponseFilter implements Filter {
+
+        private static final Logger LOGGER = Logger.getLogger(CORSResponseFilter.class.getName());
 
         private JwtConsumer jwtConsumer;
 
@@ -40,14 +44,6 @@ public class CORSResponseFilter implements Filter {
                 String method = request.getMethod();
                 String uri = request.getRequestURI();
                 String authHeader = request.getHeader("Authorization");
-
-                System.out.println("=== CORS FILTER DEBUG ===");
-                System.out.println("Method: " + method);
-                System.out.println("URI: " + uri);
-                System.out.println("Authorization Header: " + (authHeader != null
-                                ? authHeader.substring(0, Math.min(50, authHeader.length())) + "..."
-                                : "NULL"));
-                System.out.println("========================");
 
                 // Configurar headers CORS para el frontend Angular
                 // Obtener el origen de la petición
@@ -75,7 +71,6 @@ public class CORSResponseFilter implements Filter {
 
                 // Manejar pre-flight requests
                 if (request.getMethod().equals("OPTIONS")) {
-                        System.out.println("[CORS Filter] OPTIONS request - permitiendo pre-flight");
                         response.addHeader("Content-Type", "application/json");
                         response.setStatus(HttpServletResponse.SC_OK);
                         return;
@@ -83,7 +78,6 @@ public class CORSResponseFilter implements Filter {
 
                 // 🆕 VERIFICAR SI ES RUTA PÚBLICA ANTES DE REQUERIR JWT
                 if (isPublicPath(uri)) {
-                        System.out.println("[CORS Filter] ✅ Ruta pública permitida sin JWT: " + uri);
                         // Continuar sin verificar JWT
                         chain.doFilter(request, response);
                         return;
@@ -91,7 +85,6 @@ public class CORSResponseFilter implements Filter {
 
                 // --- AUTENTICACIÓN JWT ACTIVADA PARA PRODUCCIÓN ---
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                        System.err.println("[CORS Filter] BLOQUEANDO ACCESO - Sin token JWT válido");
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT requerido");
                         return;
                 }
@@ -110,10 +103,8 @@ public class CORSResponseFilter implements Filter {
                         request.setAttribute("jwt_claims", claims.getClaimsMap());
                         request.setAttribute("authenticated", true);
 
-                        System.out.println("[CORS Filter] ✅ Usuario JWT autenticado: " + username);
-
                 } catch (Exception e) {
-                        System.err.println("[CORS Filter] ❌ Error validando JWT: " + e.getMessage());
+                        LOGGER.log(Level.WARNING, "Token JWT inválido o expirado", e);
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT inválido o expirado");
                         return;
                 }

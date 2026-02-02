@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -25,6 +27,7 @@ import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class CategoriaEquipoController {
+    private static final Logger LOGGER = Logger.getLogger(CategoriaEquipoController.class.getName());
     @Inject
     private CategoriaEquipoRepository categoriaRepository;
 
@@ -115,7 +118,7 @@ public class CategoriaEquipoController {
         } catch (WebApplicationException ex) {
             return ex.getResponse();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear la categoría", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al crear la categoría: " + e.getMessage() + "\"}")
                     .build();
@@ -150,7 +153,7 @@ public class CategoriaEquipoController {
         } catch (WebApplicationException ex) {
             return ex.getResponse();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al actualizar la categoría", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al actualizar la categoría: " + e.getMessage() + "\"}")
                     .build();
@@ -259,7 +262,7 @@ public class CategoriaEquipoController {
                 return usuarioRepository.findByKeycloakId(keycloakId);
             }
         } catch (Exception e) {
-            System.out.println("⚠️ No se pudo obtener usuario de Keycloak: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "No se pudo obtener usuario de Keycloak", e);
         }
         return null;
     }

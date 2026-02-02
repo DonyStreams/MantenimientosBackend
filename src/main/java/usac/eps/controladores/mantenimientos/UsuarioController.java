@@ -14,12 +14,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/usuarios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class UsuarioController {
+
+    private static final Logger LOGGER = Logger.getLogger(UsuarioController.class.getName());
 
     @Inject
     private UsuarioMantenimientoRepository usuarioRepository;
@@ -45,11 +49,9 @@ public class UsuarioController {
     public Response getAll() {
         try {
             List<UsuarioMantenimientoModel> usuarios = usuarioRepository.findAll();
-            System.out.println("📋 Devolviendo " + usuarios.size() + " usuarios");
             return Response.ok(usuarios).build();
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener usuarios: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener usuarios", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener usuarios\"}")
                     .build();
@@ -79,7 +81,7 @@ public class UsuarioController {
         try {
             return usuarioRepository.findByKeycloakId(keycloakId);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al buscar usuario por keycloakId", e);
             return null;
         }
     }
@@ -104,7 +106,7 @@ public class UsuarioController {
                 return Response.status(Response.Status.CREATED).entity(usuario).build();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al sincronizar usuario", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al sincronizar usuario: " + e.getMessage() + "\"}")
                     .build();
@@ -137,23 +139,19 @@ public class UsuarioController {
                 entityManager.flush(); // Forzar escribir a BD
                 entityManager.clear(); // Limpiar caché L1
                 entityManager.getEntityManagerFactory().getCache().evictAll(); // Limpiar caché L2
-                System.out.println("🧹 Cache invalidada después de cambio de estado");
             } catch (Exception cacheError) {
-                System.out.println("⚠️ Error al invalidar cache (no crítico): " + cacheError.getMessage());
+                LOGGER.log(Level.WARNING, "Error al invalidar caché del EntityManager", cacheError);
             }
 
             // Log de auditoría
             String accion = nuevoEstado ? "ACTIVADO" : "DESACTIVADO";
-            System.out.println("👤 Usuario " + accion + ": " + usuario.getNombreCompleto() +
-                    " (ID: " + usuario.getId() + ") - Cache invalidada ✅");
 
             return Response.ok()
                     .entity("{\"mensaje\": \"Usuario " + accion.toLowerCase() + " exitosamente\", \"usuario\": " +
                             "{\"id\":" + usuario.getId() + ",\"activo\":" + nuevoEstado + "}}")
                     .build();
         } catch (Exception e) {
-            System.out.println("❌ Error al cambiar estado del usuario: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al cambiar estado de usuario", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al cambiar estado: " + e.getMessage() + "\"}")
                     .build();
@@ -184,15 +182,12 @@ public class UsuarioController {
             entityManager.clear();
             entityManager.getEntityManagerFactory().getCache().evictAll();
 
-            System.out.println("🧹 Cache invalidada manualmente por administrador");
-
             return Response.ok()
                     .entity("{\"mensaje\": \"Cache invalidada exitosamente\", \"timestamp\": \"" +
                             java.time.LocalDateTime.now() + "\"}")
                     .build();
         } catch (Exception e) {
-            System.out.println("❌ Error al invalidar cache: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al invalidar caché", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al invalidar cache: " + e.getMessage() + "\"}")
                     .build();
@@ -216,7 +211,7 @@ public class UsuarioController {
                             ",\"inactivos\":" + (todos.size() - activos.size()) + "}")
                     .build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener estadísticas de usuarios", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener estadísticas\"}")
                     .build();
@@ -253,7 +248,7 @@ public class UsuarioController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al auto-sincronizar usuario", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al auto-sincronizar usuario\"}")
                     .build();
@@ -271,9 +266,6 @@ public class UsuarioController {
             String username = (String) request.getAttribute("username");
             String email = (String) request.getAttribute("email");
 
-            System.out.println("🔍 getCurrentUser - Keycloak ID: " + keycloakId);
-            System.out.println("🔍 getCurrentUser - Username: " + username);
-
             if (keycloakId == null) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"error\": \"Token JWT inválido\"}")
@@ -284,41 +276,24 @@ public class UsuarioController {
             UsuarioMantenimientoModel usuario = null;
             try {
                 usuario = usuarioRepository.findByKeycloakId(keycloakId);
-                System.out.println("✅ Usuario encontrado en BD: " + usuario.getNombreCompleto());
-                System.out.println("📊 DETALLES COMPLETOS:");
-                System.out.println("   - ID: " + usuario.getId());
-                System.out.println("   - Nombre: " + usuario.getNombreCompleto());
-                System.out.println("   - Email: " + usuario.getCorreo());
-                System.out.println("   - Activo: " + usuario.getActivo() + " (tipo: "
-                        + usuario.getActivo().getClass().getSimpleName() + ")");
-                System.out.println("   - Keycloak ID: " + usuario.getKeycloakId());
             } catch (javax.persistence.NoResultException e) {
-                System.out.println("🔄 Usuario no encontrado en BD, necesita sincronización: " + keycloakId);
+                LOGGER.log(Level.FINE, "Usuario no encontrado por keycloakId", e);
                 usuario = null; // Explícitamente establecer como null
             }
 
             if (usuario != null) {
                 // 🛡️ VALIDACIÓN CRÍTICA: Verificar estado activo
                 boolean estaActivo = usuario.getActivo();
-                System.out.println("🔍 VALIDACIÓN DE ESTADO:");
-                System.out.println("   - Valor activo leído: " + estaActivo);
-                System.out.println("   - ¿Es true?: " + (estaActivo == true));
-                System.out.println("   - ¿Es false?: " + (estaActivo == false));
-                System.out.println("   - Negación (!activo): " + (!estaActivo));
 
                 if (!estaActivo) {
-                    System.out.println("🚫 ACCESO DENEGADO: Usuario desactivado - " + usuario.getNombreCompleto());
                     return Response.status(Response.Status.FORBIDDEN)
                             .entity("{\"error\": \"Usuario desactivado\", \"codigo\": \"USUARIO_DESACTIVADO\", \"usuario\": \""
                                     + usuario.getNombreCompleto() + "\"}")
                             .build();
                 }
-
-                System.out.println("✅ Usuario activo verificado: " + usuario.getNombreCompleto());
                 return Response.ok(usuario).build();
             } else {
                 // Usuario no sincronizado - devolver info básica
-                System.out.println("📝 Devolviendo información básica para usuario no sincronizado");
                 String json = String.format(
                         "{\"keycloakId\":\"%s\",\"nombreCompleto\":\"%s\",\"correo\":\"%s\",\"sincronizado\":false}",
                         keycloakId, username, email != null ? email : "");
@@ -326,8 +301,7 @@ public class UsuarioController {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error en getCurrentUser: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener usuario actual", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al obtener usuario actual: " + e.getMessage() + "\"}")
                     .build();
@@ -345,6 +319,7 @@ public class UsuarioController {
             try {
                 usuario = usuarioRepository.findByKeycloakId(keycloakId);
             } catch (javax.persistence.NoResultException e) {
+                LOGGER.log(Level.FINE, "Usuario no encontrado para auto-sincronización", e);
                 // Usuario no encontrado - normal para nuevos usuarios
                 usuario = null;
             }
@@ -365,15 +340,12 @@ public class UsuarioController {
 
                 if (needsUpdate) {
                     usuarioRepository.save(usuario);
-                    System.out.println("✅ Usuario actualizado automáticamente: " + username);
                 }
 
                 return usuario;
             }
 
             // 2. Usuario no existe - AUTO-SINCRONIZACIÓN
-            System.out.println("🔄 Auto-sincronizando nuevo usuario: " + username + " (" + keycloakId + ")");
-
             UsuarioMantenimientoModel nuevoUsuario = new UsuarioMantenimientoModel();
             nuevoUsuario.setKeycloakId(keycloakId);
             nuevoUsuario.setNombreCompleto(username);
@@ -381,14 +353,10 @@ public class UsuarioController {
             nuevoUsuario.setActivo(true);
 
             usuarioRepository.save(nuevoUsuario);
-
-            System.out.println(
-                    "✅ Usuario auto-sincronizado exitosamente: " + username + " con ID: " + nuevoUsuario.getId());
             return nuevoUsuario;
 
         } catch (Exception e) {
-            System.err.println("❌ Error en auto-sincronización: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error al obtener o crear usuario", e);
             return null;
         }
     }

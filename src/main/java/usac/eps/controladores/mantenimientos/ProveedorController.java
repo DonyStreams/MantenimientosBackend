@@ -14,12 +14,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/proveedores")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class ProveedorController {
+    private static final Logger LOGGER = Logger.getLogger(ProveedorController.class.getName());
     @Inject
     private ProveedorRepository proveedorRepository;
 
@@ -67,13 +70,13 @@ public class ProveedorController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo asignar usuario de creación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al asignar usuario de creación", e);
             }
 
             proveedorRepository.save(proveedor);
             return Response.status(Response.Status.CREATED).entity(proveedor).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al crear proveedor", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al crear proveedor: " + e.getMessage() + "\"}")
                     .build();
@@ -109,13 +112,13 @@ public class ProveedorController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo asignar usuario de modificación: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Error al asignar usuario modificador", e);
             }
 
             proveedorRepository.save(proveedor);
             return Response.ok(proveedor).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al actualizar proveedor", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Error al actualizar proveedor: " + e.getMessage() + "\"}")
                     .build();
@@ -131,7 +134,7 @@ public class ProveedorController {
                 proveedorRepository.deleteByIdProveedor(id);
                 return Response.noContent().build();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Error al eliminar proveedor", e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity("{\"error\": \"Error al eliminar proveedor: " + e.getMessage() + "\"}")
                         .build();
