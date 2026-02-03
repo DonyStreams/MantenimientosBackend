@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +28,8 @@ import java.util.logging.Logger;
  */
 @Singleton
 @Startup
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
 public class NotificacionScheduler {
 
     private static final Logger LOGGER = Logger.getLogger(NotificacionScheduler.class.getName());
@@ -97,9 +100,15 @@ public class NotificacionScheduler {
      * Esto permite cambiar la hora sin reiniciar el servidor
      */
     @Schedule(hour = "*", minute = "*", second = "0", persistent = false)
+    @Lock(LockType.READ)
     public void verificarHoraProgramada() {
         // SIEMPRE recargar configuración desde BD (permite cambios sin reinicio)
-        loadConfiguracionFromDB();
+        try {
+            loadConfiguracionFromDB();
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error cargando configuración, saltando ciclo", e);
+            return;
+        }
 
         if (!schedulerHabilitado) {
             return;
