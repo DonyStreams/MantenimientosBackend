@@ -39,6 +39,9 @@ RUN mkdir -p /opt/inacif-data/evidencias \
     && chmod -R 777 /opt/inacif-data \
     && chmod -R 777 /opt/inacif-logs
 
+# Configurar TomEE para usar puerto 8081
+RUN sed -i 's/port="8080"/port="8081"/g' /usr/local/tomee/conf/server.xml
+
 # Copiar WAR desde el builder
 COPY --from=builder /build/target/MantenimientosBackend.war /usr/local/tomee/webapps/
 
@@ -46,11 +49,11 @@ COPY --from=builder /build/target/MantenimientosBackend.war /usr/local/tomee/web
 COPY src/main/resources/*.properties /usr/local/tomee/conf/
 
 # Exponer puerto
-EXPOSE 8080
+EXPOSE 8081
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/MantenimientosBackend/api/health || exit 1
+  CMD curl -f http://localhost:8081/MantenimientosBackend/api/health || exit 1
 
 # Comando de inicio
 CMD ["catalina.sh", "run"]
