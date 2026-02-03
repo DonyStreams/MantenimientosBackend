@@ -48,7 +48,7 @@ services:
       # - ./config/email.properties:/usr/local/tomee/conf/email.properties:ro
       # - ./config/scheduler.properties:/usr/local/tomee/conf/scheduler.properties:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/MantenimientosBackend/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/MantenimientosBackend/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

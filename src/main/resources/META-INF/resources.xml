@@ -2,9 +2,16 @@
 <resources>
     <Resource id="inacifDataSource" type="javax.sql.DataSource">
         jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
-        jdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=false;
+        jdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=false;connectRetryCount=1;connectRetryInterval=1;loginTimeout=15;socketTimeout=30000;
         jtaManaged = true
         password = ${DB_PASSWORD}
         userName = ${DB_USER}
+        initialSize = 1
+        maxActive = 5
+        maxIdle = 2
+        minIdle = 1
+        maxWait = 10000
+        validationQuery = SELECT 1
+        testOnBorrow = true
     </Resource>    
 </resources>
