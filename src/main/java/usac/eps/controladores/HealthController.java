@@ -101,7 +101,7 @@ public class HealthController {
             if (realm == null || realm.isEmpty()) {
                 realm = "inacif";
             }
-            
+
             String jwksUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/certs";
             URL url = new URL(jwksUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -110,7 +110,7 @@ public class HealthController {
             conn.setReadTimeout(3000);
             int responseCode = conn.getResponseCode();
             conn.disconnect();
-            
+
             return responseCode == 200;
         } catch (Exception e) {
             return false;

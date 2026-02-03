@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <Resource id="inacifDataSource" type="javax.sql.DataSource">
-        JdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
-        JdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=false;trustServerCertificate=true
-        UserName = ${DB_USER}
-        Password = ${DB_PASSWORD}
+jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
+        jdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=false;trustServerCertificate=true
+        userName = ${DB_USER}
+        password = ${DB_PASSWORD}
 
-        JtaManaged = true
-        InitialSize = 1
-        MaxActive = 10
-        MaxIdle = 5
-        MinIdle = 1
-        MaxWait = 30000
+        jtaManaged = true
+        initialSize = 1
+        maxActive = 10
+        maxIdle = 5
+        minIdle = 1
+        maxWait = 30000
 
-        ValidationQuery = SELECT 1
-        TestOnBorrow = true
+        validationQuery = SELECT 1
+        testOnBorrow = true
     </Resource>
 </resources>
