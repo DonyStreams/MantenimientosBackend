@@ -7,11 +7,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Properties;
-import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Controlador para verificar el estado del sistema (Health Check)
@@ -80,11 +79,10 @@ public class HealthController {
 
     private boolean checkEmailConfig() {
         try {
-            Properties props = new Properties();
-            InputStream is = getClass().getClassLoader().getResourceAsStream("email.properties");
-            if (is != null) {
-                props.load(is);
-                return props.containsKey("mail.smtp.host");
+            // Verificar configuración SMTP desde variables de entorno
+            String smtpHost = System.getenv("SMTP_HOST");
+            if (smtpHost != null && !smtpHost.isEmpty()) {
+                return true;
             }
             return false;
         } catch (Exception e) {
@@ -94,8 +92,26 @@ public class HealthController {
 
     private boolean checkKeycloakConfig() {
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("keycloak.json");
-            return is != null;
+            // Verificar conectividad con Keycloak JWKS endpoint
+            String keycloakUrl = System.getenv("KEYCLOAK_URL");
+            if (keycloakUrl == null || keycloakUrl.isEmpty()) {
+                keycloakUrl = "http://172.16.1.192:8080/auth"; // URL por defecto
+            }
+            String realm = System.getenv("KEYCLOAK_REALM");
+            if (realm == null || realm.isEmpty()) {
+                realm = "inacif";
+            }
+            
+            String jwksUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/certs";
+            URL url = new URL(jwksUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+            int responseCode = conn.getResponseCode();
+            conn.disconnect();
+            
+            return responseCode == 200;
         } catch (Exception e) {
             return false;
         }

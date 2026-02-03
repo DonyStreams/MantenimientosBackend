@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <Resource id="inacifDataSource" type="javax.sql.DataSource">
-        jdbcDriver = net.sourceforge.jtds.jdbc.Driver
-        jdbcUrl = jdbc:jtds:sqlserver://${DB_HOST}:${DB_PORT}/${DB_NAME};tds=8.0;ssl=off;useNTLMv2=false;
-        jtaManaged = true
-        password = ${DB_PASSWORD}
-        userName = ${DB_USER}
-        initialSize = 0
-        maxActive = 10
-        maxIdle = 5
-        minIdle = 0
-        maxWait = 30000
-        validationQuery = SELECT 1
-        testOnBorrow = true
-        testWhileIdle = true
-        timeBetweenEvictionRunsMillis = 30000
-        removeAbandoned = true
-        removeAbandonedTimeout = 60
-        logAbandoned = true
-    </Resource>    
+        JdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
+        JdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=false;trustServerCertificate=true
+        UserName = ${DB_USER}
+        Password = ${DB_PASSWORD}
+
+        JtaManaged = true
+        InitialSize = 1
+        MaxActive = 10
+        MaxIdle = 5
+        MinIdle = 1
+        MaxWait = 30000
+
+        ValidationQuery = SELECT 1
+        TestOnBorrow = true
+    </Resource>
 </resources>

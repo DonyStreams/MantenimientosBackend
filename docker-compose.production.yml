@@ -11,7 +11,10 @@ services:
       dockerfile: Dockerfile.production
     image: inacif/mantenimientos-backend:latest
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - "${TOMEE_PORT:-8081}:8080"
+    networks:
+      - inacif-network
     environment:
       # Base de datos
       - DB_HOST=${DB_HOST}
