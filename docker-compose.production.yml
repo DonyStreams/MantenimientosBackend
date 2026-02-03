@@ -45,9 +45,9 @@ services:
       - inacif-data:/opt/inacif-data
       # Logs
       - inacif-logs:/opt/inacif-logs
-      # Configuración externa (sobrescribe la del contenedor)
-      - ./config/email.properties:/usr/local/tomee/conf/email.properties:ro
-      - ./config/scheduler.properties:/usr/local/tomee/conf/scheduler.properties:ro
+      # Configuración externa (deshabilitada - se usa .env)
+      # - ./config/email.properties:/usr/local/tomee/conf/email.properties:ro
+      # - ./config/scheduler.properties:/usr/local/tomee/conf/scheduler.properties:ro
     networks:
       - inacif-network
     healthcheck:
