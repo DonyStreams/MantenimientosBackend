@@ -11,8 +11,7 @@ services:
       dockerfile: Dockerfile.production
     image: inacif/mantenimientos-backend:latest
     restart: unless-stopped
-    ports:
-      - "${TOMEE_PORT:-8080}:8080"
+    network_mode: host
     environment:
       # Base de datos
       - DB_HOST=${DB_HOST}
@@ -48,10 +47,8 @@ services:
       # Configuración externa (deshabilitada - se usa .env)
       # - ./config/email.properties:/usr/local/tomee/conf/email.properties:ro
       # - ./config/scheduler.properties:/usr/local/tomee/conf/scheduler.properties:ro
-    networks:
-      - inacif-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/MantenimientosBackend/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/MantenimientosBackend/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
