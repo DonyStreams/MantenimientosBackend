@@ -15,7 +15,7 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <deltaspike.version>1.9.4</deltaspike.version>
-        <version.eclipselink>2.7.9</version.eclipselink>
+        <version.eclipselink>3.0.3</version.eclipselink>
     </properties>
 
     <dependencyManagement>
