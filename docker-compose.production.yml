@@ -68,8 +68,10 @@ services:
       context: ../EPS-FRONTEND-USAC
       dockerfile: Dockerfile.production
       args:
-        - BACKEND_URL=${SERVER_URL}:${TOMEE_PORT}/MantenimientosBackend
+        - BACKEND_URL=http://${SERVER_URL}:${TOMEE_PORT}/MantenimientosBackend
         - KEYCLOAK_URL=${KEYCLOAK_URL}
+        - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+        - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID_FRONTEND:-inacif-frontend}
     image: inacif/mantenimientos-frontend:latest
     restart: unless-stopped
     ports:
