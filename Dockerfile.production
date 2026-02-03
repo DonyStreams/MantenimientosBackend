@@ -22,7 +22,7 @@ RUN mvn clean package -DskipTests -B
 
 # ============================================
 # Etapa 2: Runtime con TomEE
-FROM tomee:9.0.0-M7-plus
+FROM tomee:8.0.16-plume
 
 # Metadata
 LABEL maintainer="INACIF <soporte@inacif.gob.gt>"
