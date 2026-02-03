@@ -87,12 +87,11 @@ El sistema utiliza Keycloak como Identity Provider (IdP) centralizado:
   - `inacif-backend` (Bearer-only, validación de tokens)
 
 **Roles definidos:**
-- `ADMIN` - Administrador del sistema
-- `JEFE_LABORATORIO` - Jefatura de laboratorio
-- `TECNICO_MANTENIMIENTO` - Técnico de mantenimiento
-- `PROVEEDOR` - Proveedor externo
-- `ALMACEN` - Personal de almacén
-- `USUARIO_LECTURA` - Solo consulta
+- `ADMIN` - Administrador del sistema (control total)
+- `SUPERVISOR` - Supervisor de laboratorio (crear/editar sin eliminar)
+- `TECNICO` - Técnico de mantenimiento (ejecutar mantenimientos y resolver tickets)
+- `TECNICO_EQUIPOS` - Técnico de equipos (gestión de inventario)
+- `USER` - Usuario solo lectura (consulta e informes)
 
 **Flujo de autenticación:**
 1. Usuario accede al frontend Angular
@@ -487,80 +486,38 @@ docker stats tomee-server
 
 ---
 
-## 🔧 Configuración del Sistema
+## 🔧 Configuración de Email (SMTP)
 
-### Configuración de Keycloak
+Editar `src/main/resources/email.properties`. Ejemplos de configuración:
 
-**1. Crear Realm `inacif`:**
-- Acceder a Admin Console: http://localhost:8180
-- Crear nuevo realm: `inacif`
-
-**2. Configurar Client `inacif-frontend`:**
-- Client ID: `inacif-frontend`
-- Client Protocol: `openid-connect`
-- Access Type: `confidential`
-- Valid Redirect URIs: `http://localhost:4200/*`
-- Web Origins: `http://localhost:4200`
-
-**3. Configurar Client `inacif-backend`:**
-- Client ID: `inacif-backend`
-- Access Type: `bearer-only`
-
-**4. Crear Roles:**
-```
-ADMIN
-JEFE_LABORATORIO
-TECNICO_MANTENIMIENTO
-PROVEEDOR
-ALMACEN
-USUARIO_LECTURA
-```
-
-**5. Crear usuarios de prueba y asignar roles**
-
-Archivo de importación: `Configuraciones/keycloak-simple.json`
-
-### Configuración de Email (SMTP)
-
-Editar `src/main/resources/email.properties`:
-
-**Gmail:**
 ```properties
+# Gmail
 mail.smtp.host=smtp.gmail.com
 mail.smtp.port=587
 mail.smtp.auth=true
 mail.smtp.starttls.enable=true
-mail.smtp.from=notificaciones@inacif.gob.gt
-mail.smtp.username=tu-correo@gmail.com
-mail.smtp.password=app-password-generado
+
+# Outlook/Office 365
+mail.smtp.host=smtp.office365.com
+
+# Servidor SMTP Institucional
+mail.smtp.host=mail.inacif.gob.gt
+mail.smtp.port=25
+mail.smtp.auth=false
+
+# Configuración común
+mail.smtp.from=sistema.mantenimientos@inacif.gob.gt
+mail.smtp.username=usuario@correo.com
+mail.smtp.password=contraseña
 mail.admin.address=admin@inacif.gob.gt
 mail.jefatura.address=jefatura@inacif.gob.gt
 ```
 
-**Outlook/Office 365:**
-```properties
-mail.smtp.host=smtp.office365.com
-mail.smtp.port=587
-mail.smtp.auth=true
-mail.smtp.starttls.enable=true
-mail.smtp.from=notificaciones@inacif.gob.gt
-mail.smtp.username=usuario@inacif.gob.gt
-mail.smtp.password=password
-```
-
-**Servidor SMTP Institucional:**
-```properties
-mail.smtp.host=mail.inacif.gob.gt
-mail.smtp.port=25
-mail.smtp.auth=false
-mail.smtp.starttls.enable=false
-mail.smtp.from=sistema.mantenimientos@inacif.gob.gt
-```
-
 **⚠️ Importante:**
-- Para Gmail, generar "Contraseña de Aplicación" desde la configuración de cuenta
-- Asegurar que el servidor de correo permita relay desde la IP del servidor
+- Para Gmail: generar "Contraseña de Aplicación" desde la configuración de cuenta
+- Asegurar que el servidor SMTP permita relay desde la IP del servidor
 - Configurar SPF/DKIM para evitar que correos caigan en spam
+- `email.properties` está en `.gitignore` - nunca subirlo al repositorio
 
 ### Configuración de Scheduler
 
@@ -601,7 +558,7 @@ Response: {
 
 **GET** `/api/equipos/{id}` - Detalle de equipo
 
-**POST** `/api/equipos` - Crear equipo (Rol: ADMIN, JEFE_LABORATORIO)
+**POST** `/api/equipos` - Crear equipo (Rol: ADMIN, SUPERVISOR, TECNICO_EQUIPOS)
 ```json
 {
   "nombreEquipo": "Microscopio Óptico",
