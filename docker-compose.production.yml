@@ -32,6 +32,8 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - SMTP_FROM_ADDRESS=${SMTP_FROM_ADDRESS}
       - SMTP_FROM_NAME=${SMTP_FROM_NAME}
+      - SMTP_ADMIN_EMAIL=${SMTP_ADMIN_EMAIL}
+      - SMTP_JEFATURA_EMAIL=${SMTP_JEFATURA_EMAIL}
       # Entorno
       - TZ=${TZ:-America/Guatemala}
       - ENVIRONMENT=${ENVIRONMENT:-production}

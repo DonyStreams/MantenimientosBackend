@@ -39,12 +39,21 @@ apt install -y \
 # Agregar clave GPG de Docker
 echo -e "${YELLOW}[3/6] Agregando repositorio de Docker...${NC}"
 mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-# Agregar repositorio Docker
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Detectar distribución
+if [ -f /etc/debian_version ]; then
+    # Es Debian
+    DISTRO="debian"
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+else
+    # Es Ubuntu
+    DISTRO="ubuntu"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+fi
+
+echo -e "${GREEN}Detectado: $DISTRO $(lsb_release -cs)${NC}"
 
 # Instalar Docker
 echo -e "${YELLOW}[4/6] Instalando Docker...${NC}"

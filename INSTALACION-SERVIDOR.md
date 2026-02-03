@@ -113,8 +113,8 @@ SERVER_DOMAIN=mantenimientos.inacif.gob.gt
 HTTP_PORT=80
 
 # Repositorios
-GIT_BACKEND_REPO=https://github.com/usuario/MantenimientosBackend.git
-GIT_FRONTEND_REPO=https://github.com/usuario/EPS-FRONTEND.git
+GIT_BACKEND_REPO=https://github.com/DonyStreams/MantenimientosBackend.git
+GIT_FRONTEND_REPO=https://github.com/DonyStreams/EPS-FRONTEND-USAC.git
 GIT_BRANCH=main
 
 # Rutas

@@ -319,7 +319,7 @@ AND DATEDIFF(day, GETDATE(), pm.fecha_programada) BETWEEN 0 AND 30;
 
 **1. Clonar repositorio:**
 ```bash
-git clone https://github.com/inacif/MantenimientosBackend.git
+git clone https://github.com/DonyStreams/MantenimientosBackend.git
 cd MantenimientosBackend
 ```
 

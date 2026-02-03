@@ -3,6 +3,7 @@ package usac.eps.servicios.mantenimientos;
 import usac.eps.modelos.mantenimientos.ConfiguracionAlertaModel;
 import usac.eps.repositorios.mantenimientos.ConfiguracionAlertaRepository;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.mail.Authenticator;
@@ -34,20 +35,60 @@ public class EmailService {
     private ConfiguracionAlertaRepository configuracionRepository;
 
     public EmailService() {
+        // Constructor sin inicialización
+    }
+
+    @PostConstruct
+    public void init() {
         loadEmailProperties();
     }
 
     /**
-     * Carga configuración del servidor SMTP desde email.properties
+     * Carga configuración del servidor SMTP desde variables de entorno (.env)
+     * Fallback a email.properties si existe, o valores por defecto
      */
     private void loadEmailProperties() {
         emailProperties = new Properties();
+
+        // Intentar cargar desde variables de entorno primero
+        String smtpHost = System.getenv("SMTP_HOST");
+        LOGGER.info("🔍 Verificando SMTP_HOST: " + (smtpHost != null ? smtpHost : "NULL"));
+
+        if (smtpHost != null && !smtpHost.isEmpty()) {
+            LOGGER.info("📧 Cargando configuración SMTP desde variables de entorno");
+            emailProperties.setProperty("mail.smtp.host", smtpHost);
+            emailProperties.setProperty("mail.smtp.port", System.getenv().getOrDefault("SMTP_PORT", "587"));
+            emailProperties.setProperty("mail.smtp.auth", "true");
+            emailProperties.setProperty("mail.smtp.starttls.enable", "true");
+            emailProperties.setProperty("mail.smtp.connectiontimeout", "5000");
+            emailProperties.setProperty("mail.debug", "false");
+
+            String smtpUser = System.getenv().getOrDefault("SMTP_USER", "");
+            String smtpPassword = System.getenv().getOrDefault("SMTP_PASSWORD", "");
+
+            emailProperties.setProperty("mail.smtp.user", smtpUser);
+            emailProperties.setProperty("mail.smtp.password", smtpPassword);
+            emailProperties.setProperty("mail.from.address",
+                    System.getenv().getOrDefault("SMTP_FROM_ADDRESS", "notificaciones@inacif.gob.gt"));
+            emailProperties.setProperty("mail.from.name",
+                    System.getenv().getOrDefault("SMTP_FROM_NAME", "Sistema de Mantenimientos INACIF"));
+            emailProperties.setProperty("mail.admin.address",
+                    System.getenv().getOrDefault("SMTP_ADMIN_EMAIL", "admin@inacif.gob.gt"));
+            emailProperties.setProperty("mail.jefatura.address",
+                    System.getenv().getOrDefault("SMTP_JEFATURA_EMAIL", "jefatura@inacif.gob.gt"));
+
+            LOGGER.info("✅ SMTP configurado: host=" + smtpHost + ", user=" + smtpUser + ", port="
+                    + emailProperties.getProperty("mail.smtp.port"));
+            return;
+        }
+
+        // Fallback: intentar cargar desde email.properties
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("email.properties")) {
             if (input != null) {
                 emailProperties.load(input);
-                LOGGER.info("✅ Configuración de correo cargada exitosamente");
+                LOGGER.info("✅ Configuración de correo cargada desde email.properties");
             } else {
-                LOGGER.warning("⚠️ No se encontró archivo email.properties, usando valores por defecto");
+                LOGGER.warning("⚠️ No se encontró configuración SMTP, usando valores por defecto");
                 setDefaultProperties();
             }
         } catch (IOException e) {
