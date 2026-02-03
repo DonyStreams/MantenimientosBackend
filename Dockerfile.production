@@ -33,11 +33,11 @@ LABEL version="2.0.0"
 ENV TOMEE_PORT=8080
 ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseG1GC"
 
-# Crear directorios para datos y logs
+# Crear directorios para datos y logs (permisos amplios para volúmenes)
 RUN mkdir -p /opt/inacif-data/evidencias \
     && mkdir -p /opt/inacif-logs \
-    && chown -R tomee:tomee /opt/inacif-data \
-    && chown -R tomee:tomee /opt/inacif-logs
+    && chmod -R 777 /opt/inacif-data \
+    && chmod -R 777 /opt/inacif-logs
 
 # Copiar WAR desde el builder
 COPY --from=builder /build/target/MantenimientosBackend.war /usr/local/tomee/webapps/
@@ -51,9 +51,6 @@ EXPOSE 8080
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8080/MantenimientosBackend/api/health || exit 1
-
-# Usuario no privilegiado
-USER tomee
 
 # Comando de inicio
 CMD ["catalina.sh", "run"]
