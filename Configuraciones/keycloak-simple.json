@@ -20,14 +20,17 @@
       "directAccessGrantsEnabled": true,
       "redirectUris": [
         "http://localhost:4200/*",
-        "http://localhost:4200/auth/login"
+        "http://localhost:4200/auth/login",
+        "http://172.16.33.11/*",
+        "http://172.16.33.11/auth/login"
       ],
       "webOrigins": [
-        "http://localhost:4200"
+        "http://localhost:4200",
+        "http://172.16.33.11"
       ],
-      "rootUrl": "http://localhost:4200",
-      "baseUrl": "http://localhost:4200",
-      "adminUrl": "http://localhost:4200",
+      "rootUrl": "http://172.16.33.11",
+      "baseUrl": "http://172.16.33.11",
+      "adminUrl": "http://172.16.33.11",
       "attributes": {
         "pkce.code.challenge.method": "S256"
       },
