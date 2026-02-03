@@ -68,7 +68,7 @@ services:
   frontend:
     container_name: inacif-frontend
     build:
-      context: ../EPS-FRONTEND
+      context: ../EPS-FRONTEND-USAC
       dockerfile: Dockerfile.production
       args:
         - BACKEND_URL=${SERVER_URL}:${TOMEE_PORT}/MantenimientosBackend
