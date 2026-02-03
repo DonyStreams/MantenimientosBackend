@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <Resource id="inacifDataSource" type="javax.sql.DataSource">
-        jdbcDriver = com.microsoft.sqlserver.jdbc.SQLServerDriver
-        jdbcUrl = jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=false;trustServerCertificate=true;loginTimeout=30;socketTimeout=60000;
+        jdbcDriver = net.sourceforge.jtds.jdbc.Driver
+        jdbcUrl = jdbc:jtds:sqlserver://${DB_HOST}:${DB_PORT}/${DB_NAME};tds=8.0;ssl=off;useNTLMv2=false;
         jtaManaged = true
         password = ${DB_PASSWORD}
         userName = ${DB_USER}

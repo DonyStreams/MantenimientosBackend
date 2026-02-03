@@ -92,6 +92,14 @@
 
         <!-- BASE DE DATOS -->
 
+        <!-- jTDS - driver alternativo más compatible -->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+        
+        <!-- Microsoft JDBC (backup) -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
