@@ -68,7 +68,7 @@ services:
       context: ../EPS-FRONTEND-USAC
       dockerfile: Dockerfile.production
       args:
-        - BACKEND_URL=http://${SERVER_URL}:${TOMEE_PORT}/MantenimientosBackend
+        - BACKEND_URL=${BACKEND_URL}
         - KEYCLOAK_URL=${KEYCLOAK_URL}
         - KEYCLOAK_REALM=${KEYCLOAK_REALM}
         - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID_FRONTEND:-inacif-frontend}
