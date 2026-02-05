@@ -503,7 +503,136 @@ CREATE INDEX IX_Notificaciones_Usuario ON Notificaciones(usuario_id);
 CREATE INDEX IX_Notificaciones_Leida ON Notificaciones(leida);
 ```
 
-### 5.3 Vistas Especializadas
+### 5.3 Entidades JPA Completas
+
+**Todas las entidades del sistema:**
+
+| Entidad (Clase Java) | Tabla BD | Descripción |
+|---------------------|----------|-------------|
+| `EquipoModel` | `Equipos` | Inventario de equipos |
+| `HistorialEquipoModel` | `Historial_Equipo` | Auditoría de cambios en equipos |
+| `CategoriaEquipoModel` | `Categoria_Equipo` | Tipos de equipos |
+| `AreaModel` | `Areas` | Laboratorios y departamentos |
+| `ProgramacionMantenimientoModel` | `Programaciones_Mantenimiento` | Programaciones automáticas |
+| `EjecucionMantenimientoModel` | `Ejecuciones_Mantenimiento` | Mantenimientos ejecutados |
+| `TipoMantenimientoModel` | `Tipos_Mantenimiento` | Catálogo de tipos |
+| `ComentarioEjecucionModel` | `Comentarios_Ejecucion` | Comentarios de ejecuciones |
+| `EvidenciaModel` | `Evidencias` | Archivos adjuntos de ejecuciones |
+| `TicketModel` | `Tickets` | Reportes de fallas |
+| `ComentarioTicketModel` | `Comentarios_Ticket` | Seguimiento de tickets |
+| `TipoComentarioModel` | `Tipos_Comentario` | Catálogo de tipos de comentario |
+| `ContratoModel` | `Contratos` | Contratos con proveedores |
+| `ContratoArchivoModel` | `Contratos_Archivos` | Documentos PDF de contratos |
+| `ContratoEquipoModel` | `Contrato_Equipo` | Relación N:M contratos-equipos |
+| `ContratoTipoMantenimientoModel` | `Contrato_Tipo_Mantenimiento` | Relación N:M contratos-tipos |
+| `ProveedorModel` | `Proveedores` | Empresas proveedoras |
+| `UsuarioMantenimientoModel` | `Usuarios` | Usuarios sincronizados con Keycloak |
+| `NotificacionModel` | `Notificaciones` | Alertas en el sistema |
+| `ConfiguracionAlertaModel` | `Configuracion_Alertas` | Configuración de alertas y scheduler |
+
+**Ejemplo de entidad completa:**
+
+```java
+@Entity
+@Table(name = "Equipos")
+public class EquipoModel {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_equipo")
+    private Integer idEquipo;
+    
+    @Column(name = "numero_inventario", length = 100)
+    private String numeroInventario;
+    
+    @Column(name = "numero_serie", length = 100, unique = true)
+    private String numeroSerie;
+    
+    @Column(name = "nombre_equipo", nullable = false, length = 255)
+    private String nombreEquipo;
+    
+    @Column(name = "codigo_inacif", length = 50, unique = true)
+    private String codigoInacif;
+    
+    @Column(name = "marca", length = 100)
+    private String marca;
+    
+    @Column(name = "modelo", length = 100)
+    private String modelo;
+    
+    @Column(name = "ubicacion", length = 255)
+    private String ubicacion;
+    
+    @Column(name = "estado", length = 50)
+    private String estado; // Activo, Inactivo, Crítico
+    
+    @Column(name = "magnitud_medicion", length = 100)
+    private String magnitudMedicion;
+    
+    @Column(name = "rango_capacidad", length = 100)
+    private String rangoCapacidad;
+    
+    @Column(name = "condiciones_operacion", columnDefinition = "TEXT")
+    private String condicionesOperacion;
+    
+    @Column(name = "fotografia", columnDefinition = "TEXT")
+    private String fotografia; // Base64 o URL
+    
+    @ManyToOne
+    @JoinColumn(name = "area_id", nullable = false)
+    private AreaModel area;
+    
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private CategoriaEquipoModel categoria;
+    
+    @ManyToOne
+    @JoinColumn(name = "usuario_creacion")
+    private UsuarioMantenimientoModel usuarioCreacion;
+    
+    @Column(name = "fecha_creacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
+    
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)
+    private List<ProgramacionMantenimientoModel> programaciones;
+    
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)
+    private List<TicketModel> tickets;
+    
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)
+    private List<HistorialEquipoModel> historial;
+    
+    // Getters y Setters
+}
+```
+
+**Relaciones importantes:**
+
+```java
+// 1:N - Un Área tiene muchos Equipos
+AreaModel → List<EquipoModel>
+
+// 1:N - Un Equipo tiene muchas Programaciones
+EquipoModel → List<ProgramacionMantenimientoModel>
+
+// 1:N - Una Programación genera muchas Ejecuciones
+ProgramacionMantenimientoModel → List<EjecucionMantenimientoModel>
+
+// 1:N - Una Ejecución tiene muchos Comentarios
+EjecucionMantenimientoModel → List<ComentarioEjecucionModel>
+
+// 1:N - Una Ejecución tiene muchas Evidencias (fotos)
+EjecucionMantenimientoModel → List<EvidenciaModel>
+
+// N:M - Un Contrato cubre muchos Equipos (via tabla intermedia)
+ContratoModel ↔ ContratoEquipoModel ↔ EquipoModel
+
+// N:M - Un Contrato cubre muchos Tipos de Mantenimiento
+ContratoModel ↔ ContratoTipoMantenimientoModel ↔ TipoMantenimientoModel
+```
+
+### 5.4 Vistas Especializadas
 
 **VW_AlertasMantenimiento** - Mantenimientos próximos a vencer
 ```sql
@@ -564,66 +693,397 @@ Authorization: Bearer <jwt_token>
 
 ### 6.2 Endpoints por Módulo
 
-#### **EQUIPOS**
+#### **EQUIPOS** - `/api/equipos`
 
 ```
-GET    /api/equipos              [ADMIN, SUPERVISOR, TECNICO, USER]
-POST   /api/equipos              [ADMIN, SUPERVISOR, TECNICO_EQUIPOS]
-GET    /api/equipos/{id}         [ADMIN, SUPERVISOR, TECNICO, USER]
-PUT    /api/equipos/{id}         [ADMIN, SUPERVISOR, TECNICO_EQUIPOS]
-DELETE /api/equipos/{id}         [ADMIN]
-GET    /api/equipos/area/{areaId}  [ADMIN, SUPERVISOR, TECNICO, USER]
-GET    /api/equipos/search?q=...   [ADMIN, SUPERVISOR, TECNICO, USER]
+GET    /api/equipos                           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Lista paginada de equipos
+
+POST   /api/equipos                           [ADMIN, SUPERVISOR, TECNICO_EQUIPOS]
+       Body: EquipoDTO
+       Respuesta: Equipo creado con ID
+
+GET    /api/equipos/{id}                      [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Detalle completo del equipo
+
+PUT    /api/equipos/{id}                      [ADMIN, SUPERVISOR, TECNICO_EQUIPOS]
+       Body: EquipoDTO
+       Respuesta: Equipo actualizado
+
+DELETE /api/equipos/{id}                      [ADMIN]
+       Respuesta: 204 No Content
+
+GET    /api/equipos/area/{areaId}             [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Equipos filtrados por área
+
+GET    /api/equipos/buscar?q={termino}        [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Búsqueda por nombre, código, serie
 ```
 
-#### **MANTENIMIENTOS**
+#### **HISTORIAL DE EQUIPOS** - `/api/historial-equipos`
 
 ```
-GET    /api/mantenimientos                    [ADMIN, SUPERVISOR, TECNICO, USER]
-POST   /api/mantenimientos                    [ADMIN, SUPERVISOR]
-PUT    /api/mantenimientos/{id}               [ADMIN, SUPERVISOR]
-DELETE /api/mantenimientos/{id}               [ADMIN]
-GET    /api/mantenimientos/programaciones    [ADMIN, SUPERVISOR, TECNICO]
-POST   /api/mantenimientos/{id}/ejecutar     [ADMIN, SUPERVISOR, TECNICO]
-GET    /api/mantenimientos/{id}/historial    [ADMIN, SUPERVISOR, TECNICO, USER]
-GET    /api/mantenimientos/alertas/proximas  [ADMIN, SUPERVISOR]
+GET    /api/historial-equipos                 [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Historial completo de cambios
+
+GET    /api/historial-equipos/equipo/{id}     [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Cambios de un equipo específico
+
+GET    /api/historial-equipos/usuario/{id}    [ADMIN, SUPERVISOR]
+       Respuesta: Cambios realizados por un usuario
 ```
 
-#### **TICKETS**
+#### **PROGRAMACIONES** - `/api/programaciones`
 
 ```
-GET    /api/tickets                            [ADMIN, SUPERVISOR, TECNICO, USER]
-POST   /api/tickets                            [ADMIN, SUPERVISOR, TECNICO, USER]
-GET    /api/tickets/{id}                       [ADMIN, SUPERVISOR, TECNICO, USER]
-PUT    /api/tickets/{id}                       [ADMIN, SUPERVISOR, TECNICO]
-DELETE /api/tickets/{id}                       [ADMIN]
+GET    /api/programaciones                    [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Lista de programaciones activas
+
+POST   /api/programaciones                    [ADMIN, SUPERVISOR]
+       Body: ProgramacionDTO
+       Respuesta: Programación creada
+
+GET    /api/programaciones/{id}               [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Detalle de programación
+
+PUT    /api/programaciones/{id}               [ADMIN, SUPERVISOR]
+       Body: ProgramacionDTO
+       Respuesta: Programación actualizada
+
+DELETE /api/programaciones/{id}               [ADMIN]
+       Respuesta: 204 No Content
+
+PUT    /api/programaciones/{id}/activar       [ADMIN, SUPERVISOR]
+       Respuesta: Programación activada
+
+PUT    /api/programaciones/{id}/desactivar    [ADMIN, SUPERVISOR]
+       Respuesta: Programación desactivada
+
+GET    /api/programaciones/equipo/{equipoId}  [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Programaciones de un equipo
+
+GET    /api/programaciones/estadisticas       [ADMIN, SUPERVISOR]
+       Respuesta: KPIs y métricas de programaciones
+
+GET    /api/programaciones/proximas           [ADMIN, SUPERVISOR, TECNICO]
+       Query params: ?dias=7
+       Respuesta: Programaciones próximas a ejecutar
+```
+
+#### **EJECUCIONES** - `/api/ejecuciones`
+
+```
+GET    /api/ejecuciones                       [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Lista de ejecuciones de mantenimiento
+
+POST   /api/ejecuciones                       [ADMIN, SUPERVISOR, TECNICO]
+       Body: EjecucionDTO
+       Respuesta: Ejecución creada
+
+GET    /api/ejecuciones/{id}                  [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Detalle de ejecución con comentarios y evidencias
+
+PUT    /api/ejecuciones/{id}                  [ADMIN, SUPERVISOR, TECNICO]
+       Body: EjecucionDTO
+       Respuesta: Ejecución actualizada
+
+DELETE /api/ejecuciones/{id}                  [ADMIN]
+       Respuesta: 204 No Content
+
+PUT    /api/ejecuciones/{id}/iniciar          [ADMIN, SUPERVISOR, TECNICO]
+       Respuesta: Estado cambio a EN_PROCESO
+
+PUT    /api/ejecuciones/{id}/completar        [ADMIN, SUPERVISOR, TECNICO]
+       Body: { observaciones, fechaFin }
+       Respuesta: Estado cambia a COMPLETADO
+
+PUT    /api/ejecuciones/{id}/cancelar         [ADMIN, SUPERVISOR]
+       Body: { motivo }
+       Respuesta: Estado cambia a CANCELADO
+
+POST   /api/ejecuciones/{id}/comentarios      [ADMIN, SUPERVISOR, TECNICO]
+       Body: ComentarioDTO
+       Respuesta: Comentario agregado
+
+POST   /api/ejecuciones/{id}/evidencias       [ADMIN, SUPERVISOR, TECNICO]
+       Body: Multipart file
+       Respuesta: Evidencia subida
+
+GET    /api/ejecuciones/{id}/evidencias       [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Lista de archivos adjuntos
+
+GET    /api/ejecuciones/equipo/{equipoId}     [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Historial de mantenimientos del equipo
+```
+
+#### **TICKETS** - `/api/tickets`
+
+```
+GET    /api/tickets                           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Lista de tickets
+
+POST   /api/tickets                           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Body: TicketDTO
+       Respuesta: Ticket creado
+
+GET    /api/tickets/{id}                      [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Detalle del ticket
+
+PUT    /api/tickets/{id}                      [ADMIN, SUPERVISOR, TECNICO]
+       Body: TicketDTO
+       Respuesta: Ticket actualizado
+
+DELETE /api/tickets/{id}                      [ADMIN]
+       Respuesta: 204 No Content
+
 PUT    /api/tickets/{id}/asignar              [ADMIN, SUPERVISOR]
-PUT    /api/tickets/{id}/estado               [ADMIN, SUPERVISOR, TECNICO]
-POST   /api/tickets/{id}/comentarios          [ADMIN, SUPERVISOR, TECNICO, USER]
-GET    /api/tickets/{id}/comentarios          [ADMIN, SUPERVISOR, TECNICO, USER]
+       Body: { usuarioAsignadoId }
+       Respuesta: Ticket asignado, estado cambia a ASIGNADO
+
+PUT    /api/tickets/{id}/iniciar              [TECNICO] (solo si está asignado a él)
+       Respuesta: Estado cambia a EN_PROCESO
+
+PUT    /api/tickets/{id}/resolver             [TECNICO] (solo si está asignado a él)
+       Body: { descripcionSolucion }
+       Respuesta: Estado cambia a RESUELTO
+
+PUT    /api/tickets/{id}/cerrar               [ADMIN, SUPERVISOR]
+       Respuesta: Estado cambia a CERRADO
+
+POST   /api/tickets/{id}/comentarios          [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Body: ComentarioTicketDTO
+       Respuesta: Comentario agregado
+
+GET    /api/tickets/{id}/comentarios          [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Lista de comentarios con información de usuario
+
 POST   /api/tickets/{id}/evidencias           [ADMIN, SUPERVISOR, TECNICO]
-GET    /api/tickets/{id}/evidencias           [ADMIN, SUPERVISOR, TECNICO, USER]
+       Body: Multipart file
+       Respuesta: Evidencia subida
+
+GET    /api/tickets/{id}/evidencias           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Lista de archivos
+
+GET    /api/tickets/{id}/evidencias/download/{nombreArchivo}  [Todos]
+       Respuesta: Blob del archivo
+
+GET    /api/tickets/equipo/{equipoId}         [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Tickets de un equipo
+
+GET    /api/tickets/usuario/{usuarioId}       [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Tickets creados o asignados a un usuario
+
+GET    /api/tickets/criticos                  [ADMIN, SUPERVISOR]
+       Respuesta: Tickets con prioridad CRÍTICA
 ```
 
-#### **CONTRATOS**
+#### **CONTRATOS** - `/api/contratos`
 
 ```
 GET    /api/contratos                         [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Lista de contratos
+
 POST   /api/contratos                         [ADMIN, SUPERVISOR]
+       Body: ContratoDTO
+       Respuesta: Contrato creado
+
 GET    /api/contratos/{id}                    [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Detalle del contrato
+
 PUT    /api/contratos/{id}                    [ADMIN, SUPERVISOR]
+       Body: ContratoDTO
+       Respuesta: Contrato actualizado
+
 DELETE /api/contratos/{id}                    [ADMIN]
-GET    /api/contratos/alertas/vencimiento    [ADMIN, SUPERVISOR]
+       Respuesta: 204 No Content
+
+POST   /api/contratos/{id}/archivos           [ADMIN, SUPERVISOR]
+       Body: Multipart file (PDF)
+       Respuesta: Archivo subido
+
+GET    /api/contratos/{id}/archivos           [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Lista de archivos del contrato
+
+GET    /api/contratos/{id}/archivos/download/{nombreArchivo}  [Todos]
+       Respuesta: Blob del PDF
+
+DELETE /api/contratos/{id}/archivos/{archivoId}  [ADMIN]
+       Respuesta: 204 No Content
+
+GET    /api/contratos/proveedor/{proveedorId}  [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Contratos de un proveedor
+
+GET    /api/contratos/alertas/vencimiento     [ADMIN, SUPERVISOR]
+       Query params: ?dias=30
+       Respuesta: Contratos próximos a vencer
 ```
 
-#### **NOTIFICACIONES**
+#### **PROVEEDORES** - `/api/proveedores`
 
 ```
-GET    /api/notificaciones                    [ADMIN, SUPERVISOR, TECNICO, USER]
-GET    /api/notificaciones/conteo             [ADMIN, SUPERVISOR, TECNICO, USER]
-PUT    /api/notificaciones/{id}/leer          [ADMIN, SUPERVISOR, TECNICO, USER]
-DELETE /api/notificaciones/{id}               [ADMIN, SUPERVISOR, TECNICO, USER]
-PUT    /api/notificaciones/marcar-todas-leidas [ADMIN, SUPERVISOR, TECNICO, USER]
+GET    /api/proveedores                       [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Lista de proveedores
+
+POST   /api/proveedores                       [ADMIN, SUPERVISOR]
+       Body: ProveedorDTO
+       Respuesta: Proveedor creado
+
+GET    /api/proveedores/{id}                  [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Detalle del proveedor
+
+PUT    /api/proveedores/{id}                  [ADMIN, SUPERVISOR]
+       Body: ProveedorDTO
+       Respuesta: Proveedor actualizado
+
+DELETE /api/proveedores/{id}                  [ADMIN]
+       Respuesta: 204 No Content
+```
+
+#### **NOTIFICACIONES** - `/api/notificaciones`
+
+```
+GET    /api/notificaciones                    [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Notificaciones del usuario actual
+
+GET    /api/notificaciones/conteo             [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: { total: 15, noLeidas: 7, criticas: 2 }
+
+PUT    /api/notificaciones/{id}/leer          [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Notificación marcada como leída
+
+PUT    /api/notificaciones/marcar-todas-leidas  [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Todas marcadas como leídas
+
+DELETE /api/notificaciones/{id}               [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: 204 No Content
+```
+
+#### **CONFIGURACIÓN DE CORREOS** - `/api/configuracion-correos`
+
+```
+GET    /api/configuracion-correos             [ADMIN]
+       Respuesta: Lista de configuraciones de alertas
+
+PUT    /api/configuracion-correos/{tipoAlerta}  [ADMIN]
+       Body: { correos: "email1@example.com, email2@example.com" }
+       Respuesta: Configuración actualizada
+       
+       Tipos válidos:
+       - MANTENIMIENTO_PROXIMO
+       - MANTENIMIENTO_VENCIDO
+       - CONTRATO_POR_VENCER_30
+       - CONTRATO_POR_VENCER_15
+       - CONTRATO_POR_VENCER_7
+       - CONTRATO_VENCIDO
+       - TICKET_CRITICO
+```
+
+#### **SCHEDULER** - `/api/scheduler`
+
+```
+POST   /api/scheduler/ejecutar-ahora          [ADMIN]
+       Respuesta: Ejecuta verificaciones inmediatamente
+
+GET    /api/scheduler/estado                  [ADMIN]
+       Respuesta: { 
+         habilitado: true,
+         horaEjecucion: "08:00",
+         ultimaEjecucion: "2026-02-04T08:00:00Z",
+         ultimoResultado: "Mantenimientos: 3, Contratos: 1, Tickets: 0"
+       }
+
+PUT    /api/scheduler/configurar              [ADMIN]
+       Body: { hora: 10, minuto: 30, habilitado: true }
+       Respuesta: Configuración actualizada
+```
+
+#### **TIPOS DE MANTENIMIENTO** - `/api/tipos-mantenimiento`
+
+```
+GET    /api/tipos-mantenimiento               [ADMIN, SUPERVISOR, TECNICO, USER]
+       Respuesta: Catálogo de tipos
+
+POST   /api/tipos-mantenimiento               [ADMIN, SUPERVISOR]
+       Body: TipoMantenimientoDTO
+       Respuesta: Tipo creado
+
+PUT    /api/tipos-mantenimiento/{id}          [ADMIN, SUPERVISOR]
+       Body: TipoMantenimientoDTO
+       Respuesta: Tipo actualizado
+
+DELETE /api/tipos-mantenimiento/{id}          [ADMIN]
+       Respuesta: 204 No Content
+```
+
+#### **ÁREAS** - `/api/areas`
+
+```
+GET    /api/areas                             [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]
+       Respuesta: Lista de áreas/laboratorios
+
+POST   /api/areas                             [ADMIN, SUPERVISOR]
+       Body: AreaDTO
+       Respuesta: Área creada
+
+PUT    /api/areas/{id}                        [ADMIN, SUPERVISOR]
+       Body: AreaDTO
+       Respuesta: Área actualizada
+
+DELETE /api/areas/{id}                        [ADMIN]
+       Respuesta: 204 No Content
+```
+
+#### **USUARIOS** - `/api/usuarios`
+
+```
+GET    /api/usuarios                          [ADMIN]
+       Respuesta: Lista de usuarios
+
+POST   /api/usuarios/sincronizar-keycloak     [ADMIN]
+       Respuesta: Importa usuarios desde Keycloak
+
+GET    /api/usuarios/actual                   [Todos]
+       Respuesta: Información del usuario autenticado
+
+POST   /api/usuarios/auto-sync                [Todos]
+       Respuesta: Auto-sincroniza usuario actual si no existe en BD
+
+PUT    /api/usuarios/{id}/activar             [ADMIN]
+       Respuesta: Usuario activado
+
+PUT    /api/usuarios/{id}/desactivar          [ADMIN]
+       Respuesta: Usuario desactivado
+```
+
+#### **HEALTH CHECK** - `/api/health`
+
+```
+GET    /api/health                            [Público]
+       Respuesta: { 
+         status: "UP",
+         database: "UP",
+         keycloak: "UP",
+         timestamp: "2026-02-04T10:30:00Z"
+       }
+```
+
+#### **REPORTES** - `/api/reportes`
+
+```
+GET    /api/reportes/equipos                  [ADMIN, SUPERVISOR]
+       Query params: ?formato=pdf&areaId=5
+       Respuesta: Blob (PDF o Excel)
+
+GET    /api/reportes/mantenimientos           [ADMIN, SUPERVISOR]
+       Query params: ?fechaInicio=2026-01-01&fechaFin=2026-12-31
+       Respuesta: Blob (PDF o Excel)
+
+GET    /api/reportes/tickets                  [ADMIN, SUPERVISOR]
+       Query params: ?estado=ABIERTO&prioridad=ALTA
+       Respuesta: Blob (PDF o Excel)
+
+GET    /api/reportes/contratos                [ADMIN, SUPERVISOR]
+       Respuesta: Blob (PDF o Excel)
 ```
 
 ### 6.3 Ejemplo de Petición Completa
@@ -1417,7 +1877,324 @@ public class EquiposService {
 
 ---
 
-## 14. Guía de Desarrollo
+## 14. Scheduler y Tareas Programadas
+
+### 14.1 NotificacionScheduler - Arquitectura
+
+**Archivo:** `NotificacionScheduler.java`  
+**Tipo:** `@Singleton @Startup`  
+**Patrón:** Observer Pattern + Cron Job
+
+**Características clave:**
+- 🟢 **Configuración dinámica en BD** - No requiere recompilar ni reiniciar
+- 🔄 **Auto-sincronización** - Recarga configuración cada minuto desde BD
+- ⏰ **Ejecución precisa** - Verifica hora Y minuto antes de ejecutar
+- 📧 **Notificaciones múltiples** - Emails + notificaciones en sistema
+- 📋 **Auditoría completa** - Registra cada ejecución con timestamp y resultado
+
+```java
+@Singleton
+@Startup
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
+public class NotificacionScheduler {
+    
+    @Inject
+    private NotificacionService notificacionService;
+    
+    @Inject
+    private ConfiguracionAlertaRepository configuracionRepository;
+    
+    private boolean schedulerHabilitado = true;
+    private int horaEjecucion = 8;  // 8:00 AM por defecto
+    private int minutoEjecucion = 0;
+    private Date ultimaEjecucion;
+    private String ultimoResultado;
+    
+    @PostConstruct
+    public void init() {
+        // Inicializar configuraciones por defecto si no existen
+        configuracionRepository.inicializarConfiguracionesPorDefecto();
+        
+        // Cargar configuración desde BD
+        loadConfiguracionFromDB();
+        
+        LOGGER.info("═══════════════════════════════════════════════════");
+        LOGGER.info("📅 SCHEDULER DE NOTIFICACIONES INICIALIZADO");
+        LOGGER.info("   Hora de ejecución: " + String.format("%02d:%02d", horaEjecucion, minutoEjecucion));
+        LOGGER.info("   Estado: " + (schedulerHabilitado ? "✅ HABILITADO" : "❌ DESHABILITADO"));
+        LOGGER.info("═══════════════════════════════════════════════════");
+    }
+    
+    /**
+     * Tarea que se ejecuta CADA MINUTO
+     * Verifica si es la hora configurada y ejecuta verificaciones
+     */
+    @Schedule(hour = "*", minute = "*", second = "0", persistent = false)
+    public void verificarYEjecutar() {
+        // Recargar configuración desde BD (sin reiniciar servidor)
+        loadConfiguracionFromDB();
+        
+        if (!schedulerHabilitado) {
+            return; // Scheduler deshabilitado
+        }
+        
+        // Obtener hora y minuto actual
+        Calendar ahora = Calendar.getInstance();
+        int horaActual = ahora.get(Calendar.HOUR_OF_DAY);
+        int minutoActual = ahora.get(Calendar.MINUTE);
+        
+        // ¿Es la hora configurada?
+        if (horaActual == horaEjecucion && minutoActual == minutoEjecucion) {
+            ejecutarVerificaciones();
+        }
+    }
+    
+    /**
+     * Ejecuta TODAS las verificaciones de alertas
+     */
+    @Lock(LockType.WRITE)
+    public void ejecutarVerificaciones() {
+        Date inicio = new Date();
+        StringBuilder resultado = new StringBuilder();
+        
+        LOGGER.info("🚀 INICIANDO VERIFICACIÓN DE ALERTAS - " + DATE_FORMAT.format(inicio));
+        
+        try {
+            // 1. Mantenimientos próximos a vencer (7 días)
+            int alertasMantenimiento = notificacionService
+                .verificarMantenimientosProximos(7);
+            resultado.append("Mantenimientos: ").append(alertasMantenimiento).append(", ");
+            
+            // 2. Contratos por vencer (30, 15, 7 días)
+            int alertasContratos = notificacionService
+                .verificarContratosProximosVencer(30, 15, 7);
+            resultado.append("Contratos: ").append(alertasContratos).append(", ");
+            
+            // 3. Tickets críticos sin atender
+            int alertasTickets = notificacionService
+                .verificarTicketsCriticos();
+            resultado.append("Tickets: ").append(alertasTickets);
+            
+            ultimaEjecucion = inicio;
+            ultimoResultado = resultado.toString();
+            
+            LOGGER.info("✅ VERIFICACIÓN COMPLETADA: " + ultimoResultado);
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "❌ ERROR EN VERIFICACIÓN", e);
+            ultimoResultado = "ERROR: " + e.getMessage();
+        }
+    }
+}
+```
+
+### 14.2 Configuración Dinámica en Base de Datos
+
+**Tabla: `Configuracion_Alertas`**
+
+```sql
+CREATE TABLE Configuracion_Alertas (
+    id_configuracion INT PRIMARY KEY AUTO_INCREMENT,
+    tipo_alerta VARCHAR(100) UNIQUE NOT NULL,
+    dias_anticipacion INT,
+    activa BIT DEFAULT 1,
+    correos_destinatarios TEXT,
+    fecha_creacion DATETIME DEFAULT GETDATE(),
+    fecha_actualizacion DATETIME
+);
+
+-- Configuración especial para el scheduler
+INSERT INTO Configuracion_Alertas (tipo_alerta, dias_anticipacion, activa)
+VALUES ('scheduler_config', 800, 1);
+-- dias_anticipacion = hora*100 + minuto (800 = 8:00 AM)
+-- activa = 1 (habilitado), 0 (deshabilitado)
+
+-- Configuraciones de alertas
+INSERT INTO Configuracion_Alertas (tipo_alerta, dias_anticipacion, activa, correos_destinatarios)
+VALUES 
+('MANTENIMIENTO_PROXIMO', 7, 1, 'admin@inacif.gob.gt,supervisor@inacif.gob.gt'),
+('MANTENIMIENTO_VENCIDO', 0, 1, 'admin@inacif.gob.gt,jefatura@inacif.gob.gt'),
+('CONTRATO_POR_VENCER_30', 30, 1, 'compras@inacif.gob.gt'),
+('CONTRATO_POR_VENCER_15', 15, 1, 'compras@inacif.gob.gt,admin@inacif.gob.gt'),
+('CONTRATO_POR_VENCER_7', 7, 1, 'compras@inacif.gob.gt,admin@inacif.gob.gt,jefatura@inacif.gob.gt'),
+('CONTRATO_VENCIDO', 0, 1, 'admin@inacif.gob.gt,jefatura@inacif.gob.gt'),
+('TICKET_CRITICO', 0, 1, 'admin@inacif.gob.gt,soporte@inacif.gob.gt');
+```
+
+**¿Cómo cambiar la hora de ejecución SIN reiniciar?**
+
+```sql
+-- Cambiar a 10:30 AM
+UPDATE Configuracion_Alertas 
+SET dias_anticipacion = 1030  -- hora*100 + minuto
+WHERE tipo_alerta = 'scheduler_config';
+
+-- El scheduler detectará el cambio en el siguiente minuto
+```
+
+**¿Cómo deshabilitar temporalmente?**
+
+```sql
+-- Pausar scheduler
+UPDATE Configuracion_Alertas 
+SET activa = 0
+WHERE tipo_alerta = 'scheduler_config';
+
+-- Reactivar
+UPDATE Configuracion_Alertas 
+SET activa = 1
+WHERE tipo_alerta = 'scheduler_config';
+```
+
+### 14.3 Servicio de Email (SMTP)
+
+**Archivo:** `EmailService.java`  
+**Configuración:** Variables de entorno (.env) o email.properties
+
+**Variables de entorno requeridas:**
+```bash
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=notificaciones@inacif.gob.gt
+SMTP_PASSWORD=tu_password_aqui
+SMTP_FROM_ADDRESS=notificaciones@inacif.gob.gt
+SMTP_FROM_NAME=Sistema de Mantenimientos INACIF
+SMTP_ADMIN_EMAIL=admin@inacif.gob.gt
+SMTP_JEFATURA_EMAIL=jefatura@inacif.gob.gt
+```
+
+**Métodos principales:**
+
+```java
+@ApplicationScoped
+public class EmailService {
+    
+    /**
+     * Envía email a múltiples destinatarios
+     */
+    public boolean enviarEmailMultiple(
+        Set<String> destinatarios,
+        String asunto,
+        String contenidoHTML
+    ) {
+        if (destinatarios == null || destinatarios.isEmpty()) {
+            return false;
+        }
+        
+        try {
+            Session session = createSession();
+            Message message = new MimeMessage(session);
+            
+            message.setFrom(new InternetAddress(
+                emailProperties.getProperty("mail.from.address"),
+                emailProperties.getProperty("mail.from.name")
+            ));
+            
+            // Agregar destinatarios
+            for (String destinatario : destinatarios) {
+                message.addRecipient(
+                    Message.RecipientType.TO,
+                    new InternetAddress(destinatario)
+                );
+            }
+            
+            message.setSubject(asunto);
+            message.setContent(contenidoHTML, "text/html; charset=utf-8");
+            
+            Transport.send(message);
+            
+            LOGGER.info("✅ Email enviado: " + asunto + " -> " + destinatarios);
+            return true;
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "❌ Error enviando email", e);
+            return false;
+        }
+    }
+    
+    /**
+     * Construye HTML para alertas de mantenimiento
+     */
+    public String construirEmailMantenimiento(
+        String tipoAlerta,
+        String nombreEquipo,
+        String fechaProgramada,
+        int diasRestantes
+    ) {
+        StringBuilder html = new StringBuilder();
+        html.append("<!DOCTYPE html>");
+        html.append("<html><head><meta charset='UTF-8'></head><body>");
+        html.append("<h2 style='color: #d32f2f;'>🚨 Alerta de Mantenimiento</h2>");
+        html.append("<p><strong>Equipo:</strong> ").append(nombreEquipo).append("</p>");
+        html.append("<p><strong>Fecha programada:</strong> ").append(fechaProgramada).append("</p>");
+        html.append("<p><strong>Días restantes:</strong> ").append(diasRestantes).append("</p>");
+        html.append("<hr>");
+        html.append("<p style='color: #666;'>Sistema de Gestión de Mantenimientos - INACIF</p>");
+        html.append("</body></html>");
+        return html.toString();
+    }
+}
+```
+
+### 14.4 Endpoint de Configuración de Correos
+
+**Controller:** `ConfiguracionCorreosController.java`
+
+```java
+@Path("/api/configuracion-correos")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ConfiguracionCorreosController {
+    
+    @Inject
+    private ConfiguracionAlertaRepository repository;
+    
+    /**
+     * GET /api/configuracion-correos
+     * Lista todas las configuraciones de alertas
+     */
+    @GET
+    @RolesAllowed({"ADMIN"})
+    public Response listarConfiguraciones() {
+        List<ConfiguracionAlertaModel> configs = repository.findAll();
+        return Response.ok(configs).build();
+    }
+    
+    /**
+     * PUT /api/configuracion-correos/{tipoAlerta}
+     * Actualiza correos destinatarios de un tipo de alerta
+     */
+    @PUT
+    @Path("/{tipoAlerta}")
+    @RolesAllowed({"ADMIN"})
+    public Response actualizarCorreos(
+        @PathParam("tipoAlerta") String tipoAlerta,
+        Map<String, String> payload
+    ) {
+        String correos = payload.get("correos");
+        
+        ConfiguracionAlertaModel config = repository
+            .findByTipoAlerta(tipoAlerta);
+        
+        if (config == null) {
+            return Response.status(404)
+                .entity("Configuración no encontrada")
+                .build();
+        }
+        
+        config.setCorreosDestinatarios(correos);
+        config.setFechaActualizacion(new Date());
+        repository.update(config);
+        
+        return Response.ok(config).build();
+    }
+}
+```
+
+---
+
+## 15. Guía de Desarrollo
 
 ### 14.1 Setup Inicial
 

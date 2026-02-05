@@ -1,0 +1,2568 @@
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 \u55357 ?\u56538 ? Documentaci\u243 ?n T\u233 ?cnica - Sistema de Gesti\u243 ?n de Mantenimientos INACIF\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Versi\u243 ?n:} 2.0.0\line {\b Fecha:} Febrero 2026\line {\b Clasificaci\u243 ?n:} Documento T\u233 ?cnico Interno\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 \u55357 ?\u56523 ? Tabla de Contenidos\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 1.\tx360\tab {\field{\*\fldinst{HYPERLINK "#visi\u243 ?n-general"}}{\fldrslt{\ul
+Visi\u243 ?n General
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 2.\tx360\tab {\field{\*\fldinst{HYPERLINK "#arquitectura-del-sistema"}}{\fldrslt{\ul
+Arquitectura del Sistema
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 3.\tx360\tab {\field{\*\fldinst{HYPERLINK "#stack-tecnol\u243 ?gico"}}{\fldrslt{\ul
+Stack Tecnol\u243 ?gico
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 4.\tx360\tab {\field{\*\fldinst{HYPERLINK "#estructura-de-proyecto"}}{\fldrslt{\ul
+Estructura de Proyecto
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 5.\tx360\tab {\field{\*\fldinst{HYPERLINK "#base-de-datos"}}{\fldrslt{\ul
+Base de Datos
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 6.\tx360\tab {\field{\*\fldinst{HYPERLINK "#api-rest"}}{\fldrslt{\ul
+API REST
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 7.\tx360\tab {\field{\*\fldinst{HYPERLINK "#autenticaci\u243 ?n-y-autorizaci\u243 ?n"}}{\fldrslt{\ul
+Autenticaci\u243 ?n y Autorizaci\u243 ?n
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 8.\tx360\tab {\field{\*\fldinst{HYPERLINK "#integraci\u243 ?n-keycloak"}}{\fldrslt{\ul
+Integraci\u243 ?n Keycloak
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 9.\tx360\tab {\field{\*\fldinst{HYPERLINK "#componentes-y-servicios"}}{\fldrslt{\ul
+Componentes y Servicios
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 10.\tx360\tab {\field{\*\fldinst{HYPERLINK "#patrones-de-dise\u241 ?o"}}{\fldrslt{\ul
+Patrones de Dise\u241 ?o
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 11.\tx360\tab {\field{\*\fldinst{HYPERLINK "#seguridad"}}{\fldrslt{\ul
+Seguridad
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 12.\tx360\tab {\field{\*\fldinst{HYPERLINK "#deploy-y-devops"}}{\fldrslt{\ul
+Deploy y DevOps
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 13.\tx360\tab {\field{\*\fldinst{HYPERLINK "#monitoring-y-logging"}}{\fldrslt{\ul
+Monitoring y Logging
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 14.\tx360\tab {\field{\*\fldinst{HYPERLINK "#gu\u237 ?a-de-desarrollo"}}{\fldrslt{\ul
+Gu\u237 ?a de Desarrollo
+}}}
+\sa180\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 1. Visi\u243 ?n General\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 El {\b Sistema de Gesti\u243 ?n de Mantenimientos INACIF} es una aplicaci\u243 ?n empresarial que centraliza la administraci\u243 ?n de:\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b Equipos} - Cat\u225 ?logo e inventario de activos\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b Mantenimientos} - Preventivo, correctivo, calibraci\u243 ?n\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b Tickets} - Reportes de falla y seguimiento\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b Contratos} - Vigencia y proveedores\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b Notificaciones} - Alertas autom\u225 ?ticas y por email\sa180\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Objetivos t\u233 ?cnicos:} - Arquitectura modular y escalable - Seguridad centralizada con Keycloak - Trazabilidad completa de operaciones - API RESTful con autenticaci\u243 ?n JWT - Frontend reactivo con Angular/PrimeNG\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 2. Arquitectura del Sistema\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 2.1 Diagrama de Capas\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?         PRESENTACI\u211 ?N (Angular + PrimeNG)        \u9474 ?\line
+\u9474 ?    - UI Reactiva (Components)                    \u9474 ?\line
+\u9474 ?    - Guards y Interceptores                      \u9474 ?\line
+\u9474 ?    - State Management                            \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+                     \u9474 ? HTTP/REST (JWT)\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9660 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?    CAPA REST (JAX-RS Controllers)               \u9474 ?\line
+\u9474 ?    - @Path, @GET, @POST, @PUT, @DELETE         \u9474 ?\line
+\u9474 ?    - Validaci\u243 ?n de entrada                       \u9474 ?\line
+\u9474 ?    - Serializaci\u243 ?n JSON                          \u9474 ?\line
+\u9474 ?    - Autorizaci\u243 ?n por Roles (@RolesAllowed)    \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+                     \u9474 ? CDI Injection\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9660 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?    CAPA DE NEGOCIO (Services + CDI)             \u9474 ?\line
+\u9474 ?    - L\u243 ?gica de reglas                            \u9474 ?\line
+\u9474 ?    - Transacciones (@Transactional)             \u9474 ?\line
+\u9474 ?    - C\u225 ?lculos y decisiones                       \u9474 ?\line
+\u9474 ?    - Integraci\u243 ?n con terceros                    \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+                     \u9474 ? Entity Manager\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9660 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?    CAPA DE DATOS (JPA Repositories)             \u9474 ?\line
+\u9474 ?    - EclipseLink ORM                             \u9474 ?\line
+\u9474 ?    - Deltaspike Data Framework                   \u9474 ?\line
+\u9474 ?    - Query Methods                               \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+                     \u9474 ? JDBC\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9660 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?         BASE DE DATOS (SQL Server/PostgreSQL)    \u9474 ?\line
+\u9474 ?    - Tablas normalizadas                         \u9474 ?\line
+\u9474 ?    - \u205 ?ndices y constraints                       \u9474 ?\line
+\u9474 ?    - Vistas especializadas                       \u9474 ?\line
+\u9474 ?    - Procedimientos almacenados                  \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 2.2 Flujo de una Petici\u243 ?n HTTP\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 1. Cliente Angular\line
+   \u8595 ?\line
+2. HttpClient + Keycloak Interceptor\line
+   - Adjunta token JWT en header Authorization\line
+   \u8595 ?\line
+3. JAX-RS Controller\line
+   - Recibe petici\u243 ?n HTTP\line
+   - Extrae datos y par\u225 ?metros\line
+   - Valida formato con Bean Validation\line
+   \u8595 ?\line
+4. Authorization Filter\line
+   - Verifica token JWT con Keycloak JWKS\line
+   - Extrae roles del token\line
+   - Verifica @RolesAllowed en endpoint\line
+   \u8595 ?\line
+5. Service (Negocio)\line
+   - Ejecuta l\u243 ?gica de reglas\line
+   - Interact\u250 ?a con BD v\u237 ?a repositorios\line
+   - Maneja transacciones\line
+   \u8595 ?\line
+6. Repository (Datos)\line
+   - Construye queries JPA\line
+   - Persiste/recupera entidades\line
+   \u8595 ?\line
+7. Base de Datos\line
+   - Ejecuta SQL\line
+   - Retorna datos\line
+   \u8595 ?\line
+8. Service\line
+   - Transforma resultado\line
+   - Retorna al controller\line
+   \u8595 ?\line
+9. Controller\line
+   - Serializa a JSON\line
+   - Retorna HTTP 200/201/400/401/403\line
+   \u8595 ?\line
+10. Cliente Angular\line
+    - Recibe respuesta\line
+    - Actualiza UI\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 3. Stack Tecnol\u243 ?gico\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 3.1 Backend\par}
+{
+\trowd \trgaph120
+\clbrdrb\brdrs\cellx2880\clbrdrb\brdrs\cellx5760\clbrdrb\brdrs\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Componente\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Versi\u243 ?n\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Funci\u243 ?n\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Java}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 11 LTS\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Lenguaje base\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Jakarta EE}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 8\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Especificaci\u243 ?n enterprise\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Apache TomEE}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 9.0.0-M7\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Servidor aplicaciones\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b JAX-RS}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2.1\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Endpoints REST\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b JPA}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2.2\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Persistencia ORM\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b EclipseLink}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2.7.7\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Implementaci\u243 ?n JPA\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b CDI}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2.0\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Inyecci\u243 ?n dependencias\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Deltaspike}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 1.9.5\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Extensiones CDI\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Bean Validation}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2.0\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Validaci\u243 ?n datos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Maven}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 3.8+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Build & Dependency\par}
+\cell}
+}
+\intbl\row}
+{\pard \ql \f0 \sa180 \li0 \fi0 \par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 3.2 Frontend\par}
+{
+\trowd \trgaph120
+\clbrdrb\brdrs\cellx2880\clbrdrb\brdrs\cellx5760\clbrdrb\brdrs\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Componente\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Versi\u243 ?n\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Funci\u243 ?n\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Angular}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 17+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Framework SPA\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b TypeScript}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 5.x\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Lenguaje tipado\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b RxJS}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 7.x\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Programaci\u243 ?n reactiva\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b PrimeNG}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 17.x\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Componentes UI\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Keycloak JS}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 18+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Cliente OAuth2\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b SCSS}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 3.x\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Estilos moderno\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b npm}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 9+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Gestor paquetes\par}
+\cell}
+}
+\intbl\row}
+{\pard \ql \f0 \sa180 \li0 \fi0 \par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 3.3 Infraestructura\par}
+{
+\trowd \trgaph120
+\clbrdrb\brdrs\cellx2880\clbrdrb\brdrs\cellx5760\clbrdrb\brdrs\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Componente\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Versi\u243 ?n\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Funci\u243 ?n\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Docker}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 20.10+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Contenedores\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Docker Compose}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2.x\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Orquestaci\u243 ?n local\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Keycloak}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 23+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Identity Provider\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b SQL Server / PostgreSQL}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 2019+ / 13+\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Base de datos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx2880\cellx5760\cellx8640
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\b Nginx}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Latest\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Reverse proxy (prod)\par}
+\cell}
+}
+\intbl\row}
+{\pard \ql \f0 \sa180 \li0 \fi0 \par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 4. Estructura de Proyecto\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 4.1 Backend\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 MantenimientosBackend/\line
+\u9500 ?\u9472 ?\u9472 ? src/main/java/usac/eps/\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? controladores/          # JAX-RS Controllers\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? EquiposController.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? MantenimientosController.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? TicketsController.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? ContratosController.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? NotificacionesController.java\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? servicios/              # Business Logic Services\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? EquiposService.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? MantenimientosService.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? TicketsService.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? EmailService.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? NotificacionesService.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? SchedulerService.java\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? repositorios/           # JPA Data Access\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? EquiposRepository.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? MantenimientosRepository.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? TicketsRepository.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? ...Repository.java\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? entidades/              # JPA Entities\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? Equipo.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? Mantenimiento.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? Ticket.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? Contrato.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? Usuario.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? Notificacion.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? ...\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? dto/                    # Data Transfer Objects\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? EquipoDTO.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? MantenimientoDTO.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? ...\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? excepciones/            # Custom Exceptions\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? ResourceNotFoundException.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? UnauthorizedException.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? ...\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? seguridad/              # Security & Auth\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? KeycloakSecurityContext.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? JWTFilter.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? RoleValidator.java\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? util/                   # Utilidades\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? DateUtil.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? FileUtil.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? ExcelExporter.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? PDFExporter.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? ...\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? scheduler/              # Tareas Programadas\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? MantenimientosScheduler.java\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? AlertasScheduler.java\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? NotificacionesScheduler.java\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9492 ?\u9472 ?\u9472 ? config/                 # Configuraci\u243 ?n\line
+\u9474 ?       \u9500 ?\u9472 ?\u9472 ? ApplicationConfig.java\line
+\u9474 ?       \u9500 ?\u9472 ?\u9472 ? CORSFilter.java\line
+\u9474 ?       \u9492 ?\u9472 ?\u9472 ? JacksonConfiguration.java\line
+\u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ? src/main/resources/\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? META-INF/\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? persistence.xml     # JPA Configuration\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? beans.xml           # CDI beans\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? resources.xml       # Data sources\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? email.properties        # SMTP Configuration\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? scheduler.properties    # Cron jobs\line
+\u9474 ?   \u9492 ?\u9472 ?\u9472 ? application.properties\line
+\u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ? src/test/java/              # Pruebas unitarias e integraci\u243 ?n\line
+\u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ? pom.xml                     # Maven POM\line
+\u9500 ?\u9472 ?\u9472 ? Dockerfile                  # Imagen Docker\line
+\u9500 ?\u9472 ?\u9472 ? docker-compose.yml          # Composici\u243 ?n local\line
+\u9492 ?\u9472 ?\u9472 ? README.md\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 4.2 Frontend\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 EPS-FRONTEND/\line
+\u9500 ?\u9472 ?\u9472 ? src/\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? app/\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? components/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? pages/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? equipos/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? mantenimientos/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? tickets/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? contratos/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? dashboard/\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? layout/         # Layout principal\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? auth/           # Auth components\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? shared/         # Componentes reutilizables\line
+\u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? service/            # Angular Services\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? equipos.service.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? mantenimientos.service.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? tickets.service.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? keycloak.service.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? notificaciones.service.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? guards/             # Route Guards\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? auth.guard.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? permisos.guard.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? interceptors/       # HTTP Interceptors\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? keycloak.interceptor.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? error.interceptor.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? directives/         # Custom Directives\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? has-role.directive.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? tiene-permiso.directive.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? api/                # API Models\line
+\u9474 ?   \u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? equipos.ts\line
+\u9474 ?   \u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? app-routing.module.ts\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? app.module.ts\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? app.component.ts\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? assets/\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? images/\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? plantillas/\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? data/\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? silent-check-sso.html\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? environments/           # Configuraci\u243 ?n por ambiente\line
+\u9474 ?   \u9474 ?   \u9500 ?\u9472 ?\u9472 ? environment.ts      # Desarrollo\line
+\u9474 ?   \u9474 ?   \u9492 ?\u9472 ?\u9472 ? environment.prod.ts # Producci\u243 ?n\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? styles.scss\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ? main.ts\line
+\u9474 ?   \u9492 ?\u9472 ?\u9472 ? index.html\line
+\u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ? angular.json\line
+\u9500 ?\u9472 ?\u9472 ? tsconfig.json\line
+\u9500 ?\u9472 ?\u9472 ? package.json\line
+\u9492 ?\u9472 ?\u9472 ? README.md\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 5. Base de Datos\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 5.1 Diagrama Entidad-Relaci\u243 ?n (Simplificado)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?         \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?   USUARIOS      \u9474 ?         \u9474 ?    KEYCLOAK      \u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?         \u9474 ?  (OAuth2/OIDC)  \u9474 ?\line
+\u9474 ? id (PK)         \u9474 ?\u9668 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9474 ?  keycloak_id    \u9474 ?\line
+\u9474 ? keycloak_id (FK)\u9474 ?         \u9474 ?  (sincronizado) \u9474 ?\line
+\u9474 ? nombre_completo \u9474 ?         \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+\u9474 ? correo          \u9474 ?\line
+\u9474 ? estado (activo) \u9474 ?\line
+\u9474 ? fecha_creacion  \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+         \u9474 ?\line
+         \u9474 ? 1:N (crea/asigna)\line
+         \u9660 ?\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?         \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?   EQUIPOS       \u9474 ?\u9668 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9474 ?    \u193 ?REAS         \u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?         \u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?\line
+\u9474 ? id_equipo (PK)  \u9474 ?\u9472 ?\u9488 ?       \u9474 ? id_area (PK)     \u9474 ?\line
+\u9474 ? area_id (FK)    \u9474 ? \u9474 ?       \u9474 ? nombre_area      \u9474 ?\line
+\u9474 ? nombre_equipo   \u9474 ? \u9474 ?       \u9474 ? ubicacion        \u9474 ?\line
+\u9474 ? marca           \u9474 ? \u9474 ?       \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+\u9474 ? modelo          \u9474 ? \u9474 ?\line
+\u9474 ? serie           \u9474 ? \u9474 ?       \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ? estado          \u9474 ? \u9474 ?       \u9474 ? CATEGOR\u205 ?AS       \u9474 ?\line
+\u9474 ? ubicacion       \u9474 ? \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9658 ?\u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?\line
+\u9474 ? fecha_creacion  \u9474 ?         \u9474 ? id_categoria (PK)\u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?         \u9474 ? nombre           \u9474 ?\line
+         \u9474 ?                  \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+         \u9474 ? 1:N\line
+         \u9474 ?\line
+    \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9524 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+    \u9474 ?                                   \u9474 ?\line
+    \u9660 ?                                   \u9660 ?\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?      \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ? MANTENIMIENTOS      \u9474 ?      \u9474 ? TICKETS             \u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?      \u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?\line
+\u9474 ? id_mantenimiento (PK)       \u9474 ? id_ticket (PK)      \u9474 ?\line
+\u9474 ? equipo_id (FK)      \u9474 ?      \u9474 ? equipo_id (FK)      \u9474 ?\line
+\u9474 ? tipo (P/C/Cal)      \u9474 ?      \u9474 ? usuario_creador (FK)\u9474 ?\line
+\u9474 ? fecha_programada    \u9474 ?      \u9474 ? usuario_asignado(FK)\u9474 ?\line
+\u9474 ? estado              \u9474 ?      \u9474 ? descripcion         \u9474 ?\line
+\u9474 ? observaciones       \u9474 ?      \u9474 ? prioridad           \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?      \u9474 ? estado              \u9474 ?\line
+           \u9474 ?                 \u9474 ? fecha_creacion      \u9474 ?\line
+    \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9524 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?     \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+    \u9474 ?                 \u9474 ?                   \u9474 ?\line
+    \u9660 ?                 \u9660 ?                   \u9660 ?\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?  \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?  \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ? EJECUCIONES  \u9474 ?  \u9474 ? CONTRATOS    \u9474 ?  \u9474 ? COMENTARIOS_TKT  \u9474 ?\line
+\u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?  \u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?  \u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?\line
+\u9474 ? id_ejecucion \u9474 ?  \u9474 ? id_contrato  \u9474 ?  \u9474 ? id_comentario    \u9474 ?\line
+\u9474 ? mantnto_id FK    \u9474 ? proveedor_id \u9474 ?  \u9474 ? ticket_id (FK)   \u9474 ?\line
+\u9474 ? fecha_inicio \u9474 ?  \u9474 ? fecha_inicio \u9474 ?  \u9474 ? usuario (FK)     \u9474 ?\line
+\u9474 ? fecha_fin    \u9474 ?  \u9474 ? fecha_fin    \u9474 ?  \u9474 ? tipo_comentario  \u9474 ?\line
+\u9474 ? estado       \u9474 ?  \u9474 ? estado       \u9474 ?  \u9474 ? texto            \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?  \u9474 ? valor        \u9474 ?  \u9474 ? fecha_creacion   \u9474 ?\line
+                  \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?  \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+                        \u9474 ?\line
+                        \u9660 ?\line
+                   \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+                   \u9474 ? PROVEEDORES  \u9474 ?\line
+                   \u9500 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9508 ?\line
+                   \u9474 ? id_proveedor \u9474 ?\line
+                   \u9474 ? nombre       \u9474 ?\line
+                   \u9474 ? contacto     \u9474 ?\line
+                   \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 5.2 Tablas Principales\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b USUARIOS}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE TABLE Usuarios (\line
+    id INT PRIMARY KEY AUTO_INCREMENT,\line
+    keycloak_id VARCHAR(255) UNIQUE NOT NULL,\line
+    nombre_completo VARCHAR(255) NOT NULL,\line
+    correo VARCHAR(255) UNIQUE,\line
+    area_id INT,\line
+    estado INT DEFAULT 1, -- 1=Activo, 0=Inactivo\line
+    fecha_creacion DATETIME DEFAULT GETDATE(),\line
+    FOREIGN KEY (area_id) REFERENCES Areas(id_area)\line
+);\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b EQUIPOS}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE TABLE Equipos (\line
+    id_equipo INT PRIMARY KEY AUTO_INCREMENT,\line
+    nombre_equipo VARCHAR(255) NOT NULL,\line
+    marca VARCHAR(100),\line
+    modelo VARCHAR(100),\line
+    serie VARCHAR(100) UNIQUE,\line
+    codigo_inacif VARCHAR(50) UNIQUE,\line
+    area_id INT NOT NULL,\line
+    categoria_id INT,\line
+    estado VARCHAR(50), -- Operativo, Reparaci\u243 ?n, Baja, Calibraci\u243 ?n\line
+    ubicacion VARCHAR(255),\line
+    fecha_creacion DATETIME DEFAULT GETDATE(),\line
+    usuario_creacion INT,\line
+    FOREIGN KEY (area_id) REFERENCES Areas(id_area),\line
+    FOREIGN KEY (categoria_id) REFERENCES Categorias_Equipo(id_categoria),\line
+    FOREIGN KEY (usuario_creacion) REFERENCES Usuarios(id)\line
+);\line
+\line
+CREATE INDEX IX_Equipos_Area ON Equipos(area_id);\line
+CREATE INDEX IX_Equipos_Estado ON Equipos(estado);\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b MANTENIMIENTOS}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE TABLE Mantenimientos (\line
+    id_mantenimiento INT PRIMARY KEY AUTO_INCREMENT,\line
+    equipo_id INT NOT NULL,\line
+    tipo_mantenimiento VARCHAR(50), -- Preventivo, Correctivo, Calibraci\u243 ?n\line
+    frecuencia_dias INT,\line
+    estado VARCHAR(50), -- Programado, En Proceso, Completado, Cancelado\line
+    fecha_programada DATETIME,\line
+    observaciones TEXT,\line
+    contrato_id INT,\line
+    usuario_responsable INT,\line
+    fecha_creacion DATETIME DEFAULT GETDATE(),\line
+    FOREIGN KEY (equipo_id) REFERENCES Equipos(id_equipo),\line
+    FOREIGN KEY (usuario_responsable) REFERENCES Usuarios(id),\line
+    FOREIGN KEY (contrato_id) REFERENCES Contratos(id_contrato)\line
+);\line
+\line
+CREATE INDEX IX_Mantenimientos_Equipo ON Mantenimientos(equipo_id);\line
+CREATE INDEX IX_Mantenimientos_Estado ON Mantenimientos(estado);\line
+CREATE INDEX IX_Mantenimientos_Fecha ON Mantenimientos(fecha_programada);\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b TICKETS}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE TABLE Tickets (\line
+    id_ticket INT PRIMARY KEY AUTO_INCREMENT,\line
+    equipo_id INT NOT NULL,\line
+    usuario_creador INT NOT NULL,\line
+    usuario_asignado INT,\line
+    descripcion TEXT NOT NULL,\line
+    prioridad VARCHAR(20), -- Baja, Media, Alta, Cr\u237 ?tica\line
+    estado VARCHAR(50), -- Abierto, Asignado, En Proceso, Resuelto, Cerrado\line
+    fecha_creacion DATETIME DEFAULT GETDATE(),\line
+    fecha_cierre DATETIME,\line
+    FOREIGN KEY (equipo_id) REFERENCES Equipos(id_equipo),\line
+    FOREIGN KEY (usuario_creador) REFERENCES Usuarios(id),\line
+    FOREIGN KEY (usuario_asignado) REFERENCES Usuarios(id)\line
+);\line
+\line
+CREATE INDEX IX_Tickets_Estado ON Tickets(estado);\line
+CREATE INDEX IX_Tickets_Prioridad ON Tickets(prioridad);\line
+CREATE INDEX IX_Tickets_Asignado ON Tickets(usuario_asignado);\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b NOTIFICACIONES}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE TABLE Notificaciones (\line
+    id_notificacion INT PRIMARY KEY AUTO_INCREMENT,\line
+    usuario_id INT NOT NULL,\line
+    tipo VARCHAR(50), -- mantenimiento_proximo, ticket_critico, contrato_vencido\line
+    titulo VARCHAR(255),\line
+    descripcion TEXT,\line
+    prioridad VARCHAR(20),\line
+    leida INT DEFAULT 0,\line
+    fecha_creacion DATETIME DEFAULT GETDATE(),\line
+    fecha_lectura DATETIME,\line
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)\line
+);\line
+\line
+CREATE INDEX IX_Notificaciones_Usuario ON Notificaciones(usuario_id);\line
+CREATE INDEX IX_Notificaciones_Leida ON Notificaciones(leida);\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 5.3 Entidades JPA Completas\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Todas las entidades del sistema:}\par}
+{
+\trowd \trgaph120
+\clbrdrb\brdrs\cellx4123\clbrdrb\brdrs\cellx6086\clbrdrb\brdrs\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Entidad (Clase Java)\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Tabla BD\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Descripci\u243 ?n\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 EquipoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Equipos}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Inventario de equipos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 HistorialEquipoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Historial_Equipo}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Auditor\u237 ?a de cambios en equipos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 CategoriaEquipoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Categoria_Equipo}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Tipos de equipos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 AreaModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Areas}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Laboratorios y departamentos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ProgramacionMantenimientoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Programaciones_Mantenimiento}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Programaciones autom\u225 ?ticas\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 EjecucionMantenimientoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Ejecuciones_Mantenimiento}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Mantenimientos ejecutados\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 TipoMantenimientoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Tipos_Mantenimiento}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Cat\u225 ?logo de tipos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ComentarioEjecucionModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Comentarios_Ejecucion}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Comentarios de ejecuciones\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 EvidenciaModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Evidencias}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Archivos adjuntos de ejecuciones\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 TicketModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Tickets}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Reportes de fallas\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ComentarioTicketModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Comentarios_Ticket}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Seguimiento de tickets\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 TipoComentarioModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Tipos_Comentario}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Cat\u225 ?logo de tipos de comentario\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ContratoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Contratos}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Contratos con proveedores\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ContratoArchivoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Contratos_Archivos}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Documentos PDF de contratos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ContratoEquipoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Contrato_Equipo}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Relaci\u243 ?n N:M contratos-equipos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ContratoTipoMantenimientoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Contrato_Tipo_Mantenimiento}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Relaci\u243 ?n N:M contratos-tipos\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ProveedorModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Proveedores}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Empresas proveedoras\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 UsuarioMantenimientoModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Usuarios}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Usuarios sincronizados con Keycloak\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 NotificacionModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Notificaciones}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Alertas en el sistema\par}
+\cell}
+}
+\intbl\row}
+{
+\trowd \trgaph120
+\cellx4123\cellx6086\cellx8638
+\trkeep\intbl
+{
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 ConfiguracionAlertaModel}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 {\f1 Configuracion_Alertas}\par}
+\cell}
+{{\pard\intbl \ql \f0 \sa0 \li0 \fi0 Configuraci\u243 ?n de alertas y scheduler\par}
+\cell}
+}
+\intbl\row}
+{\pard \ql \f0 \sa180 \li0 \fi0 \par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Ejemplo de entidad completa:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Entity\line
+@Table(name = "Equipos")\line
+public class EquipoModel \{\line
+    \line
+    @Id\line
+    @GeneratedValue(strategy = GenerationType.IDENTITY)\line
+    @Column(name = "id_equipo")\line
+    private Integer idEquipo;\line
+    \line
+    @Column(name = "numero_inventario", length = 100)\line
+    private String numeroInventario;\line
+    \line
+    @Column(name = "numero_serie", length = 100, unique = true)\line
+    private String numeroSerie;\line
+    \line
+    @Column(name = "nombre_equipo", nullable = false, length = 255)\line
+    private String nombreEquipo;\line
+    \line
+    @Column(name = "codigo_inacif", length = 50, unique = true)\line
+    private String codigoInacif;\line
+    \line
+    @Column(name = "marca", length = 100)\line
+    private String marca;\line
+    \line
+    @Column(name = "modelo", length = 100)\line
+    private String modelo;\line
+    \line
+    @Column(name = "ubicacion", length = 255)\line
+    private String ubicacion;\line
+    \line
+    @Column(name = "estado", length = 50)\line
+    private String estado; // Activo, Inactivo, Cr\u237 ?tico\line
+    \line
+    @Column(name = "magnitud_medicion", length = 100)\line
+    private String magnitudMedicion;\line
+    \line
+    @Column(name = "rango_capacidad", length = 100)\line
+    private String rangoCapacidad;\line
+    \line
+    @Column(name = "condiciones_operacion", columnDefinition = "TEXT")\line
+    private String condicionesOperacion;\line
+    \line
+    @Column(name = "fotografia", columnDefinition = "TEXT")\line
+    private String fotografia; // Base64 o URL\line
+    \line
+    @ManyToOne\line
+    @JoinColumn(name = "area_id", nullable = false)\line
+    private AreaModel area;\line
+    \line
+    @ManyToOne\line
+    @JoinColumn(name = "categoria_id")\line
+    private CategoriaEquipoModel categoria;\line
+    \line
+    @ManyToOne\line
+    @JoinColumn(name = "usuario_creacion")\line
+    private UsuarioMantenimientoModel usuarioCreacion;\line
+    \line
+    @Column(name = "fecha_creacion")\line
+    @Temporal(TemporalType.TIMESTAMP)\line
+    private Date fechaCreacion;\line
+    \line
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)\line
+    private List<ProgramacionMantenimientoModel> programaciones;\line
+    \line
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)\line
+    private List<TicketModel> tickets;\line
+    \line
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)\line
+    private List<HistorialEquipoModel> historial;\line
+    \line
+    // Getters y Setters\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Relaciones importantes:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 // 1:N - Un \u193 ?rea tiene muchos Equipos\line
+AreaModel \u8594 ? List<EquipoModel>\line
+\line
+// 1:N - Un Equipo tiene muchas Programaciones\line
+EquipoModel \u8594 ? List<ProgramacionMantenimientoModel>\line
+\line
+// 1:N - Una Programaci\u243 ?n genera muchas Ejecuciones\line
+ProgramacionMantenimientoModel \u8594 ? List<EjecucionMantenimientoModel>\line
+\line
+// 1:N - Una Ejecuci\u243 ?n tiene muchos Comentarios\line
+EjecucionMantenimientoModel \u8594 ? List<ComentarioEjecucionModel>\line
+\line
+// 1:N - Una Ejecuci\u243 ?n tiene muchas Evidencias (fotos)\line
+EjecucionMantenimientoModel \u8594 ? List<EvidenciaModel>\line
+\line
+// N:M - Un Contrato cubre muchos Equipos (via tabla intermedia)\line
+ContratoModel \u8596 ? ContratoEquipoModel \u8596 ? EquipoModel\line
+\line
+// N:M - Un Contrato cubre muchos Tipos de Mantenimiento\line
+ContratoModel \u8596 ? ContratoTipoMantenimientoModel \u8596 ? TipoMantenimientoModel\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 5.4 Vistas Especializadas\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b VW_AlertasMantenimiento} - Mantenimientos pr\u243 ?ximos a vencer\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE VIEW VW_AlertasMantenimiento AS\line
+SELECT \line
+    e.id_equipo,\line
+    e.nombre_equipo,\line
+    m.fecha_programada,\line
+    DATEDIFF(day, GETDATE(), m.fecha_programada) as dias_restantes,\line
+    tm.nombre_tipo as tipo_mantenimiento,\line
+    u.nombre_completo as responsable,\line
+    CASE \line
+        WHEN DATEDIFF(day, GETDATE(), m.fecha_programada) <= 7 THEN 'Cr\u237 ?tica'\line
+        WHEN DATEDIFF(day, GETDATE(), m.fecha_programada) <= 15 THEN 'Alta'\line
+        WHEN DATEDIFF(day, GETDATE(), m.fecha_programada) <= 30 THEN 'Media'\line
+        ELSE 'Baja'\line
+    END as prioridad_alerta\line
+FROM Mantenimientos m\line
+INNER JOIN Equipos e ON m.equipo_id = e.id_equipo\line
+INNER JOIN Tipos_Mantenimiento tm ON m.tipo_mantenimiento_id = tm.id_tipo\line
+INNER JOIN Usuarios u ON m.usuario_responsable = u.id\line
+WHERE m.estado IN ('Programado', 'Pendiente')\line
+AND DATEDIFF(day, GETDATE(), m.fecha_programada) BETWEEN 0 AND 30;\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 6. API REST\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 6.1 Convenciones\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Base URL:} {\f1 http://localhost:8080/MantenimientosBackend/api}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Autenticaci\u243 ?n:} Todas las peticiones requieren header:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 Authorization: Bearer <jwt_token>\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Formato respuesta:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 \{\line
+  "success": true,\line
+  "data": \{ /* payload */ \},\line
+  "message": "Operaci\u243 ?n exitosa",\line
+  "timestamp": "2026-02-03T15:30:00Z"\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b C\u243 ?digos HTTP:} - {\f1 200} - OK - {\f1 201} - Created - {\f1 204} - No Content - {\f1 400} - Bad Request - {\f1 401} - Unauthorized - {\f1 403} - Forbidden - {\f1 404} - Not Found - {\f1 500} - Internal Server Error\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 6.2 Endpoints por M\u243 ?dulo\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b EQUIPOS} - {\f1 /api/equipos}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/equipos                           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Lista paginada de equipos\line
+\line
+POST   /api/equipos                           [ADMIN, SUPERVISOR, TECNICO_EQUIPOS]\line
+       Body: EquipoDTO\line
+       Respuesta: Equipo creado con ID\line
+\line
+GET    /api/equipos/\{id\}                      [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Detalle completo del equipo\line
+\line
+PUT    /api/equipos/\{id\}                      [ADMIN, SUPERVISOR, TECNICO_EQUIPOS]\line
+       Body: EquipoDTO\line
+       Respuesta: Equipo actualizado\line
+\line
+DELETE /api/equipos/\{id\}                      [ADMIN]\line
+       Respuesta: 204 No Content\line
+\line
+GET    /api/equipos/area/\{areaId\}             [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Equipos filtrados por \u225 ?rea\line
+\line
+GET    /api/equipos/buscar?q=\{termino\}        [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: B\u250 ?squeda por nombre, c\u243 ?digo, serie\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b HISTORIAL DE EQUIPOS} - {\f1 /api/historial-equipos}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/historial-equipos                 [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Historial completo de cambios\line
+\line
+GET    /api/historial-equipos/equipo/\{id\}     [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Cambios de un equipo espec\u237 ?fico\line
+\line
+GET    /api/historial-equipos/usuario/\{id\}    [ADMIN, SUPERVISOR]\line
+       Respuesta: Cambios realizados por un usuario\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b PROGRAMACIONES} - {\f1 /api/programaciones}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/programaciones                    [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Lista de programaciones activas\line
+\line
+POST   /api/programaciones                    [ADMIN, SUPERVISOR]\line
+       Body: ProgramacionDTO\line
+       Respuesta: Programaci\u243 ?n creada\line
+\line
+GET    /api/programaciones/\{id\}               [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Detalle de programaci\u243 ?n\line
+\line
+PUT    /api/programaciones/\{id\}               [ADMIN, SUPERVISOR]\line
+       Body: ProgramacionDTO\line
+       Respuesta: Programaci\u243 ?n actualizada\line
+\line
+DELETE /api/programaciones/\{id\}               [ADMIN]\line
+       Respuesta: 204 No Content\line
+\line
+PUT    /api/programaciones/\{id\}/activar       [ADMIN, SUPERVISOR]\line
+       Respuesta: Programaci\u243 ?n activada\line
+\line
+PUT    /api/programaciones/\{id\}/desactivar    [ADMIN, SUPERVISOR]\line
+       Respuesta: Programaci\u243 ?n desactivada\line
+\line
+GET    /api/programaciones/equipo/\{equipoId\}  [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Programaciones de un equipo\line
+\line
+GET    /api/programaciones/estadisticas       [ADMIN, SUPERVISOR]\line
+       Respuesta: KPIs y m\u233 ?tricas de programaciones\line
+\line
+GET    /api/programaciones/proximas           [ADMIN, SUPERVISOR, TECNICO]\line
+       Query params: ?dias=7\line
+       Respuesta: Programaciones pr\u243 ?ximas a ejecutar\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b EJECUCIONES} - {\f1 /api/ejecuciones}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/ejecuciones                       [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Lista de ejecuciones de mantenimiento\line
+\line
+POST   /api/ejecuciones                       [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: EjecucionDTO\line
+       Respuesta: Ejecuci\u243 ?n creada\line
+\line
+GET    /api/ejecuciones/\{id\}                  [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Detalle de ejecuci\u243 ?n con comentarios y evidencias\line
+\line
+PUT    /api/ejecuciones/\{id\}                  [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: EjecucionDTO\line
+       Respuesta: Ejecuci\u243 ?n actualizada\line
+\line
+DELETE /api/ejecuciones/\{id\}                  [ADMIN]\line
+       Respuesta: 204 No Content\line
+\line
+PUT    /api/ejecuciones/\{id\}/iniciar          [ADMIN, SUPERVISOR, TECNICO]\line
+       Respuesta: Estado cambio a EN_PROCESO\line
+\line
+PUT    /api/ejecuciones/\{id\}/completar        [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: \{ observaciones, fechaFin \}\line
+       Respuesta: Estado cambia a COMPLETADO\line
+\line
+PUT    /api/ejecuciones/\{id\}/cancelar         [ADMIN, SUPERVISOR]\line
+       Body: \{ motivo \}\line
+       Respuesta: Estado cambia a CANCELADO\line
+\line
+POST   /api/ejecuciones/\{id\}/comentarios      [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: ComentarioDTO\line
+       Respuesta: Comentario agregado\line
+\line
+POST   /api/ejecuciones/\{id\}/evidencias       [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: Multipart file\line
+       Respuesta: Evidencia subida\line
+\line
+GET    /api/ejecuciones/\{id\}/evidencias       [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Lista de archivos adjuntos\line
+\line
+GET    /api/ejecuciones/equipo/\{equipoId\}     [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Historial de mantenimientos del equipo\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b TICKETS} - {\f1 /api/tickets}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/tickets                           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Lista de tickets\line
+\line
+POST   /api/tickets                           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Body: TicketDTO\line
+       Respuesta: Ticket creado\line
+\line
+GET    /api/tickets/\{id\}                      [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Detalle del ticket\line
+\line
+PUT    /api/tickets/\{id\}                      [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: TicketDTO\line
+       Respuesta: Ticket actualizado\line
+\line
+DELETE /api/tickets/\{id\}                      [ADMIN]\line
+       Respuesta: 204 No Content\line
+\line
+PUT    /api/tickets/\{id\}/asignar              [ADMIN, SUPERVISOR]\line
+       Body: \{ usuarioAsignadoId \}\line
+       Respuesta: Ticket asignado, estado cambia a ASIGNADO\line
+\line
+PUT    /api/tickets/\{id\}/iniciar              [TECNICO] (solo si est\u225 ? asignado a \u233 ?l)\line
+       Respuesta: Estado cambia a EN_PROCESO\line
+\line
+PUT    /api/tickets/\{id\}/resolver             [TECNICO] (solo si est\u225 ? asignado a \u233 ?l)\line
+       Body: \{ descripcionSolucion \}\line
+       Respuesta: Estado cambia a RESUELTO\line
+\line
+PUT    /api/tickets/\{id\}/cerrar               [ADMIN, SUPERVISOR]\line
+       Respuesta: Estado cambia a CERRADO\line
+\line
+POST   /api/tickets/\{id\}/comentarios          [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Body: ComentarioTicketDTO\line
+       Respuesta: Comentario agregado\line
+\line
+GET    /api/tickets/\{id\}/comentarios          [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Lista de comentarios con informaci\u243 ?n de usuario\line
+\line
+POST   /api/tickets/\{id\}/evidencias           [ADMIN, SUPERVISOR, TECNICO]\line
+       Body: Multipart file\line
+       Respuesta: Evidencia subida\line
+\line
+GET    /api/tickets/\{id\}/evidencias           [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Lista de archivos\line
+\line
+GET    /api/tickets/\{id\}/evidencias/download/\{nombreArchivo\}  [Todos]\line
+       Respuesta: Blob del archivo\line
+\line
+GET    /api/tickets/equipo/\{equipoId\}         [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Tickets de un equipo\line
+\line
+GET    /api/tickets/usuario/\{usuarioId\}       [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Tickets creados o asignados a un usuario\line
+\line
+GET    /api/tickets/criticos                  [ADMIN, SUPERVISOR]\line
+       Respuesta: Tickets con prioridad CR\u205 ?TICA\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b CONTRATOS} - {\f1 /api/contratos}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/contratos                         [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Lista de contratos\line
+\line
+POST   /api/contratos                         [ADMIN, SUPERVISOR]\line
+       Body: ContratoDTO\line
+       Respuesta: Contrato creado\line
+\line
+GET    /api/contratos/\{id\}                    [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Detalle del contrato\line
+\line
+PUT    /api/contratos/\{id\}                    [ADMIN, SUPERVISOR]\line
+       Body: ContratoDTO\line
+       Respuesta: Contrato actualizado\line
+\line
+DELETE /api/contratos/\{id\}                    [ADMIN]\line
+       Respuesta: 204 No Content\line
+\line
+POST   /api/contratos/\{id\}/archivos           [ADMIN, SUPERVISOR]\line
+       Body: Multipart file (PDF)\line
+       Respuesta: Archivo subido\line
+\line
+GET    /api/contratos/\{id\}/archivos           [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Lista de archivos del contrato\line
+\line
+GET    /api/contratos/\{id\}/archivos/download/\{nombreArchivo\}  [Todos]\line
+       Respuesta: Blob del PDF\line
+\line
+DELETE /api/contratos/\{id\}/archivos/\{archivoId\}  [ADMIN]\line
+       Respuesta: 204 No Content\line
+\line
+GET    /api/contratos/proveedor/\{proveedorId\}  [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Contratos de un proveedor\line
+\line
+GET    /api/contratos/alertas/vencimiento     [ADMIN, SUPERVISOR]\line
+       Query params: ?dias=30\line
+       Respuesta: Contratos pr\u243 ?ximos a vencer\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b PROVEEDORES} - {\f1 /api/proveedores}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/proveedores                       [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Lista de proveedores\line
+\line
+POST   /api/proveedores                       [ADMIN, SUPERVISOR]\line
+       Body: ProveedorDTO\line
+       Respuesta: Proveedor creado\line
+\line
+GET    /api/proveedores/\{id\}                  [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Detalle del proveedor\line
+\line
+PUT    /api/proveedores/\{id\}                  [ADMIN, SUPERVISOR]\line
+       Body: ProveedorDTO\line
+       Respuesta: Proveedor actualizado\line
+\line
+DELETE /api/proveedores/\{id\}                  [ADMIN]\line
+       Respuesta: 204 No Content\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b NOTIFICACIONES} - {\f1 /api/notificaciones}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/notificaciones                    [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Notificaciones del usuario actual\line
+\line
+GET    /api/notificaciones/conteo             [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: \{ total: 15, noLeidas: 7, criticas: 2 \}\line
+\line
+PUT    /api/notificaciones/\{id\}/leer          [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Notificaci\u243 ?n marcada como le\u237 ?da\line
+\line
+PUT    /api/notificaciones/marcar-todas-leidas  [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Todas marcadas como le\u237 ?das\line
+\line
+DELETE /api/notificaciones/\{id\}               [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: 204 No Content\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b CONFIGURACI\u211 ?N DE CORREOS} - {\f1 /api/configuracion-correos}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/configuracion-correos             [ADMIN]\line
+       Respuesta: Lista de configuraciones de alertas\line
+\line
+PUT    /api/configuracion-correos/\{tipoAlerta\}  [ADMIN]\line
+       Body: \{ correos: "email1@example.com, email2@example.com" \}\line
+       Respuesta: Configuraci\u243 ?n actualizada\line
+       \line
+       Tipos v\u225 ?lidos:\line
+       - MANTENIMIENTO_PROXIMO\line
+       - MANTENIMIENTO_VENCIDO\line
+       - CONTRATO_POR_VENCER_30\line
+       - CONTRATO_POR_VENCER_15\line
+       - CONTRATO_POR_VENCER_7\line
+       - CONTRATO_VENCIDO\line
+       - TICKET_CRITICO\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b SCHEDULER} - {\f1 /api/scheduler}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 POST   /api/scheduler/ejecutar-ahora          [ADMIN]\line
+       Respuesta: Ejecuta verificaciones inmediatamente\line
+\line
+GET    /api/scheduler/estado                  [ADMIN]\line
+       Respuesta: \{ \line
+         habilitado: true,\line
+         horaEjecucion: "08:00",\line
+         ultimaEjecucion: "2026-02-04T08:00:00Z",\line
+         ultimoResultado: "Mantenimientos: 3, Contratos: 1, Tickets: 0"\line
+       \}\line
+\line
+PUT    /api/scheduler/configurar              [ADMIN]\line
+       Body: \{ hora: 10, minuto: 30, habilitado: true \}\line
+       Respuesta: Configuraci\u243 ?n actualizada\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b TIPOS DE MANTENIMIENTO} - {\f1 /api/tipos-mantenimiento}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/tipos-mantenimiento               [ADMIN, SUPERVISOR, TECNICO, USER]\line
+       Respuesta: Cat\u225 ?logo de tipos\line
+\line
+POST   /api/tipos-mantenimiento               [ADMIN, SUPERVISOR]\line
+       Body: TipoMantenimientoDTO\line
+       Respuesta: Tipo creado\line
+\line
+PUT    /api/tipos-mantenimiento/\{id\}          [ADMIN, SUPERVISOR]\line
+       Body: TipoMantenimientoDTO\line
+       Respuesta: Tipo actualizado\line
+\line
+DELETE /api/tipos-mantenimiento/\{id\}          [ADMIN]\line
+       Respuesta: 204 No Content\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b \u193 ?REAS} - {\f1 /api/areas}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/areas                             [ADMIN, SUPERVISOR, TECNICO, TECNICO_EQUIPOS, USER]\line
+       Respuesta: Lista de \u225 ?reas/laboratorios\line
+\line
+POST   /api/areas                             [ADMIN, SUPERVISOR]\line
+       Body: AreaDTO\line
+       Respuesta: \u193 ?rea creada\line
+\line
+PUT    /api/areas/\{id\}                        [ADMIN, SUPERVISOR]\line
+       Body: AreaDTO\line
+       Respuesta: \u193 ?rea actualizada\line
+\line
+DELETE /api/areas/\{id\}                        [ADMIN]\line
+       Respuesta: 204 No Content\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b USUARIOS} - {\f1 /api/usuarios}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/usuarios                          [ADMIN]\line
+       Respuesta: Lista de usuarios\line
+\line
+POST   /api/usuarios/sincronizar-keycloak     [ADMIN]\line
+       Respuesta: Importa usuarios desde Keycloak\line
+\line
+GET    /api/usuarios/actual                   [Todos]\line
+       Respuesta: Informaci\u243 ?n del usuario autenticado\line
+\line
+POST   /api/usuarios/auto-sync                [Todos]\line
+       Respuesta: Auto-sincroniza usuario actual si no existe en BD\line
+\line
+PUT    /api/usuarios/\{id\}/activar             [ADMIN]\line
+       Respuesta: Usuario activado\line
+\line
+PUT    /api/usuarios/\{id\}/desactivar          [ADMIN]\line
+       Respuesta: Usuario desactivado\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b HEALTH CHECK} - {\f1 /api/health}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/health                            [P\u250 ?blico]\line
+       Respuesta: \{ \line
+         status: "UP",\line
+         database: "UP",\line
+         keycloak: "UP",\line
+         timestamp: "2026-02-04T10:30:00Z"\line
+       \}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel3 \b \fs24 {\b REPORTES} - {\f1 /api/reportes}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 GET    /api/reportes/equipos                  [ADMIN, SUPERVISOR]\line
+       Query params: ?formato=pdf&areaId=5\line
+       Respuesta: Blob (PDF o Excel)\line
+\line
+GET    /api/reportes/mantenimientos           [ADMIN, SUPERVISOR]\line
+       Query params: ?fechaInicio=2026-01-01&fechaFin=2026-12-31\line
+       Respuesta: Blob (PDF o Excel)\line
+\line
+GET    /api/reportes/tickets                  [ADMIN, SUPERVISOR]\line
+       Query params: ?estado=ABIERTO&prioridad=ALTA\line
+       Respuesta: Blob (PDF o Excel)\line
+\line
+GET    /api/reportes/contratos                [ADMIN, SUPERVISOR]\line
+       Respuesta: Blob (PDF o Excel)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 6.3 Ejemplo de Petici\u243 ?n Completa\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b POST - Crear Ticket}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 curl -X POST http://localhost:8080/MantenimientosBackend/api/tickets \\\line
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIs..." \\\line
+  -H "Content-Type: application/json" \\\line
+  -d '\{\line
+    "equipoId": 5,\line
+    "descripcion": "El microscopio no enciende",\line
+    "prioridad": "Alta",\line
+    "usuarioAsignadoId": 3\line
+  \}'\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Response - 201 Created}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 \{\line
+  "success": true,\line
+  "data": \{\line
+    "id": 42,\line
+    "equipoId": 5,\line
+    "descripcion": "El microscopio no enciende",\line
+    "prioridad": "Alta",\line
+    "estado": "Abierto",\line
+    "usuarioCreadorId": 1,\line
+    "usuarioAsignadoId": 3,\line
+    "fechaCreacion": "2026-02-03T15:35:00Z"\line
+  \},\line
+  "message": "Ticket creado exitosamente",\line
+  "timestamp": "2026-02-03T15:35:01Z"\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 7. Autenticaci\u243 ?n y Autorizaci\u243 ?n\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 7.1 Flujo OAuth2 (Authorization Code)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?                              \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?   Angular    \u9474 ?                              \u9474 ?   Keycloak     \u9474 ?\line
+\u9474 ?   Frontend   \u9474 ?                              \u9474 ?   IdP           \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?                              \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 1. Usuario accede a /dashboard             \u9474 ?\line
+       \u9474 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9658 ?\u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 2. No autenticado \u8594 ? Redirige a login      \u9474 ?\line
+       \u9474 ?\u9668 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 3. Muestra formulario de login               \u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 4. Usuario ingresa credenciales              \u9474 ?\line
+       \u9474 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9658 ?\u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 5. Valida credenciales (BD usuarios)        \u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 6. Genera JWT con roles y scopes             \u9474 ?\line
+       \u9474 ?\u9668 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 7. Almacena token en localStorage           \u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 8. Redirige a /dashboard                    \u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 9. GET /api/equipos                         \u9474 ?\line
+       \u9474 ?    Authorization: Bearer <token>            \u9474 ?\line
+       \u9474 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9658 ?\u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 10. Backend valida token contra Keycloak JWKS\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 11. Extrae roles del JWT                    \u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 12. Verifica @RolesAllowed(\{"ADMIN"\})      \u9474 ?\line
+       \u9474 ?                                              \u9474 ?\line
+       \u9474 ? 13. Retorna datos (200 OK)                  \u9474 ?\line
+       \u9474 ?\u9668 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9474 ?\line
+       \u9474 ?                                              \u9474 ?\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 7.2 Estructura del JWT Token\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 Header:\line
+\{\line
+  "alg": "RS256",\line
+  "typ": "JWT",\line
+  "kid": "..."\line
+\}\line
+\line
+Payload:\line
+\{\line
+  "jti": "...",\line
+  "exp": 1643901600,\line
+  "nbf": 0,\line
+  "iat": 1643901300,\line
+  "iss": "http://localhost:8180/auth/realms/inacif",\line
+  "sub": "f47ac10b-58cc-4372-a567-0e02b2c3d479",\line
+  "typ": "Bearer",\line
+  "azp": "inacif-frontend",\line
+  "preferred_username": "admin",\line
+  "email": "admin@inacif.gob.gt",\line
+  "resource_access": \{\line
+    "inacif-frontend": \{\line
+      "roles": ["ADMIN", "manage-account"]\line
+    \}\line
+  \},\line
+  "realm_access": \{\line
+    "roles": ["offline_access", "uma_authorization"]\line
+  \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 7.3 Validaci\u243 ?n Backend\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b KeycloakSecurityContext.java}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Provider\line
+public class KeycloakSecurityContext implements SecurityContext \{\line
+    \line
+    @Inject\line
+    private KeycloakPrincipal<KeycloakSecurityContext> principal;\line
+    \line
+    public boolean isUserInRole(String role) \{\line
+        return principal.getKeycloakSecurityContext()\line
+                       .getToken()\line
+                       .getRealmAccess()\line
+                       .isUserInRole(role);\line
+    \}\line
+    \line
+    public Set<String> getUserRoles() \{\line
+        return principal.getKeycloakSecurityContext()\line
+                       .getToken()\line
+                       .getResourceAccess("inacif-frontend")\line
+                       .getRoles();\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Anotaci\u243 ?n en Controllers}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Path("/api/equipos")\line
+public class EquiposController \{\line
+    \line
+    @DELETE\line
+    @Path("/\{id\}")\line
+    @RolesAllowed("ADMIN")  // Solo ADMIN puede eliminar\line
+    public Response eliminarEquipo(@PathParam("id") int id) \{\line
+        // l\u243 ?gica de eliminaci\u243 ?n\line
+    \}\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 8. Integraci\u243 ?n Keycloak\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 8.1 Configuraci\u243 ?n Backend (persistence.xml)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 <provider>\line
+    <name>keycloak-cfg</name>\line
+    <property-value>\line
+        \{\line
+            "realm": "inacif",\line
+            "bearer-only": true,\line
+            "auth-server-url": "http://localhost:8180",\line
+            "ssl-required": "external",\line
+            "resource": "inacif-backend",\line
+            "credentials": \{\line
+                "secret": "tu-secret-aqui"\line
+            \}\line
+        \}\line
+    </property-value>\line
+</provider>\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 8.2 Configuraci\u243 ?n Frontend (environment.ts)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 export const environment = \{\line
+  production: false,\line
+  apiUrl: 'http://localhost:8080/MantenimientosBackend/api',\line
+  keycloak: \{\line
+    url: 'http://localhost:8180',\line
+    realm: 'inacif',\line
+    clientId: 'inacif-frontend',\line
+    redirectUri: 'http://localhost:4200'\line
+  \}\line
+\};\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 8.3 Inicializaci\u243 ?n Keycloak (main.ts)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 import \{ KeycloakService \} from './app/service/keycloak.service';\line
+\line
+const keycloakService = new KeycloakService();\line
+\line
+keycloakService.init().then(() => \{\line
+  platformBrowserDynamic()\line
+    .bootstrapModule(AppModule)\line
+    .catch(err => console.error(err));\line
+\}).catch(error => \{\line
+  console.error('Fall\u243 ? inicializaci\u243 ?n de Keycloak', error);\line
+\});\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 8.4 Sincronizaci\u243 ?n Usuarios (Local)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Stateless\line
+public class UsuarioSyncService \{\line
+    \line
+    @Inject\line
+    private UsuariosRepository usuariosRepository;\line
+    \line
+    /**\line
+     * Sincroniza o crea usuario basado en Keycloak\line
+     */\line
+    public Usuario sincronizarDesdeKeycloak(String keycloakId, String email, String nombreCompleto) \{\line
+        Usuario usuario = usuariosRepository.findByKeycloakId(keycloakId);\line
+        \line
+        if (usuario == null) \{\line
+            usuario = new Usuario();\line
+            usuario.setKeycloakId(keycloakId);\line
+            usuario.setEstado(1); // Activo\line
+            usuariosRepository.save(usuario);\line
+        \}\line
+        \line
+        usuario.setCorreo(email);\line
+        usuario.setNombreCompleto(nombreCompleto);\line
+        usuariosRepository.update(usuario);\line
+        \line
+        return usuario;\line
+    \}\line
+    \line
+    /**\line
+     * Valida que usuario est\u233 ? activo en BD local\line
+     * (Regla cr\u237 ?tica: acceso denegado si est\u225 ? inactivo)\line
+     */\line
+    public boolean isUsuarioActivo(String keycloakId) \{\line
+        Usuario usuario = usuariosRepository.findByKeycloakId(keycloakId);\line
+        return usuario != null && usuario.getEstado() == 1;\line
+    \}\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 9. Componentes y Servicios\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 9.1 Arquitectura de Servicios\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?     Controllers (JAX-RS)                \u9474 ?\line
+\u9474 ?  - Reciben peticiones HTTP              \u9474 ?\line
+\u9474 ?  - Validan entrada                      \u9474 ?\line
+\u9474 ?  - Llaman a servicios                   \u9474 ?\line
+\u9474 ?  - Retornan respuestas                  \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+             \u9474 ?\line
+    \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9524 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+    \u9474 ?                 \u9474 ?\line
+    \u9660 ?                 \u9660 ?\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?  \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ?   Services   \u9474 ?  \u9474 ? Data Services    \u9474 ?\line
+\u9474 ? (Negocio)    \u9474 ?  \u9474 ? (Repositorios)   \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?  \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+    \u9474 ?                 \u9474 ?\line
+    \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9516 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\line
+             \u9474 ?\line
+    \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9660 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+    \u9474 ?                 \u9474 ?\line
+    \u9660 ?                 \u9660 ?\line
+\u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?  \u9484 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9488 ?\line
+\u9474 ? EmailService \u9474 ?  \u9474 ? FileService      \u9474 ?\line
+\u9474 ? (Notif.)     \u9474 ?  \u9474 ? (Evidencias)     \u9474 ?\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?  \u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9472 ?\u9496 ?\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 9.2 Servicios Principales\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b EquiposService.java} - {\f1 getAllEquipos()} - Listar con paginaci\u243 ?n - {\f1 getEquipoById(id)} - Obtener detalle - {\f1 createEquipo(dto)} - Crear con validaciones - {\f1 updateEquipo(id, dto)} - Actualizar estado - {\f1 deleteEquipo(id)} - Eliminar (solo ADMIN) - {\f1 getEquiposByArea(areaId)} - Filtrar por \u225 ?rea - {\f1 getHistorialEquipo(id)} - Cambios hist\u243 ?ricos\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b MantenimientosService.java} - {\f1 getProgramaciones()} - Pr\u243 ?ximas a vencer - {\f1 crearEjecucion(dto)} - Registrar mantenimiento - {\f1 generarAlertasProximas(diasAnticipacion)} - Notificaciones autom\u225 ?ticas - {\f1 exportarHistorial(equipoId)} - Reportes\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b TicketsService.java} - {\f1 crearTicket(dto)} - Crear con asignaci\u243 ?n autom\u225 ?tica - {\f1 cambiarEstado(id, nuevoEstado)} - Validar transiciones - {\f1 asignarTicket(id, usuarioId)} - Asignar t\u233 ?cnico - {\f1 agregarComentario(ticketId, comentarioDto)} - Seguimiento - {\f1 subirEvidencia(ticketId, archivo)} - Almacenar archivos\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b NotificacionesService.java} - {\f1 crearNotificacion(usuarioId, tipo, titulo)} - Crear alerta - {\f1 enviarEmailNotificacion(usuarioId, asunto)} - SMTP - {\f1 marcarComoLeida(notificacionId)} - Actualizar estado - {\f1 obtenerConteo(usuarioId)} - KPIs en navbar\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b EmailService.java} - {\f1 enviarEmail(destinatario, asunto, contenido)} - SMTP - {\f1 enviarEmailProgramado(evento)} - Tareas scheduler - {\f1 construirTemplate(tipo, datos)} - HTML templates\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 9.3 Inyecci\u243 ?n de Dependencias (CDI)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Stateless\line
+public class EquiposService \{\line
+    \line
+    @Inject\line
+    private EquiposRepository equiposRepository;\line
+    \line
+    @Inject\line
+    private NotificacionesService notificacionesService;\line
+    \line
+    @Inject\line
+    private Logger logger;\line
+    \line
+    @Transactional(Transactional.TxType.REQUIRED)\line
+    public Equipo crearEquipo(EquipoDTO dto) \{\line
+        Equipo equipo = new Equipo();\line
+        // ... mapear de DTO a entidad\line
+        equiposRepository.save(equipo);\line
+        \line
+        logger.info("Equipo creado: " + equipo.getId());\line
+        return equipo;\line
+    \}\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 10. Patrones de Dise\u241 ?o\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 10.1 Repository Pattern\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 public interface BaseRepository<T, ID> \{\line
+    T findById(ID id);\line
+    List<T> findAll();\line
+    T save(T entity);\line
+    T update(T entity);\line
+    void delete(T entity);\line
+\}\line
+\line
+@Repository\line
+public class EquiposRepository implements BaseRepository<Equipo, Integer> \{\line
+    \line
+    @PersistenceContext\line
+    private EntityManager em;\line
+    \line
+    @Override\line
+    public Equipo findById(Integer id) \{\line
+        return em.find(Equipo.class, id);\line
+    \}\line
+    \line
+    public List<Equipo> findByArea(Integer areaId) \{\line
+        return em.createQuery(\line
+            "SELECT e FROM Equipo e WHERE e.area.id = ?1",\line
+            Equipo.class\line
+        ).setParameter(1, areaId).getResultList();\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 10.2 DTO Pattern (Data Transfer Objects)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 // Entidad JPA (pesada, con relaciones)\line
+@Entity\line
+public class Equipo \{\line
+    @Id private Integer id;\line
+    @ManyToOne private Area area;\line
+    @OneToMany private List<Mantenimiento> mantenimientos;\line
+    // ... relaciones\line
+\}\line
+\line
+// DTO para respuesta API (ligero, sin relaciones innecesarias)\line
+public class EquipoDTO \{\line
+    private Integer id;\line
+    private String nombre;\line
+    private String codigo;\line
+    private Integer areaId;\line
+    private String estado;\line
+    // ... solo campos necesarios\line
+\}\line
+\line
+// Mapeo en servicio\line
+public EquipoDTO getEquipoDTO(Integer id) \{\line
+    Equipo equipo = equiposRepository.findById(id);\line
+    return new EquipoDTO(\line
+        equipo.getId(),\line
+        equipo.getNombre(),\line
+        equipo.getCodigo(),\line
+        equipo.getArea().getId(),\line
+        equipo.getEstado()\line
+    );\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 10.3 Service Locator (CDI)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Stateless\line
+@Transactional\line
+public class MantenimientosService \{\line
+    \line
+    @Inject\line
+    private MantenimientosRepository repository;\line
+    \line
+    @Inject\line
+    private EquiposRepository equiposRepository;\line
+    \line
+    @Inject\line
+    private NotificacionesService notificacionesService;\line
+    \line
+    @Inject\line
+    private EmailService emailService;\line
+    \line
+    public void ejecutarMantenimiento(MantenimientoDTO dto) \{\line
+        // L\u243 ?gica que orquesta m\u250 ?ltiples servicios\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 10.4 Observer Pattern (Notificaciones)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Stateless\line
+public class MantenimientosService \{\line
+    \line
+    @Inject\line
+    private NotificacionesService notificacionesService;\line
+    \line
+    @Transactional\line
+    public Mantenimiento crearMantenimiento(MantenimientoDTO dto) \{\line
+        Mantenimiento m = new Mantenimiento();\line
+        // ... crear\line
+        \line
+        // Observer: notificar cambio\line
+        notificacionesService.crearNotificacion(\line
+            usuarioResponsable.getId(),\line
+            "mantenimiento_proximo",\line
+            "Nuevo mantenimiento programado"\line
+        );\line
+        \line
+        return m;\line
+    \}\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 11. Seguridad\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 11.1 Validaci\u243 ?n de Entrada\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Backend}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Path("/api/equipos")\line
+public class EquiposController \{\line
+    \line
+    @POST\line
+    @Consumes(MediaType.APPLICATION_JSON)\line
+    public Response crearEquipo(\line
+        @Valid EquipoDTO equipo\line
+    ) \{\line
+        // EquipoDTO tiene @NotBlank, @Min, @Max, etc.\line
+        // Bean Validation falla autom\u225 ?ticamente si inv\u225 ?lido\line
+    \}\line
+\}\line
+\line
+@Data\line
+public class EquipoDTO \{\line
+    @NotBlank(message = "Nombre es obligatorio")\line
+    private String nombre;\line
+    \line
+    @Min(value = 1, message = "El \u225 ?rea es requerida")\line
+    private Integer areaId;\line
+    \line
+    @Pattern(regexp = "^(Operativo|Reparacion|Baja|Calibracion)$")\line
+    private String estado;\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Frontend}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 // Reactive Forms con validaci\u243 ?n\line
+this.form = this.formBuilder.group(\{\line
+  nombre: ['', [Validators.required, Validators.minLength(3)]],\line
+  areaId: ['', Validators.required],\line
+  estado: ['', Validators.required]\line
+\});\line
+\line
+// Mostrar errores\line
+<input [formControl]="form.get('nombre')">\line
+<small *ngIf="form.get('nombre').invalid">\line
+  El nombre es obligatorio\line
+</small>\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 11.2 Prevenci\u243 ?n CSRF\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 <!-- Keycloak maneja CSRF autom\u225 ?ticamente -->\line
+<!-- En frontend, los tokens CSRF se incluyen autom\u225 ?ticamente -->\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 11.3 Seguridad de Headers\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Provider\line
+public class SecurityHeadersFilter implements ContainerResponseFilter \{\line
+    \line
+    @Override\line
+    public void filter(ContainerRequestContext req, \line
+                      ContainerResponseContext res) \{\line
+        res.getHeaders().add("X-Content-Type-Options", "nosniff");\line
+        res.getHeaders().add("X-Frame-Options", "DENY");\line
+        res.getHeaders().add("X-XSS-Protection", "1; mode=block");\line
+        res.getHeaders().add("Strict-Transport-Security", \line
+            "max-age=31536000; includeSubDomains");\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 11.4 Sanitizaci\u243 ?n de SQL\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 // \u9989 ? CORRECTO: JPA prepara sentencia\line
+List<Equipo> equipos = em.createQuery(\line
+    "SELECT e FROM Equipo e WHERE e.nombre = ?1",\line
+    Equipo.class\line
+).setParameter(1, nombreUsuario).getResultList();\line
+\line
+// \u10060 ? INCORRECTO: Concatenaci\u243 ?n (SQL Injection)\line
+String query = "SELECT e FROM Equipo e WHERE e.nombre = '" + nombre + "'";\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 12. Deploy y DevOps\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 12.1 Dockerizaci\u243 ?n Backend\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Dockerfile}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 FROM tomee:9.0.0-M7-plus\line
+\line
+# Copiar WAR compilado\line
+COPY target/MantenimientosBackend.war \\\line
+  /usr/local/tomee/webapps/\line
+\line
+# Exponer puerto\line
+EXPOSE 8080\line
+\line
+# Variables de entorno\line
+ENV CATALINA_OPTS="\\\line
+  -Dkeycloak.realm=inacif \\\line
+  -Dkeycloak.auth-server-url=http://keycloak:8080 \\\line
+  -Dkeycloak.resource=inacif-backend"\line
+\line
+CMD ["catalina.sh", "run"]\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 12.2 Docker Compose (Desarrollo)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 version: '3.8'\line
+\line
+services:\line
+  # Backend\line
+  tomee-server:\line
+    build:\line
+      context: .\line
+      dockerfile: Dockerfile\line
+    container_name: tomee-server\line
+    ports:\line
+      - "8080:8080"\line
+    environment:\line
+      - CATALINA_OPTS=-Xmx1024M\line
+    volumes:\line
+      - ./logs:/usr/local/tomee/logs\line
+    networks:\line
+      - inacif-network\line
+    depends_on:\line
+      - db-server\line
+      - keycloak-server\line
+    healthcheck:\line
+      test: ["CMD", "curl", "-f", \line
+             "http://localhost:8080/MantenimientosBackend/api/health"]\line
+      interval: 30s\line
+      timeout: 10s\line
+      retries: 3\line
+\line
+  # Base de Datos\line
+  db-server:\line
+    image: mcr.microsoft.com/mssql/server:2019-latest\line
+    container_name: db-server\line
+    environment:\line
+      - SA_PASSWORD=YourPassword123!\line
+      - ACCEPT_EULA=Y\line
+    ports:\line
+      - "1433:1433"\line
+    volumes:\line
+      - mssql_data:/var/opt/mssql\line
+    networks:\line
+      - inacif-network\line
+\line
+  # Keycloak\line
+  keycloak-server:\line
+    image: quay.io/keycloak/keycloak:23.0.0\line
+    container_name: keycloak-server\line
+    environment:\line
+      - KEYCLOAK_ADMIN=admin\line
+      - KEYCLOAK_ADMIN_PASSWORD=admin\line
+    ports:\line
+      - "8180:8080"\line
+    networks:\line
+      - inacif-network\line
+\line
+volumes:\line
+  mssql_data:\line
+\line
+networks:\line
+  inacif-network:\line
+    driver: bridge\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 12.3 CI/CD Pipeline (Cloud Sonet)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 pipeline:\line
+  stages:\line
+    - build\line
+    - test\line
+    - deploy\line
+\line
+build:\line
+  stage: build\line
+  script:\line
+    - mvn clean package -DskipTests\line
+  artifacts:\line
+    paths:\line
+      - target/MantenimientosBackend.war\line
+\line
+test:\line
+  stage: test\line
+  script:\line
+    - mvn test\line
+    - mvn verify\line
+  coverage: '/Coverage: (\\d+\\.\\d+)%/'\line
+  reports:\line
+    junit: target/surefire-reports/**/*.xml\line
+\line
+deploy_dev:\line
+  stage: deploy\line
+  script:\line
+    - docker build -t inacif-backend:latest .\line
+    - docker push registry.inacif.gob.gt/inacif-backend:latest\line
+    - kubectl set image deployment/mantenimientos-backend \line
+        backend=registry.inacif.gob.gt/inacif-backend:latest\line
+  environment:\line
+    name: development\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 13. Monitoring y Logging\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 13.1 Configuraci\u243 ?n de Logs\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b logging.properties}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 handlers = java.util.logging.ConsoleHandler, \\\line
+           java.util.logging.FileHandler\line
+\line
+.level = INFO\line
+\line
+# Logs de aplicaci\u243 ?n\line
+usac.eps.level = DEBUG\line
+\line
+# Logs de Keycloak\line
+org.keycloak.level = INFO\line
+\line
+# Logs de JPA\line
+org.eclipse.persistence.level = WARNING\line
+\line
+# Logs de Deltaspike\line
+org.apache.deltaspike.level = INFO\line
+\line
+# Handler archivo\line
+java.util.logging.FileHandler.level = DEBUG\line
+java.util.logging.FileHandler.pattern = \\\line
+  /usr/local/tomee/logs/MantenimientosBackend.log\line
+java.util.logging.FileHandler.limit = 50000000\line
+java.util.logging.FileHandler.count = 5\line
+java.util.logging.FileHandler.formatter = \\\line
+  java.util.logging.SimpleFormatter\line
+\line
+java.util.logging.SimpleFormatter.format = \\\line
+  %1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 13.2 Health Check Endpoint\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Path("/api/health")\line
+public class HealthCheckController \{\line
+    \line
+    @Inject\line
+    private DataSource dataSource;\line
+    \line
+    @GET\line
+    @Produces(MediaType.APPLICATION_JSON)\line
+    public Response health() \{\line
+        Map<String, Object> health = new HashMap<>();\line
+        health.put("status", "UP");\line
+        \line
+        // Verificar BD\line
+        try \{\line
+            dataSource.getConnection().close();\line
+            health.put("database", "UP");\line
+        \} catch (Exception e) \{\line
+            health.put("database", "DOWN");\line
+        \}\line
+        \line
+        // Verificar Keycloak\line
+        try \{\line
+            // Validar token\line
+            health.put("keycloak", "UP");\line
+        \} catch (Exception e) \{\line
+            health.put("keycloak", "DOWN");\line
+        \}\line
+        \line
+        return Response.ok(health).build();\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 13.3 M\u233 ?tricas y Auditor\u237 ?a\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Stateless\line
+@Interceptors(\{AuditInterceptor.class\})\line
+public class EquiposService \{\line
+    \line
+    @Inject\line
+    private Logger logger;\line
+    \line
+    @Inject\line
+    private AuditRepository auditRepository;\line
+    \line
+    public Equipo crearEquipo(EquipoDTO dto) \{\line
+        // ... crear\line
+        \line
+        // Registrar auditor\u237 ?a\line
+        auditRepository.registrar(\line
+            usuarioActual.getId(),\line
+            "CREAR_EQUIPO",\line
+            "Equipo creado: " + equipo.getId(),\line
+            new Date()\line
+        );\line
+        \line
+        logger.info("Equipo creado por " + usuarioActual.getNombre() + \line
+                   " - ID: " + equipo.getId());\line
+        \line
+        return equipo;\line
+    \}\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 14. Scheduler y Tareas Programadas\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.1 NotificacionScheduler - Arquitectura\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Archivo:} {\f1 NotificacionScheduler.java}\line {\b Tipo:} {\f1 @Singleton @Startup}\line {\b Patr\u243 ?n:} Observer Pattern + Cron Job\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Caracter\u237 ?sticas clave:} - \u55357 ?\u57314 ? {\b Configuraci\u243 ?n din\u225 ?mica en BD} - No requiere recompilar ni reiniciar - \u55357 ?\u56580 ? {\b Auto-sincronizaci\u243 ?n} - Recarga configuraci\u243 ?n cada minuto desde BD - \u9200 ? {\b Ejecuci\u243 ?n precisa} - Verifica hora Y minuto antes de ejecutar - \u55357 ?\u56551 ? {\b Notificaciones m\u250 ?ltiples} - Emails + notificaciones en sistema - \u55357 ?\u56523 ? {\b Auditor\u237 ?a completa} - Registra cada ejecuci\u243 ?n con timestamp y resultado\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Singleton\line
+@Startup\line
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)\line
+@AccessTimeout(value = 5, unit = TimeUnit.SECONDS)\line
+public class NotificacionScheduler \{\line
+    \line
+    @Inject\line
+    private NotificacionService notificacionService;\line
+    \line
+    @Inject\line
+    private ConfiguracionAlertaRepository configuracionRepository;\line
+    \line
+    private boolean schedulerHabilitado = true;\line
+    private int horaEjecucion = 8;  // 8:00 AM por defecto\line
+    private int minutoEjecucion = 0;\line
+    private Date ultimaEjecucion;\line
+    private String ultimoResultado;\line
+    \line
+    @PostConstruct\line
+    public void init() \{\line
+        // Inicializar configuraciones por defecto si no existen\line
+        configuracionRepository.inicializarConfiguracionesPorDefecto();\line
+        \line
+        // Cargar configuraci\u243 ?n desde BD\line
+        loadConfiguracionFromDB();\line
+        \line
+        LOGGER.info("\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?");\line
+        LOGGER.info("\u55357 ?\u56517 ? SCHEDULER DE NOTIFICACIONES INICIALIZADO");\line
+        LOGGER.info("   Hora de ejecuci\u243 ?n: " + String.format("%02d:%02d", horaEjecucion, minutoEjecucion));\line
+        LOGGER.info("   Estado: " + (schedulerHabilitado ? "\u9989 ? HABILITADO" : "\u10060 ? DESHABILITADO"));\line
+        LOGGER.info("\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?\u9552 ?");\line
+    \}\line
+    \line
+    /**\line
+     * Tarea que se ejecuta CADA MINUTO\line
+     * Verifica si es la hora configurada y ejecuta verificaciones\line
+     */\line
+    @Schedule(hour = "*", minute = "*", second = "0", persistent = false)\line
+    public void verificarYEjecutar() \{\line
+        // Recargar configuraci\u243 ?n desde BD (sin reiniciar servidor)\line
+        loadConfiguracionFromDB();\line
+        \line
+        if (!schedulerHabilitado) \{\line
+            return; // Scheduler deshabilitado\line
+        \}\line
+        \line
+        // Obtener hora y minuto actual\line
+        Calendar ahora = Calendar.getInstance();\line
+        int horaActual = ahora.get(Calendar.HOUR_OF_DAY);\line
+        int minutoActual = ahora.get(Calendar.MINUTE);\line
+        \line
+        // \u191 ?Es la hora configurada?\line
+        if (horaActual == horaEjecucion && minutoActual == minutoEjecucion) \{\line
+            ejecutarVerificaciones();\line
+        \}\line
+    \}\line
+    \line
+    /**\line
+     * Ejecuta TODAS las verificaciones de alertas\line
+     */\line
+    @Lock(LockType.WRITE)\line
+    public void ejecutarVerificaciones() \{\line
+        Date inicio = new Date();\line
+        StringBuilder resultado = new StringBuilder();\line
+        \line
+        LOGGER.info("\u55357 ?\u56960 ? INICIANDO VERIFICACI\u211 ?N DE ALERTAS - " + DATE_FORMAT.format(inicio));\line
+        \line
+        try \{\line
+            // 1. Mantenimientos pr\u243 ?ximos a vencer (7 d\u237 ?as)\line
+            int alertasMantenimiento = notificacionService\line
+                .verificarMantenimientosProximos(7);\line
+            resultado.append("Mantenimientos: ").append(alertasMantenimiento).append(", ");\line
+            \line
+            // 2. Contratos por vencer (30, 15, 7 d\u237 ?as)\line
+            int alertasContratos = notificacionService\line
+                .verificarContratosProximosVencer(30, 15, 7);\line
+            resultado.append("Contratos: ").append(alertasContratos).append(", ");\line
+            \line
+            // 3. Tickets cr\u237 ?ticos sin atender\line
+            int alertasTickets = notificacionService\line
+                .verificarTicketsCriticos();\line
+            resultado.append("Tickets: ").append(alertasTickets);\line
+            \line
+            ultimaEjecucion = inicio;\line
+            ultimoResultado = resultado.toString();\line
+            \line
+            LOGGER.info("\u9989 ? VERIFICACI\u211 ?N COMPLETADA: " + ultimoResultado);\line
+            \line
+        \} catch (Exception e) \{\line
+            LOGGER.log(Level.SEVERE, "\u10060 ? ERROR EN VERIFICACI\u211 ?N", e);\line
+            ultimoResultado = "ERROR: " + e.getMessage();\line
+        \}\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.2 Configuraci\u243 ?n Din\u225 ?mica en Base de Datos\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Tabla: {\f1 Configuracion_Alertas}}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 CREATE TABLE Configuracion_Alertas (\line
+    id_configuracion INT PRIMARY KEY AUTO_INCREMENT,\line
+    tipo_alerta VARCHAR(100) UNIQUE NOT NULL,\line
+    dias_anticipacion INT,\line
+    activa BIT DEFAULT 1,\line
+    correos_destinatarios TEXT,\line
+    fecha_creacion DATETIME DEFAULT GETDATE(),\line
+    fecha_actualizacion DATETIME\line
+);\line
+\line
+-- Configuraci\u243 ?n especial para el scheduler\line
+INSERT INTO Configuracion_Alertas (tipo_alerta, dias_anticipacion, activa)\line
+VALUES ('scheduler_config', 800, 1);\line
+-- dias_anticipacion = hora*100 + minuto (800 = 8:00 AM)\line
+-- activa = 1 (habilitado), 0 (deshabilitado)\line
+\line
+-- Configuraciones de alertas\line
+INSERT INTO Configuracion_Alertas (tipo_alerta, dias_anticipacion, activa, correos_destinatarios)\line
+VALUES \line
+('MANTENIMIENTO_PROXIMO', 7, 1, 'admin@inacif.gob.gt,supervisor@inacif.gob.gt'),\line
+('MANTENIMIENTO_VENCIDO', 0, 1, 'admin@inacif.gob.gt,jefatura@inacif.gob.gt'),\line
+('CONTRATO_POR_VENCER_30', 30, 1, 'compras@inacif.gob.gt'),\line
+('CONTRATO_POR_VENCER_15', 15, 1, 'compras@inacif.gob.gt,admin@inacif.gob.gt'),\line
+('CONTRATO_POR_VENCER_7', 7, 1, 'compras@inacif.gob.gt,admin@inacif.gob.gt,jefatura@inacif.gob.gt'),\line
+('CONTRATO_VENCIDO', 0, 1, 'admin@inacif.gob.gt,jefatura@inacif.gob.gt'),\line
+('TICKET_CRITICO', 0, 1, 'admin@inacif.gob.gt,soporte@inacif.gob.gt');\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b \u191 ?C\u243 ?mo cambiar la hora de ejecuci\u243 ?n SIN reiniciar?}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 -- Cambiar a 10:30 AM\line
+UPDATE Configuracion_Alertas \line
+SET dias_anticipacion = 1030  -- hora*100 + minuto\line
+WHERE tipo_alerta = 'scheduler_config';\line
+\line
+-- El scheduler detectar\u225 ? el cambio en el siguiente minuto\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b \u191 ?C\u243 ?mo deshabilitar temporalmente?}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 -- Pausar scheduler\line
+UPDATE Configuracion_Alertas \line
+SET activa = 0\line
+WHERE tipo_alerta = 'scheduler_config';\line
+\line
+-- Reactivar\line
+UPDATE Configuracion_Alertas \line
+SET activa = 1\line
+WHERE tipo_alerta = 'scheduler_config';\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.3 Servicio de Email (SMTP)\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Archivo:} {\f1 EmailService.java}\line {\b Configuraci\u243 ?n:} Variables de entorno (.env) o email.properties\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Variables de entorno requeridas:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 SMTP_HOST=smtp.gmail.com\line
+SMTP_PORT=587\line
+SMTP_USER=notificaciones@inacif.gob.gt\line
+SMTP_PASSWORD=tu_password_aqui\line
+SMTP_FROM_ADDRESS=notificaciones@inacif.gob.gt\line
+SMTP_FROM_NAME=Sistema de Mantenimientos INACIF\line
+SMTP_ADMIN_EMAIL=admin@inacif.gob.gt\line
+SMTP_JEFATURA_EMAIL=jefatura@inacif.gob.gt\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b M\u233 ?todos principales:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @ApplicationScoped\line
+public class EmailService \{\line
+    \line
+    /**\line
+     * Env\u237 ?a email a m\u250 ?ltiples destinatarios\line
+     */\line
+    public boolean enviarEmailMultiple(\line
+        Set<String> destinatarios,\line
+        String asunto,\line
+        String contenidoHTML\line
+    ) \{\line
+        if (destinatarios == null || destinatarios.isEmpty()) \{\line
+            return false;\line
+        \}\line
+        \line
+        try \{\line
+            Session session = createSession();\line
+            Message message = new MimeMessage(session);\line
+            \line
+            message.setFrom(new InternetAddress(\line
+                emailProperties.getProperty("mail.from.address"),\line
+                emailProperties.getProperty("mail.from.name")\line
+            ));\line
+            \line
+            // Agregar destinatarios\line
+            for (String destinatario : destinatarios) \{\line
+                message.addRecipient(\line
+                    Message.RecipientType.TO,\line
+                    new InternetAddress(destinatario)\line
+                );\line
+            \}\line
+            \line
+            message.setSubject(asunto);\line
+            message.setContent(contenidoHTML, "text/html; charset=utf-8");\line
+            \line
+            Transport.send(message);\line
+            \line
+            LOGGER.info("\u9989 ? Email enviado: " + asunto + " -> " + destinatarios);\line
+            return true;\line
+            \line
+        \} catch (Exception e) \{\line
+            LOGGER.log(Level.SEVERE, "\u10060 ? Error enviando email", e);\line
+            return false;\line
+        \}\line
+    \}\line
+    \line
+    /**\line
+     * Construye HTML para alertas de mantenimiento\line
+     */\line
+    public String construirEmailMantenimiento(\line
+        String tipoAlerta,\line
+        String nombreEquipo,\line
+        String fechaProgramada,\line
+        int diasRestantes\line
+    ) \{\line
+        StringBuilder html = new StringBuilder();\line
+        html.append("<!DOCTYPE html>");\line
+        html.append("<html><head><meta charset='UTF-8'></head><body>");\line
+        html.append("<h2 style='color: #d32f2f;'>\u55357 ?\u57000 ? Alerta de Mantenimiento</h2>");\line
+        html.append("<p><strong>Equipo:</strong> ").append(nombreEquipo).append("</p>");\line
+        html.append("<p><strong>Fecha programada:</strong> ").append(fechaProgramada).append("</p>");\line
+        html.append("<p><strong>D\u237 ?as restantes:</strong> ").append(diasRestantes).append("</p>");\line
+        html.append("<hr>");\line
+        html.append("<p style='color: #666;'>Sistema de Gesti\u243 ?n de Mantenimientos - INACIF</p>");\line
+        html.append("</body></html>");\line
+        return html.toString();\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.4 Endpoint de Configuraci\u243 ?n de Correos\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Controller:} {\f1 ConfiguracionCorreosController.java}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @Path("/api/configuracion-correos")\line
+@Produces(MediaType.APPLICATION_JSON)\line
+@Consumes(MediaType.APPLICATION_JSON)\line
+public class ConfiguracionCorreosController \{\line
+    \line
+    @Inject\line
+    private ConfiguracionAlertaRepository repository;\line
+    \line
+    /**\line
+     * GET /api/configuracion-correos\line
+     * Lista todas las configuraciones de alertas\line
+     */\line
+    @GET\line
+    @RolesAllowed(\{"ADMIN"\})\line
+    public Response listarConfiguraciones() \{\line
+        List<ConfiguracionAlertaModel> configs = repository.findAll();\line
+        return Response.ok(configs).build();\line
+    \}\line
+    \line
+    /**\line
+     * PUT /api/configuracion-correos/\{tipoAlerta\}\line
+     * Actualiza correos destinatarios de un tipo de alerta\line
+     */\line
+    @PUT\line
+    @Path("/\{tipoAlerta\}")\line
+    @RolesAllowed(\{"ADMIN"\})\line
+    public Response actualizarCorreos(\line
+        @PathParam("tipoAlerta") String tipoAlerta,\line
+        Map<String, String> payload\line
+    ) \{\line
+        String correos = payload.get("correos");\line
+        \line
+        ConfiguracionAlertaModel config = repository\line
+            .findByTipoAlerta(tipoAlerta);\line
+        \line
+        if (config == null) \{\line
+            return Response.status(404)\line
+                .entity("Configuraci\u243 ?n no encontrada")\line
+                .build();\line
+        \}\line
+        \line
+        config.setCorreosDestinatarios(correos);\line
+        config.setFechaActualizacion(new Date());\line
+        repository.update(config);\line
+        \line
+        return Response.ok(config).build();\line
+    \}\line
+\}\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 15. Gu\u237 ?a de Desarrollo\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.1 Setup Inicial\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 # 1. Clonar repositorio\line
+git clone https://github.com/DonyStreams/MantenimientosBackend.git\line
+cd MantenimientosBackend\line
+\line
+# 2. Verificar Java 11\line
+java -version\line
+\line
+# 3. Instalar Maven\line
+mvn -version\line
+\line
+# 4. Instalar Docker\line
+docker --version\line
+docker-compose --version\line
+\line
+# 5. Compilar proyecto\line
+mvn clean install\line
+\line
+# 6. Iniciar contenedores\line
+docker-compose up -d\line
+\line
+# 7. Esperar ~30 segundos y verificar\line
+docker logs tomee-server\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.2 Estructura de una Nueva Feature\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Crear un nuevo m\u243 ?dulo (Ejemplo: \u8220"Calibraciones\u8221")}\par}
+{\pard \ql \f0 \sa180 \li360 \fi-360 1.\tx360\tab {\b Entidad JPA}\par}
+{\pard \ql \f0 \sa180 \li360 \fi0 \f1 @Entity\line
+@Table(name = "Calibraciones")\line
+public class Calibracion \{\line
+    @Id\line
+    @GeneratedValue(strategy = GenerationType.IDENTITY)\line
+    private Integer id;\line
+\line
+    @ManyToOne\line
+    @JoinColumn(name = "equipo_id")\line
+    private Equipo equipo;\line
+    // ...\line
+\}\par}
+{\pard \ql \f0 \sa180 \li360 \fi-360 2.\tx360\tab {\b DTO}\par}
+{\pard \ql \f0 \sa180 \li360 \fi0 \f1 public class CalibrationDTO \{\line
+    private Integer equipoId;\line
+    private LocalDateTime fecha;\line
+    // ...\line
+\}\par}
+{\pard \ql \f0 \sa180 \li360 \fi-360 3.\tx360\tab {\b Repository}\par}
+{\pard \ql \f0 \sa180 \li360 \fi0 \f1 @Repository\line
+public class CalibracionesRepository \line
+    implements BaseRepository<Calibracion, Integer> \{\line
+    // ...\line
+\}\par}
+{\pard \ql \f0 \sa180 \li360 \fi-360 4.\tx360\tab {\b Service}\par}
+{\pard \ql \f0 \sa180 \li360 \fi0 \f1 @Stateless\line
+@Transactional\line
+public class CalibracionesService \{\line
+    @Inject\line
+    private CalibracionesRepository repository;\line
+    // ...\line
+\}\par}
+{\pard \ql \f0 \sa180 \li360 \fi-360 5.\tx360\tab {\b Controller}\par}
+{\pard \ql \f0 \sa180 \li360 \fi0 \f1 @Path("/api/calibraciones")\line
+@Consumes(MediaType.APPLICATION_JSON)\line
+@Produces(MediaType.APPLICATION_JSON)\line
+public class CalibracionesController \{\line
+    @Inject\line
+    private CalibracionesService service;\line
+\line
+    @GET\line
+    @RolesAllowed(\{"ADMIN", "SUPERVISOR"\})\line
+    public Response listar() \{\line
+        // ...\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li360 \fi-360 6.\tx360\tab {\b Frontend Component}\par}
+{\pard \ql \f0 \sa180 \li360 \fi0 \f1 @Component(\{\line
+  selector: 'app-calibraciones',\line
+  templateUrl: './calibraciones.component.html',\line
+  styleUrls: ['./calibraciones.component.scss']\line
+\})\line
+export class CalibracionesComponent implements OnInit \{\line
+  @Inject private calibracionesService: CalibracionesService;\line
+\}\sa180\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.3 Testing\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Test Unitario}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @RunWith(ArquillianRunner.class)\line
+public class EquiposServiceTest \{\line
+    \line
+    @Inject\line
+    private EquiposService service;\line
+    \line
+    @Test\line
+    public void testCrearEquipo() \{\line
+        EquipoDTO dto = new EquipoDTO();\line
+        dto.setNombre("Microscopio Test");\line
+        \line
+        Equipo resultado = service.crearEquipo(dto);\line
+        \line
+        assertNotNull(resultado.getId());\line
+        assertEquals("Microscopio Test", resultado.getNombre());\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Test de API}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 @RunWith(ArquillianRunner.class)\line
+public class EquiposAPITest \{\line
+    \line
+    @Test\line
+    public void testGetEquipos() \{\line
+        Response response = given()\line
+            .header("Authorization", "Bearer " + token)\line
+            .when()\line
+            .get("/api/equipos")\line
+            .then()\line
+            .statusCode(200)\line
+            .extract()\line
+            .response();\line
+        \line
+        List<EquipoDTO> equipos = \line
+            response.jsonPath().getList("data", EquipoDTO.class);\line
+        \line
+        assertNotNull(equipos);\line
+    \}\line
+\}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 14.4 Best Practices\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \u9989 ? {\b HACER:} - Usar Deltaspike Data para operaciones CRUD - Validar entrada con Bean Validation - Loguear operaciones cr\u237 ?ticas - Usar transacciones expl\u237 ?citas (@Transactional) - Documentar APIs con comentarios - Escribir pruebas unitarias\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \u10060 ? {\b NO HACER:} - Concatenar SQL (usar PreparedStatements) - Confiar solo en autenticaci\u243 ?n frontend - Almacenar contrase\u241 ?as en c\u243 ?digo - Hacer queries N+1 - Retornar entidades JPA directamente (usar DTOs) - Ignorar excepciones sin loguear\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Conclusi\u243 ?n\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Esta documentaci\u243 ?n proporciona una base s\u243 ?lida para entender la arquitectura, componentes y flujos del sistema. Para mayor detalle, consultar:\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b README.md} - Instalaci\u243 ?n y uso\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b Configuraciones/} - Setup de Keycloak\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b C\u243 ?digo fuente} - Ejemplos pr\u225 ?cticos\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\b postman_collection.json} - APIs disponibles\sa180\par}
+{\pard \qc \f0 \sa180 \li0 \fi0 \emdash\emdash\emdash\emdash\emdash\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Documento t\u233 ?cnico completado.}\line {\i \u218 ?ltima actualizaci\u243 ?n: Febrero 2026}\par}
