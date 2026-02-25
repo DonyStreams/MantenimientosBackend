@@ -21,6 +21,7 @@
       "redirectUris": [
         "http://localhost:4200/*",
         "http://localhost:4200/auth/login",
+        "http://172.16.33.11",
         "http://172.16.33.11/*",
         "http://172.16.33.11/auth/login"
       ],
