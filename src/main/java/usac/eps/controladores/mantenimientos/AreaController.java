@@ -7,6 +7,9 @@ import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -29,6 +32,9 @@ public class AreaController {
 
     @Inject
     private UsuarioMantenimientoRepository usuarioRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Context
     private HttpServletRequest request;
@@ -108,18 +114,37 @@ public class AreaController {
     @Path("/{id}")
     public Response delete(@PathParam("id") Integer id) {
         AreaModel area = areaRepository.findByIdArea(id);
-        if (area != null) {
-            try {
-                areaRepository.deleteByIdArea(id);
-                return Response.noContent().build();
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error al eliminar área", e);
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity("{\"error\": \"Error al eliminar área: " + e.getMessage() + "\"}")
+        if (area == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Área no encontrada\"}")
+                    .build();
+        }
+
+        try {
+            Long equiposAsociados = (Long) entityManager
+                    .createQuery("SELECT COUNT(e) FROM EquipoModel e WHERE e.idArea = :id")
+                    .setParameter("id", id)
+                    .getSingleResult();
+
+            if (equiposAsociados != null && equiposAsociados > 0) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("{\"error\": \"No se puede eliminar el área porque tiene equipos asociados\"}")
                         .build();
             }
+
+            areaRepository.deleteByIdArea(id);
+            return Response.noContent().build();
+        } catch (PersistenceException e) {
+            LOGGER.log(Level.WARNING, "No se pudo eliminar área por restricciones de integridad", e);
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("{\"error\": \"No se puede eliminar el área porque tiene datos relacionados\"}")
+                    .build();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar área", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al eliminar área\"}")
+                    .build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     /**
