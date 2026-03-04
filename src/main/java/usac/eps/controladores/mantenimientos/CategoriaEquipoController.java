@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -164,33 +165,49 @@ public class CategoriaEquipoController {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Integer id) {
-        CategoriaEquipoModel categoria = categoriaRepository.findByIdCategoria(id);
-        if (categoria == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"Categoría no encontrada\"}")
-                    .build();
-        }
+        try {
+            CategoriaEquipoModel categoria = categoriaRepository.findByIdCategoria(id);
+            if (categoria == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\": \"Categoría no encontrada\"}")
+                        .build();
+            }
 
-        Long hijos = categoriaRepository.countByPadre(id);
-        if (hijos != null && hijos > 0) {
+            Long hijos = categoriaRepository.countByPadre(id);
+            if (hijos != null && hijos > 0) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("{\"error\": \"La categoría tiene subcategorías asociadas\"}")
+                        .build();
+            }
+
+            Long equipos = (Long) entityManager
+                    .createQuery("SELECT COUNT(e) FROM EquipoModel e WHERE e.idCategoria = :id")
+                    .setParameter("id", id)
+                    .getSingleResult();
+
+            if (equipos != null && equipos > 0) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("{\"error\": \"La categoría tiene equipos asociados\"}")
+                        .build();
+            }
+
+            CategoriaEquipoModel managedCategoria = entityManager.contains(categoria)
+                    ? categoria
+                    : entityManager.merge(categoria);
+            entityManager.remove(managedCategoria);
+            entityManager.flush();
+            return Response.noContent().build();
+        } catch (PersistenceException ex) {
+            LOGGER.log(Level.WARNING, "No se pudo eliminar categoría por restricciones de integridad", ex);
             return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"La categoría tiene subcategorías asociadas\"}")
+                    .entity("{\"error\": \"No se puede eliminar la categoría porque tiene datos relacionados\"}")
+                    .build();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Error inesperado al eliminar categoría", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Error al eliminar la categoría\"}")
                     .build();
         }
-
-        Long equipos = (Long) entityManager
-                .createQuery("SELECT COUNT(e) FROM EquipoModel e WHERE e.idCategoria = :id")
-                .setParameter("id", id)
-                .getSingleResult();
-
-        if (equipos != null && equipos > 0) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"La categoría tiene equipos asociados\"}")
-                    .build();
-        }
-
-        categoriaRepository.remove(categoria);
-        return Response.noContent().build();
     }
 
     private void validarNombre(String nombre, Integer idPadre, Integer idActual) {

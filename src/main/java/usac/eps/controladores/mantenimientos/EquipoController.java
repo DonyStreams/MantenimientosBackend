@@ -414,13 +414,29 @@ public class EquipoController {
                     .setParameter(1, id)
                     .getSingleResult()).intValue();
 
+            // Verificar historial asociado específicamente a tickets
+            String queryHistorialTickets = "SELECT COUNT(*) FROM Historial_Equipo WHERE id_equipo = ? AND ticket_id IS NOT NULL";
+            Integer countHistorialTickets = ((Number) entityManager.createNativeQuery(queryHistorialTickets)
+                    .setParameter(1, id)
+                    .getSingleResult()).intValue();
+
+            // Historial general del equipo (sin vínculo a ticket)
+            Integer countHistorialGeneral = Math.max(0, countHistorial - countHistorialTickets);
+
             // Verificar si tiene tickets asociados
             String queryTickets = "SELECT COUNT(*) FROM Tickets WHERE equipo_id = ?";
             Integer countTickets = ((Number) entityManager.createNativeQuery(queryTickets)
                     .setParameter(1, id)
                     .getSingleResult()).intValue();
 
-            if (countProgramaciones > 0 || countEjecuciones > 0 || countHistorial > 0 || countTickets > 0) {
+            // Verificar si tiene vínculos con contratos
+            String queryContratos = "SELECT COUNT(*) FROM Contrato_Equipo WHERE id_equipo = ?";
+            Integer countContratos = ((Number) entityManager.createNativeQuery(queryContratos)
+                    .setParameter(1, id)
+                    .getSingleResult()).intValue();
+
+            if (countProgramaciones > 0 || countEjecuciones > 0 || countHistorial > 0 || countTickets > 0
+                    || countContratos > 0) {
                 StringBuilder mensaje = new StringBuilder(
                         "No se puede eliminar el equipo porque tiene registros relacionados: ");
                 boolean hayRelaciones = false;
@@ -441,10 +457,25 @@ public class EquipoController {
                     mensaje.append(countTickets).append(" ticket(s)");
                     hayRelaciones = true;
                 }
-                if (countHistorial > 0) {
+
+                if (countHistorialTickets > 0) {
                     if (hayRelaciones)
                         mensaje.append(", ");
-                    mensaje.append(countHistorial).append(" registro(s) de historial");
+                    mensaje.append(countHistorialTickets).append(" registro(s) de historial asociado(s) a ticket");
+                    hayRelaciones = true;
+                }
+
+                if (countHistorialGeneral > 0) {
+                    if (hayRelaciones)
+                        mensaje.append(", ");
+                    mensaje.append(countHistorialGeneral).append(" registro(s) de historial general del equipo");
+                    hayRelaciones = true;
+                }
+
+                if (countContratos > 0) {
+                    if (hayRelaciones)
+                        mensaje.append(", ");
+                    mensaje.append(countContratos).append(" vínculo(s) con contrato");
                 }
 
                 LOGGER.warning("⚠️ No se puede eliminar equipo " + id + ": " + mensaje);
