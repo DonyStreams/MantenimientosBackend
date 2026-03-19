@@ -120,13 +120,26 @@ public class ProgramacionMantenimientoController {
                 // Equipo
                 jsonBuilder.append("\"equipo\":");
                 if (p.getEquipo() != null) {
+                    String areaNombre = resolverAreaNombre(p.getEquipo());
+                    String categoriaNombre = resolverCategoriaNombre(p.getEquipo());
+                    String tipoEquipoNombre = resolverTipoEquipoNombre(p.getEquipo());
+
                     jsonBuilder.append("{");
                     jsonBuilder.append("\"idEquipo\":").append(p.getEquipo().getIdEquipo()).append(",");
                     jsonBuilder.append("\"nombre\":\"").append(escapeJson(p.getEquipo().getNombre())).append("\",");
                     jsonBuilder.append("\"codigoInacif\":\"").append(escapeJson(p.getEquipo().getCodigoInacif()))
                             .append("\",");
                     jsonBuilder.append("\"ubicacion\":\"").append(escapeJson(p.getEquipo().getUbicacion()))
-                            .append("\"");
+                            .append("\",");
+                    jsonBuilder.append("\"idArea\":")
+                            .append(p.getEquipo().getIdArea() != null ? p.getEquipo().getIdArea() : "null")
+                            .append(",");
+                    jsonBuilder.append("\"areaNombre\":\"").append(escapeJson(areaNombre)).append("\",");
+                    jsonBuilder.append("\"idCategoria\":")
+                            .append(p.getEquipo().getIdCategoria() != null ? p.getEquipo().getIdCategoria() : "null")
+                            .append(",");
+                    jsonBuilder.append("\"categoriaNombre\":\"").append(escapeJson(categoriaNombre)).append("\",");
+                    jsonBuilder.append("\"tipoEquipoNombre\":\"").append(escapeJson(tipoEquipoNombre)).append("\"");
                     jsonBuilder.append("}");
                 } else {
                     jsonBuilder.append("null");
@@ -206,6 +219,70 @@ public class ProgramacionMantenimientoController {
             return null;
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
+    }
+
+    private String resolverAreaNombre(EquipoModel equipo) {
+        try {
+            if (equipo == null || equipo.getIdArea() == null) {
+                return "";
+            }
+
+            Query query = em.createNativeQuery("SELECT nombre FROM Areas WHERE id_area = ?");
+            query.setParameter(1, equipo.getIdArea());
+
+            List<?> result = query.getResultList();
+            if (!result.isEmpty() && result.get(0) != null) {
+                return result.get(0).toString();
+            }
+            return "";
+        } catch (Exception e) {
+            LOGGER.log(Level.FINE, "No se pudo resolver area para id " + equipo.getIdArea(), e);
+            return "";
+        }
+    }
+
+    private String resolverCategoriaNombre(EquipoModel equipo) {
+        try {
+            if (equipo == null || equipo.getIdCategoria() == null) {
+                return "";
+            }
+
+            Query query = em.createNativeQuery("SELECT nombre FROM Categoria_Equipo WHERE id_categoria = ?");
+            query.setParameter(1, equipo.getIdCategoria());
+
+            List<?> result = query.getResultList();
+            if (!result.isEmpty() && result.get(0) != null) {
+                return result.get(0).toString();
+            }
+            return "";
+        } catch (Exception e) {
+            LOGGER.log(Level.FINE, "No se pudo resolver categoria para id " + equipo.getIdCategoria(), e);
+            return "";
+        }
+    }
+
+    private String resolverTipoEquipoNombre(EquipoModel equipo) {
+        try {
+            if (equipo == null || equipo.getIdCategoria() == null) {
+                return "";
+            }
+
+            Query query = em.createNativeQuery(
+                    "SELECT cp.nombre "
+                            + "FROM Categoria_Equipo c "
+                            + "LEFT JOIN Categoria_Equipo cp ON cp.id_categoria = c.id_padre "
+                            + "WHERE c.id_categoria = ?");
+            query.setParameter(1, equipo.getIdCategoria());
+
+            List<?> result = query.getResultList();
+            if (!result.isEmpty() && result.get(0) != null) {
+                return result.get(0).toString();
+            }
+            return "";
+        } catch (Exception e) {
+            LOGGER.log(Level.FINE, "No se pudo resolver tipo de equipo para categoria " + equipo.getIdCategoria(), e);
+            return "";
+        }
     }
 
     /**

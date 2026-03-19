@@ -148,6 +148,20 @@ public class ConfiguracionAlertaRepository {
     }
 
     /**
+     * Obtiene configuraciones activas cuyo tipo empieza con el prefijo dado,
+     * ordenadas por diasAnticipacion ASC (para resolución dinámica de umbrales)
+     */
+    public List<ConfiguracionAlertaModel> findActivasByTipoPrefix(String prefix) {
+        return em.createQuery(
+                "SELECT c FROM ConfiguracionAlertaModel c " +
+                        "WHERE c.tipoAlerta LIKE :prefix AND c.activa = true " +
+                        "ORDER BY c.diasAnticipacion ASC",
+                ConfiguracionAlertaModel.class)
+                .setParameter("prefix", prefix + "%")
+                .getResultList();
+    }
+
+    /**
      * Busca configuración por ID
      */
     public ConfiguracionAlertaModel findById(Integer id) {

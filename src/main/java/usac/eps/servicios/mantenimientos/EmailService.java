@@ -116,7 +116,7 @@ public class EmailService {
     /**
      * Envía notificación cuando un ticket cambia a prioridad crítica
      */
-    public void notificarTicketCritico(Integer ticketId, String descripcion,
+    public boolean notificarTicketCritico(Integer ticketId, String descripcion,
             String equipoNombre, String codigoInacif,
             String usuarioAsignado, String ubicacion) {
         try {
@@ -126,18 +126,25 @@ public class EmailService {
                     codigoInacif, usuarioAsignado, ubicacion);
 
             String destinatarios = resolverDestinatarios("ticket_critico");
+            if (destinatarios == null || destinatarios.trim().isEmpty()) {
+                LOGGER.info("ℹ️ Sin correos configurados para ticket_critico. Se omite envío de correo para ticket #"
+                        + ticketId);
+                return false;
+            }
             enviarCorreo(destinatarios, asunto, contenido);
             LOGGER.info("📧 Correo enviado a: " + destinatarios);
+            return true;
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de ticket crítico #" + ticketId, e);
+            return false;
         }
     }
 
     /**
      * Envía notificación cuando un equipo cambia a estado crítico
      */
-    public void notificarEquipoCritico(Integer equipoId, String equipoNombre,
+    public boolean notificarEquipoCritico(Integer equipoId, String equipoNombre,
             String codigoInacif, String ubicacion,
             String estadoAnterior, String motivoCambio) {
         try {
@@ -147,12 +154,19 @@ public class EmailService {
                     ubicacion, estadoAnterior, motivoCambio);
 
             String destinatarios = resolverDestinatarios("equipo_critico");
+            if (destinatarios == null || destinatarios.trim().isEmpty()) {
+                LOGGER.info("ℹ️ Sin correos configurados para equipo_critico. Se omite envío de correo para equipo #"
+                        + equipoId);
+                return false;
+            }
             enviarCorreo(destinatarios, asunto, contenido);
             LOGGER.info("📧 Correo enviado a: " + destinatarios);
             LOGGER.info("✅ Notificación de equipo crítico enviada - Equipo #" + equipoId);
+            return true;
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "❌ Error al enviar notificación de equipo crítico #" + equipoId, e);
+            return false;
         }
     }
 
@@ -221,12 +235,15 @@ public class EmailService {
             }
 
             ConfiguracionAlertaModel config = configuracionRepository.findByTipo(tipoAlerta);
-            String correos = config != null ? config.getUsuariosNotificar() : null;
-            String normalizados = normalizarCorreos(correos);
-            if (normalizados.isEmpty()) {
-                return getDefaultDestinatarios();
+            if (config != null) {
+                String normalizados = normalizarCorreos(config.getUsuariosNotificar());
+                if (normalizados.isEmpty()) {
+                    return "";
+                }
+                return normalizados;
             }
-            return normalizados;
+
+            return getDefaultDestinatarios();
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "⚠️ No se pudieron resolver destinatarios para " + tipoAlerta, e);
             return getDefaultDestinatarios();
@@ -282,7 +299,7 @@ public class EmailService {
      */
     private void enviarCorreo(String destinatario, String asunto, String contenidoHtml) {
         if (destinatario == null || destinatario.trim().isEmpty()) {
-            LOGGER.warning("⚠️ No hay destinatarios configurados para el correo: " + asunto);
+            LOGGER.info("ℹ️ Envío omitido sin destinatarios configurados: " + asunto);
             return;
         }
 

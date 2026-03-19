@@ -302,6 +302,7 @@ public class EquipoController {
                     && !equipoAnterior.getUbicacion().equals(equipo.getUbicacion()));
             boolean cambioEstado = (equipoAnterior.getEstado() != null
                     && !equipoAnterior.getEstado().equals(equipo.getEstado()));
+            Boolean correoCriticoEnviado = null;
 
             if (cambioImagen) {
                 // Cambio de imagen
@@ -326,7 +327,7 @@ public class EquipoController {
                         String motivoCambio = "Estado cambiado de '" + equipoAnterior.getEstado() + "' a 'Crítico' por "
                                 + usuarioNombre;
 
-                        emailService.notificarEquipoCritico(
+                        correoCriticoEnviado = emailService.notificarEquipoCritico(
                                 id,
                                 equipo.getNombre() != null ? equipo.getNombre() : "Sin nombre",
                                 equipo.getCodigoInacif() != null ? equipo.getCodigoInacif() : "N/A",
@@ -335,6 +336,7 @@ public class EquipoController {
                                 motivoCambio);
                     } catch (Exception emailEx) {
                         LOGGER.log(Level.WARNING, "Error al enviar notificación de equipo crítico", emailEx);
+                        correoCriticoEnviado = false;
                     }
                 }
             } else {
@@ -343,7 +345,11 @@ public class EquipoController {
                         "Información del equipo actualizada",
                         usuarioId, usuarioNombre);
             }
-            return Response.ok(equipo).build();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("equipo", equipo);
+            response.put("correoCriticoEnviado", correoCriticoEnviado);
+            return Response.ok(response).build();
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al actualizar equipo", e);

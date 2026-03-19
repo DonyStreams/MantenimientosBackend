@@ -421,6 +421,8 @@ public class TicketController {
             int updatedRows = query.executeUpdate();
 
             if (updatedRows > 0) {
+                Boolean correoCriticoEnviado = null;
+
                 // Registrar cambios en bitácora
                 Integer equipoParaBitacora = equipoIdNuevo != null ? equipoIdNuevo : equipoIdActual;
                 if (equipoParaBitacora != null) {
@@ -458,10 +460,12 @@ public class TicketController {
                                         : "No especificada";
                                 String usuarioAsig = infoTicket[4] != null ? infoTicket[4].toString() : "Sin asignar";
 
-                                emailService.notificarTicketCritico(id, descripcionTicket, nombreEquipo,
+                                correoCriticoEnviado = emailService.notificarTicketCritico(id, descripcionTicket,
+                                        nombreEquipo,
                                         codigoInacif, usuarioAsig, ubicacionEquipo);
                             } catch (Exception emailEx) {
                                 LOGGER.log(Level.WARNING, "Error al enviar notificación de ticket crítico", emailEx);
+                                correoCriticoEnviado = false;
                             }
                         }
                     }
@@ -507,7 +511,9 @@ public class TicketController {
                         .append("\",");
                 jsonBuilder.append("\"equipoNombre\": \"").append(result[6] != null ? result[6] : "").append("\",");
                 jsonBuilder.append("\"usuarioCreador\": \"").append(result[7] != null ? result[7] : "").append("\",");
-                jsonBuilder.append("\"usuarioAsignado\": \"").append(result[8] != null ? result[8] : "").append("\"");
+                jsonBuilder.append("\"usuarioAsignado\": \"").append(result[8] != null ? result[8] : "").append("\",");
+                jsonBuilder.append("\"correoCriticoEnviado\": ")
+                        .append(correoCriticoEnviado == null ? "null" : correoCriticoEnviado);
                 jsonBuilder.append("}");
 
                 return Response.ok(jsonBuilder.toString()).build();

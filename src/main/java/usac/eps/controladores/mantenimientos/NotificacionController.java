@@ -2,14 +2,18 @@ package usac.eps.controladores.mantenimientos;
 
 import usac.eps.modelos.mantenimientos.NotificacionModel;
 import usac.eps.modelos.mantenimientos.ConfiguracionAlertaModel;
+import usac.eps.modelos.mantenimientos.UsuarioMantenimientoModel;
 import usac.eps.servicios.mantenimientos.NotificacionService;
 import usac.eps.servicios.mantenimientos.NotificacionScheduler;
 import usac.eps.repositorios.mantenimientos.NotificacionRepository;
 import usac.eps.repositorios.mantenimientos.ConfiguracionAlertaRepository;
+import usac.eps.repositorios.mantenimientos.UsuarioMantenimientoRepository;
 import usac.eps.seguridad.RequiresRole;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
@@ -41,6 +45,12 @@ public class NotificacionController {
 
     @Inject
     private NotificacionScheduler scheduler;
+
+    @Inject
+    private UsuarioMantenimientoRepository usuarioRepository;
+
+    @Context
+    private HttpServletRequest httpRequest;
 
     // ==================== NOTIFICACIONES ====================
 
@@ -358,6 +368,13 @@ public class NotificacionController {
             existente.setDiasAnticipacion(config.getDiasAnticipacion());
             existente.setActiva(config.getActiva());
             existente.setUsuariosNotificar(config.getUsuariosNotificar());
+            // Actualizar tipoAlerta solo si no es un tipo de sistema protegido
+            if (config.getTipoAlerta() != null
+                    && !config.getTipoAlerta().contains("vencido")
+                    && !config.getTipoAlerta().contains("critico")
+                    && !"scheduler_config".equals(config.getTipoAlerta())) {
+                existente.setTipoAlerta(config.getTipoAlerta());
+            }
 
             ConfiguracionAlertaModel actualizada = configuracionRepository.save(existente);
             return Response.ok(actualizada).build();
@@ -370,6 +387,35 @@ public class NotificacionController {
     }
 
     /**
+     * Elimina una configuración de alerta
+     */
+    @DELETE
+    @Path("/configuracion/{id}")
+    @RequiresRole({ "ADMIN", "SUPERVISOR" })
+    public Response eliminarConfiguracion(@PathParam("id") Integer id) {
+        try {
+            ConfiguracionAlertaModel existente = configuracionRepository.findById(id);
+            if (existente == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(Map.of("error", "Configuración no encontrada"))
+                        .build();
+            }
+            if ("scheduler_config".equals(existente.getTipoAlerta()) || existente.getTipoAlerta().contains("vencido") || existente.getTipoAlerta().contains("critico")) {
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity(Map.of("error", "No se puede eliminar esta configuración del sistema"))
+                        .build();
+            }
+            configuracionRepository.delete(id);
+            return Response.ok(Map.of("mensaje", "Configuración eliminada")).build();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar configuración", e);
+            return Response.serverError()
+                    .entity(Map.of("error", "Error al eliminar configuración: " + e.getMessage()))
+                    .build();
+        }
+    }
+
+    /**
      * Crea una nueva configuración de alerta
      */
     @POST
@@ -377,6 +423,13 @@ public class NotificacionController {
     @RequiresRole({ "ADMIN", "SUPERVISOR" })
     public Response crearConfiguracion(ConfiguracionAlertaModel config) {
         try {
+            String keycloakId = (String) httpRequest.getAttribute("keycloakId");
+            if (keycloakId != null) {
+                UsuarioMantenimientoModel usuario = usuarioRepository.findByKeycloakId(keycloakId);
+                if (usuario != null) {
+                    config.setUsuarioCreacion(usuario.getId());
+                }
+            }
             ConfiguracionAlertaModel nueva = configuracionRepository.save(config);
             return Response.status(Response.Status.CREATED).entity(nueva).build();
         } catch (Exception e) {
