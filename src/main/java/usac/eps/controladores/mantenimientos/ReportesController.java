@@ -11,10 +11,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Controlador de reportes
@@ -28,9 +42,602 @@ public class ReportesController {
     private static final Logger LOGGER = Logger.getLogger(ReportesController.class.getName());
     private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final Pattern CAMBIO_ESTADO_PATTERN = Pattern
+            .compile("Estado cambiado de '([^']*)' a '([^']*)'", Pattern.CASE_INSENSITIVE);
 
     @PersistenceContext
     private EntityManager em;
+
+    @GET
+    @Path("/equipos-estado-tiempo/dashboard")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerDashboardEquiposEstadoTiempo(
+            @QueryParam("fechaInicio") String fechaInicio,
+            @QueryParam("fechaFin") String fechaFin,
+            @QueryParam("idArea") Integer idArea,
+            @QueryParam("idCategoria") Integer idCategoria,
+            @QueryParam("agruparPor") @DefaultValue("area") String agruparPor) {
+        try {
+            AnalisisEstadoTiempoResponse response = calcularAnalisisEstadoTiempo(
+                    fechaInicio,
+                    fechaFin,
+                    idArea,
+                    idCategoria,
+                    agruparPor);
+            return Response.ok(response).build();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Error al obtener dashboard de estado-tiempo", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", "Error al calcular dashboard: " + ex.getMessage()))
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/equipos-estado-tiempo/pdf")
+    @Produces("text/plain")
+    public Response generarReporteEquiposEstadoTiempoTxt(
+            @QueryParam("fechaInicio") String fechaInicio,
+            @QueryParam("fechaFin") String fechaFin,
+            @QueryParam("idArea") Integer idArea,
+            @QueryParam("idCategoria") Integer idCategoria,
+            @QueryParam("agruparPor") @DefaultValue("area") String agruparPor) {
+        try {
+            AnalisisEstadoTiempoResponse analisis = calcularAnalisisEstadoTiempo(
+                    fechaInicio,
+                    fechaFin,
+                    idArea,
+                    idCategoria,
+                    agruparPor);
+
+            StringBuilder contenido = new StringBuilder();
+            contenido.append("REPORTE DE EQUIPOS POR ")
+                    .append("categoria".equalsIgnoreCase(analisis.agrupadoPor) ? "CATEGORIA" : "AREA")
+                    .append("\n");
+            contenido.append("Fecha de generación: ").append(SDF.format(new Date())).append("\n");
+            contenido.append("Rango: ").append(analisis.fechaInicio).append(" -> ").append(analisis.fechaFin)
+                    .append("\n");
+            contenido.append("Criterio operación: estado ACTIVO\n");
+            contenido.append("\nGLOSARIO\n");
+            contenido.append("- Horas Operación (Activo): tiempo con estado ACTIVO dentro del rango.\n");
+            contenido.append("- Horas Crítico: tiempo con estado CRITICO dentro del rango.\n");
+            contenido.append("- Horas Inactivo: tiempo con estado INACTIVO dentro del rango.\n");
+            contenido.append("- Porcentajes: se calculan sobre la ventana de análisis del equipo dentro del rango.\n");
+            contenido.append("- Nota: los porcentajes pueden no sumar 100% si existen estados no clasificados.\n");
+            for (int i = 0; i < 100; i++) {
+                contenido.append("=");
+            }
+            contenido.append("\n\nRESUMEN POR GRUPO\n");
+
+            for (ResumenGrupoDTO grupo : analisis.resumenPorGrupo) {
+                contenido.append("Grupo: ").append(grupo.grupo).append("\n");
+                contenido.append("Equipos: ").append(grupo.totalEquipos).append("\n");
+                contenido.append("Horas Operación (Activo): ").append(formatearDecimal(grupo.horasOperacion))
+                        .append("\n");
+                contenido.append("Horas Crítico: ").append(formatearDecimal(grupo.horasCritico)).append("\n");
+                contenido.append("Horas Inactivo: ").append(formatearDecimal(grupo.horasInactivo)).append("\n");
+                contenido.append("% Operación: ").append(formatearDecimal(grupo.porcentajeOperacion)).append("%\n");
+                contenido.append("% Crítico: ").append(formatearDecimal(grupo.porcentajeCritico)).append("%\n");
+                contenido.append("% Inactivo: ").append(formatearDecimal(grupo.porcentajeInactivo)).append("%\n");
+                for (int i = 0; i < 100; i++) {
+                    contenido.append("-");
+                }
+                contenido.append("\n");
+            }
+
+            contenido.append("\nDETALLE POR EQUIPO\n");
+            for (DetalleEquipoEstadoTiempoDTO detalle : analisis.detalleEquipos) {
+                contenido.append("Equipo: ").append(detalle.nombreEquipo).append(" (ID: ").append(detalle.idEquipo)
+                        .append(")\n");
+                contenido.append("Área: ").append(detalle.areaNombre).append(" | Categoría: ")
+                        .append(detalle.categoriaNombre)
+                        .append("\n");
+                contenido.append("Estado base: ").append(detalle.estadoBase).append("\n");
+                contenido.append("Horas Operación (Activo): ").append(formatearDecimal(detalle.horasOperacion))
+                        .append("\n");
+                contenido.append("Horas Crítico: ").append(formatearDecimal(detalle.horasCritico)).append("\n");
+                contenido.append("Horas Inactivo: ").append(formatearDecimal(detalle.horasInactivo)).append("\n");
+                contenido.append("% Operación: ").append(formatearDecimal(detalle.porcentajeOperacion)).append("%\n");
+                contenido.append("% Crítico: ").append(formatearDecimal(detalle.porcentajeCritico)).append("%\n");
+                contenido.append("% Inactivo: ").append(formatearDecimal(detalle.porcentajeInactivo)).append("%\n");
+                for (int i = 0; i < 100; i++) {
+                    contenido.append("-");
+                }
+                contenido.append("\n");
+            }
+
+            return Response.ok(contenido.toString().getBytes("UTF-8"))
+                    .header("Content-Disposition", "attachment; filename=reporte_equipos_estado_tiempo.txt")
+                    .header("Content-Type", "text/plain")
+                    .build();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte TXT de estado-tiempo", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", "Error al generar reporte: " + ex.getMessage()))
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/equipos-estado-tiempo/excel")
+    @Produces("text/csv")
+    public Response generarReporteEquiposEstadoTiempoCsv(
+            @QueryParam("fechaInicio") String fechaInicio,
+            @QueryParam("fechaFin") String fechaFin,
+            @QueryParam("idArea") Integer idArea,
+            @QueryParam("idCategoria") Integer idCategoria,
+            @QueryParam("agruparPor") @DefaultValue("area") String agruparPor) {
+        try {
+            AnalisisEstadoTiempoResponse analisis = calcularAnalisisEstadoTiempo(
+                    fechaInicio,
+                    fechaFin,
+                    idArea,
+                    idCategoria,
+                    agruparPor);
+
+            StringBuilder csv = new StringBuilder();
+            csv.append(
+                    "Tipo de Registro,Grupo de Resumen,ID Equipo,Nombre Equipo,Área,Categoría,Estado Inicial en Rango,Horas en Operación (Activo),Horas en Crítico,Horas en Inactivo,Porcentaje en Operación (Activo),Porcentaje en Crítico,Porcentaje en Inactivo\n");
+            csv.append(
+                    "GLOSARIO,Operación=ACTIVO / Crítico=CRITICO / Inactivo=INACTIVO,,,,,Porcentajes calculados sobre la ventana de análisis del equipo,,,,,,\n");
+
+            for (ResumenGrupoDTO grupo : analisis.resumenPorGrupo) {
+                csv.append("RESUMEN,")
+                        .append(escapeCsv(grupo.grupo)).append(",,,,")
+                        .append(",,")
+                        .append(formatearDecimal(grupo.horasOperacion)).append(",")
+                        .append(formatearDecimal(grupo.horasCritico)).append(",")
+                        .append(formatearDecimal(grupo.horasInactivo)).append(",")
+                        .append(formatearDecimal(grupo.porcentajeOperacion)).append(",")
+                        .append(formatearDecimal(grupo.porcentajeCritico)).append(",")
+                        .append(formatearDecimal(grupo.porcentajeInactivo))
+                        .append("\n");
+            }
+
+            for (DetalleEquipoEstadoTiempoDTO detalle : analisis.detalleEquipos) {
+                csv.append("DETALLE,")
+                        .append(escapeCsv("categoria".equalsIgnoreCase(analisis.agrupadoPor)
+                                ? detalle.categoriaNombre
+                                : detalle.areaNombre))
+                        .append(",")
+                        .append(detalle.idEquipo).append(",")
+                        .append(escapeCsv(detalle.nombreEquipo)).append(",")
+                        .append(escapeCsv(detalle.areaNombre)).append(",")
+                        .append(escapeCsv(detalle.categoriaNombre)).append(",")
+                        .append(escapeCsv(detalle.estadoBase)).append(",")
+                        .append(formatearDecimal(detalle.horasOperacion)).append(",")
+                        .append(formatearDecimal(detalle.horasCritico)).append(",")
+                        .append(formatearDecimal(detalle.horasInactivo)).append(",")
+                        .append(formatearDecimal(detalle.porcentajeOperacion)).append(",")
+                        .append(formatearDecimal(detalle.porcentajeCritico)).append(",")
+                        .append(formatearDecimal(detalle.porcentajeInactivo))
+                        .append("\n");
+            }
+
+            return Response.ok(csv.toString().getBytes("UTF-8"))
+                    .header("Content-Disposition", "attachment; filename=reporte_equipos_estado_tiempo.csv")
+                    .header("Content-Type", "text/csv; charset=UTF-8")
+                    .build();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Error al generar reporte CSV de estado-tiempo", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", "Error al generar reporte: " + ex.getMessage()))
+                    .build();
+        }
+    }
+
+    private AnalisisEstadoTiempoResponse calcularAnalisisEstadoTiempo(
+            String fechaInicioRaw,
+            String fechaFinRaw,
+            Integer idArea,
+            Integer idCategoria,
+            String agruparPorRaw) {
+
+        Date fechaFin = parseFechaFlexible(fechaFinRaw);
+        if (fechaFin == null) {
+            fechaFin = new Date();
+        }
+
+        Date fechaInicio = parseFechaFlexible(fechaInicioRaw);
+        if (fechaInicio == null) {
+            fechaInicio = Date.from(fechaFin.toInstant().minus(30, ChronoUnit.DAYS));
+        }
+
+        if (fechaInicio.after(fechaFin)) {
+            Date temp = fechaInicio;
+            fechaInicio = fechaFin;
+            fechaFin = temp;
+        }
+
+        String agruparPor = "categoria".equalsIgnoreCase(agruparPorRaw) ? "categoria" : "area";
+
+        String jpqlEquipos = "SELECT e FROM EquipoModel e " +
+                "LEFT JOIN FETCH e.area a " +
+                "LEFT JOIN FETCH e.categoria c " +
+                "WHERE 1=1";
+
+        if (idArea != null) {
+            jpqlEquipos += " AND e.idArea = :idArea";
+        }
+        if (idCategoria != null) {
+            jpqlEquipos += " AND e.idCategoria = :idCategoria";
+        }
+
+        javax.persistence.TypedQuery<EquipoModel> queryEquipos = em.createQuery(jpqlEquipos, EquipoModel.class);
+        if (idArea != null) {
+            queryEquipos.setParameter("idArea", idArea);
+        }
+        if (idCategoria != null) {
+            queryEquipos.setParameter("idCategoria", idCategoria);
+        }
+
+        List<EquipoModel> equipos = queryEquipos.setMaxResults(5000).getResultList();
+        List<DetalleEquipoEstadoTiempoDTO> detalleEquipos = new ArrayList<>();
+        Map<String, ResumenGrupoDTO> resumenPorGrupo = new HashMap<>();
+
+        long duracionTotalMs = Math.max(1L, fechaFin.getTime() - fechaInicio.getTime());
+
+        for (EquipoModel equipo : equipos) {
+            Date inicioEquipo = fechaInicio;
+            if (equipo.getFechaCreacion() != null && equipo.getFechaCreacion().after(inicioEquipo)) {
+                inicioEquipo = equipo.getFechaCreacion();
+            }
+
+            if (!inicioEquipo.before(fechaFin)) {
+                continue;
+            }
+
+            List<HistorialEquipoModel> cambiosHastaFin = em.createQuery(
+                    "SELECT h FROM HistorialEquipoModel h " +
+                            "WHERE h.equipo.idEquipo = :idEquipo " +
+                            "AND h.tipoCambio = 'CAMBIO_ESTADO' " +
+                            "AND h.fechaRegistro <= :fechaFin " +
+                            "ORDER BY h.fechaRegistro ASC",
+                    HistorialEquipoModel.class)
+                    .setParameter("idEquipo", equipo.getIdEquipo())
+                    .setParameter("fechaFin", fechaFin)
+                    .setMaxResults(5000)
+                    .getResultList();
+
+            EstadoTimeline timeline = calcularTimelineEquipo(equipo, cambiosHastaFin, inicioEquipo, fechaFin);
+            double horasOperacion = timeline.millisOperacion / 3600000.0;
+            double horasCritico = timeline.millisCritico / 3600000.0;
+            double horasInactivo = timeline.millisInactivo / 3600000.0;
+            long duracionVentanaEquipoMs = Math.max(1L, fechaFin.getTime() - inicioEquipo.getTime());
+            double porcentajeOperacion = (timeline.millisOperacion * 100.0) / duracionVentanaEquipoMs;
+            double porcentajeCritico = (timeline.millisCritico * 100.0) / duracionVentanaEquipoMs;
+            double porcentajeInactivo = (timeline.millisInactivo * 100.0) / duracionVentanaEquipoMs;
+
+            String areaNombre = resolverNombreArea(equipo);
+            String categoriaNombre = resolverNombreCategoria(equipo);
+
+            DetalleEquipoEstadoTiempoDTO detalle = new DetalleEquipoEstadoTiempoDTO();
+            detalle.idEquipo = equipo.getIdEquipo();
+            detalle.nombreEquipo = equipo.getNombre() != null ? equipo.getNombre() : "Sin nombre";
+            detalle.areaNombre = areaNombre;
+            detalle.categoriaNombre = categoriaNombre;
+            detalle.estadoBase = timeline.estadoInicial;
+            detalle.horasOperacion = redondear(horasOperacion);
+            detalle.horasCritico = redondear(horasCritico);
+            detalle.horasInactivo = redondear(horasInactivo);
+            detalle.porcentajeOperacion = redondear(porcentajeOperacion);
+            detalle.porcentajeCritico = redondear(porcentajeCritico);
+            detalle.porcentajeInactivo = redondear(porcentajeInactivo);
+            detalleEquipos.add(detalle);
+
+            String claveGrupo = "categoria".equalsIgnoreCase(agruparPor) ? categoriaNombre : areaNombre;
+            ResumenGrupoDTO resumen = resumenPorGrupo.computeIfAbsent(claveGrupo, k -> {
+                ResumenGrupoDTO nuevo = new ResumenGrupoDTO();
+                nuevo.grupo = k;
+                return nuevo;
+            });
+
+            resumen.totalEquipos += 1;
+            resumen.horasOperacion += detalle.horasOperacion;
+            resumen.horasCritico += detalle.horasCritico;
+            resumen.horasInactivo += detalle.horasInactivo;
+            resumen.porcentajeOperacion += detalle.porcentajeOperacion;
+            resumen.porcentajeCritico += detalle.porcentajeCritico;
+            resumen.porcentajeInactivo += detalle.porcentajeInactivo;
+        }
+
+        List<ResumenGrupoDTO> resumenOrdenado = new ArrayList<>(resumenPorGrupo.values());
+        for (ResumenGrupoDTO resumen : resumenOrdenado) {
+            if (resumen.totalEquipos > 0) {
+                resumen.porcentajeOperacion = redondear(resumen.porcentajeOperacion / resumen.totalEquipos);
+                resumen.porcentajeCritico = redondear(resumen.porcentajeCritico / resumen.totalEquipos);
+                resumen.porcentajeInactivo = redondear(resumen.porcentajeInactivo / resumen.totalEquipos);
+            }
+            resumen.horasOperacion = redondear(resumen.horasOperacion);
+            resumen.horasCritico = redondear(resumen.horasCritico);
+            resumen.horasInactivo = redondear(resumen.horasInactivo);
+        }
+
+        resumenOrdenado.sort(Comparator.comparing(r -> r.grupo == null ? "" : r.grupo));
+        detalleEquipos.sort(Comparator.comparing(d -> d.nombreEquipo == null ? "" : d.nombreEquipo));
+
+        AnalisisEstadoTiempoResponse response = new AnalisisEstadoTiempoResponse();
+        response.agrupadoPor = agruparPor;
+        response.fechaInicio = toIsoString(fechaInicio);
+        response.fechaFin = toIsoString(fechaFin);
+        response.totalEquipos = detalleEquipos.size();
+        response.definiciones = Map.of(
+                "horasOperacion", "Tiempo con estado ACTIVO dentro del rango de análisis.",
+                "horasCritico", "Tiempo con estado CRITICO dentro del rango de análisis.",
+                "horasInactivo", "Tiempo con estado INACTIVO dentro del rango de análisis.",
+                "porcentajes", "Porcentajes calculados sobre la ventana de análisis del equipo.",
+                "nota", "Los porcentajes pueden no sumar 100% si hay estados no clasificados.");
+        response.resumenPorGrupo = resumenOrdenado;
+        response.detalleEquipos = detalleEquipos;
+        return response;
+    }
+
+    private String resolverNombreArea(EquipoModel equipo) {
+        if (equipo.getArea() != null && equipo.getArea().getNombre() != null
+                && !equipo.getArea().getNombre().trim().isEmpty()) {
+            return equipo.getArea().getNombre();
+        }
+
+        if (equipo.getIdArea() != null) {
+            try {
+                AreaModel area = em.find(AreaModel.class, equipo.getIdArea());
+                if (area != null && area.getNombre() != null && !area.getNombre().trim().isEmpty()) {
+                    return area.getNombre();
+                }
+            } catch (Exception ex) {
+                LOGGER.log(Level.FINE, "No se pudo resolver nombre de área para equipo " + equipo.getIdEquipo(), ex);
+            }
+        }
+
+        return "Sin área";
+    }
+
+    private String resolverNombreCategoria(EquipoModel equipo) {
+        if (equipo.getCategoria() != null && equipo.getCategoria().getNombre() != null
+                && !equipo.getCategoria().getNombre().trim().isEmpty()) {
+            return equipo.getCategoria().getNombre();
+        }
+
+        if (equipo.getIdCategoria() != null) {
+            try {
+                CategoriaEquipoModel categoria = em.find(CategoriaEquipoModel.class, equipo.getIdCategoria());
+                if (categoria != null && categoria.getNombre() != null && !categoria.getNombre().trim().isEmpty()) {
+                    return categoria.getNombre();
+                }
+            } catch (Exception ex) {
+                LOGGER.log(Level.FINE,
+                        "No se pudo resolver nombre de categoría para equipo " + equipo.getIdEquipo(),
+                        ex);
+            }
+        }
+
+        return "Sin categoría";
+    }
+
+    private EstadoTimeline calcularTimelineEquipo(
+            EquipoModel equipo,
+            List<HistorialEquipoModel> cambiosHastaFin,
+            Date fechaInicio,
+            Date fechaFin) {
+
+        EstadoTimeline timeline = new EstadoTimeline();
+        String estadoInicial = resolverEstadoInicial(equipo, cambiosHastaFin, fechaInicio);
+        timeline.estadoInicial = estadoInicial;
+
+        Date cursor = fechaInicio;
+        String estadoActual = estadoInicial;
+
+        for (HistorialEquipoModel cambio : cambiosHastaFin) {
+            if (cambio.getFechaRegistro() == null || cambio.getFechaRegistro().before(fechaInicio)) {
+                continue;
+            }
+
+            if (cambio.getFechaRegistro().after(fechaFin)) {
+                break;
+            }
+
+            long tramo = Math.max(0L, cambio.getFechaRegistro().getTime() - cursor.getTime());
+            acumularPorEstado(timeline, estadoActual, tramo);
+
+            EstadoCambioParseado parse = parseCambioEstado(cambio.getDescripcion());
+            if (parse.estadoNuevo != null) {
+                estadoActual = parse.estadoNuevo;
+            }
+            cursor = cambio.getFechaRegistro();
+        }
+
+        long tramoFinal = Math.max(0L, fechaFin.getTime() - cursor.getTime());
+        acumularPorEstado(timeline, estadoActual, tramoFinal);
+        return timeline;
+    }
+
+    private String resolverEstadoInicial(EquipoModel equipo, List<HistorialEquipoModel> cambiosHastaFin,
+            Date fechaInicio) {
+        String estadoEquipo = normalizarEstado(equipo.getEstado());
+
+        HistorialEquipoModel ultimoAntesInicio = null;
+        HistorialEquipoModel primeroDesdeInicio = null;
+
+        for (HistorialEquipoModel cambio : cambiosHastaFin) {
+            if (cambio.getFechaRegistro() == null) {
+                continue;
+            }
+            if (!cambio.getFechaRegistro().after(fechaInicio)) {
+                ultimoAntesInicio = cambio;
+            } else if (primeroDesdeInicio == null) {
+                primeroDesdeInicio = cambio;
+            }
+        }
+
+        if (ultimoAntesInicio != null) {
+            EstadoCambioParseado parse = parseCambioEstado(ultimoAntesInicio.getDescripcion());
+            if (parse.estadoNuevo != null) {
+                return parse.estadoNuevo;
+            }
+        }
+
+        if (primeroDesdeInicio != null) {
+            EstadoCambioParseado parse = parseCambioEstado(primeroDesdeInicio.getDescripcion());
+            if (parse.estadoAnterior != null) {
+                return parse.estadoAnterior;
+            }
+        }
+
+        return estadoEquipo;
+    }
+
+    private void acumularPorEstado(EstadoTimeline timeline, String estado, long millis) {
+        String normalizado = normalizarEstado(estado);
+        if ("ACTIVO".equals(normalizado)) {
+            timeline.millisOperacion += millis;
+        }
+        if ("CRITICO".equals(normalizado)) {
+            timeline.millisCritico += millis;
+        }
+        if ("INACTIVO".equals(normalizado)) {
+            timeline.millisInactivo += millis;
+        }
+    }
+
+    private EstadoCambioParseado parseCambioEstado(String descripcion) {
+        EstadoCambioParseado parseado = new EstadoCambioParseado();
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            return parseado;
+        }
+
+        Matcher matcher = CAMBIO_ESTADO_PATTERN.matcher(descripcion);
+        if (matcher.find()) {
+            parseado.estadoAnterior = normalizarEstado(matcher.group(1));
+            parseado.estadoNuevo = normalizarEstado(matcher.group(2));
+            return parseado;
+        }
+
+        String upper = descripcion.toUpperCase(Locale.ROOT);
+        if (upper.contains("CRITICO") || upper.contains("CRÍTICO")) {
+            parseado.estadoNuevo = "CRITICO";
+        } else if (upper.contains("ACTIVO")) {
+            parseado.estadoNuevo = "ACTIVO";
+        } else if (upper.contains("INACTIVO")) {
+            parseado.estadoNuevo = "INACTIVO";
+        }
+        return parseado;
+    }
+
+    private String normalizarEstado(String estado) {
+        if (estado == null) {
+            return "DESCONOCIDO";
+        }
+        String texto = estado.trim().toUpperCase(Locale.ROOT)
+                .replace("Á", "A")
+                .replace("É", "E")
+                .replace("Í", "I")
+                .replace("Ó", "O")
+                .replace("Ú", "U");
+        if ("CRÍTICO".equals(texto)) {
+            return "CRITICO";
+        }
+        return texto;
+    }
+
+    private Date parseFechaFlexible(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+
+        String raw = value.trim();
+        try {
+            return Date.from(Instant.parse(raw));
+        } catch (DateTimeParseException ignored) {
+        }
+
+        List<DateTimeFormatter> formatters = List.of(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalDateTime dt = LocalDateTime.parse(raw, formatter);
+                return Date.from(dt.atZone(ZoneId.systemDefault()).toInstant());
+            } catch (DateTimeParseException ignored) {
+            }
+        }
+
+        try {
+            LocalDate date = LocalDate.parse(raw, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        } catch (DateTimeParseException ignored) {
+        }
+
+        try {
+            return DATE_PARSER.parse(raw.length() >= 19 ? raw.substring(0, 19) : raw);
+        } catch (ParseException ignored) {
+            return null;
+        }
+    }
+
+    private String toIsoString(Date date) {
+        return date.toInstant().toString();
+    }
+
+    private double redondear(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+    private String formatearDecimal(double value) {
+        return String.format(Locale.US, "%.2f", value);
+    }
+
+    private String escapeCsv(String value) {
+        String limpio = value == null ? "" : value.replace("\"", "\"\"");
+        return "\"" + limpio + "\"";
+    }
+
+    private static class EstadoTimeline {
+        private String estadoInicial;
+        private long millisOperacion;
+        private long millisCritico;
+        private long millisInactivo;
+    }
+
+    private static class EstadoCambioParseado {
+        private String estadoAnterior;
+        private String estadoNuevo;
+    }
+
+    public static class DetalleEquipoEstadoTiempoDTO {
+        public Integer idEquipo;
+        public String nombreEquipo;
+        public String areaNombre;
+        public String categoriaNombre;
+        public String estadoBase;
+        public double horasOperacion;
+        public double horasCritico;
+        public double horasInactivo;
+        public double porcentajeOperacion;
+        public double porcentajeCritico;
+        public double porcentajeInactivo;
+    }
+
+    public static class ResumenGrupoDTO {
+        public String grupo;
+        public int totalEquipos;
+        public double horasOperacion;
+        public double horasCritico;
+        public double horasInactivo;
+        public double porcentajeOperacion;
+        public double porcentajeCritico;
+        public double porcentajeInactivo;
+    }
+
+    public static class AnalisisEstadoTiempoResponse {
+        public String agrupadoPor;
+        public String fechaInicio;
+        public String fechaFin;
+        public int totalEquipos;
+        public Map<String, String> definiciones;
+        public List<ResumenGrupoDTO> resumenPorGrupo;
+        public List<DetalleEquipoEstadoTiempoDTO> detalleEquipos;
+    }
 
     /**
      * Genera reporte de equipos en PDF (simplificado como texto por ahora)
